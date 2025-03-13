@@ -1,0 +1,52 @@
+<div class="content">
+  <img class="logo" src="cloudthrash-logo-sharp.png" alt="CloudThrash logo" />
+  <div class="parent-container">
+    <div class="control-panel">
+      <h1>CloudThrash</h1>
+
+      <div class="row-container">
+        <app-configurable-button icon="play_arrow" text="Run Test" [action]="runTest.bind(this)"></app-configurable-button>
+        <app-configurable-button icon="stop" text="Stop Test" [action]="stopTest.bind(this)"></app-configurable-button>
+      </div>
+
+      <div class="row-container">
+        <app-configurable-button icon="folder" text="Files" [action]="openFiles.bind(this)"></app-configurable-button>
+        <app-configurable-button icon="visibility" text="Monitoring"
+          [action]="openMonitoring.bind(this)"></app-configurable-button>
+      </div>
+
+      <div class="settings">
+        <div class="row-container">
+          <label for="cpuComboBox">CPU:</label>
+          <mat-select [(value)]="selectedCpu" (selectionChange)="onCpuChange()">
+            <mat-option *ngFor="let cpu of cpuOptions" [value]="cpu">{{ cpu }}</mat-option>
+          </mat-select>
+        </div>
+
+        <div class="row-container">
+          <label for="memoryComboBox">Memory:</label>
+          <mat-select [(value)]="selectedMemory">
+            <mat-option *ngFor="let memory of memoryOptions" [value]="memory">{{ memory }}</mat-option>
+          </mat-select>
+        </div>
+
+        <div class="row-container">
+          <label># Agents:</label>
+          <mat-slider min="1" max="25" step="1" showTickMarks discrete class="flex-component">
+            <input matSliderThumb [(ngModel)]="loadAgents">
+          </mat-slider>
+          <app-configurable-button [type]="'mat-icon-hover'" icon="info" [action]="openFiles"
+            tooltip="Defines the number of started agents that create load in parallel."></app-configurable-button>
+        </div>
+
+        <div class="row-container">
+          <mat-form-field class="flex-component">
+            <mat-label>Environment Variables</mat-label>
+            <textarea matInput [(ngModel)]="envVars"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<router-outlet />

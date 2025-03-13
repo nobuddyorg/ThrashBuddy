@@ -1,0 +1,67 @@
+.content {
+  height: 100%;
+  width: 100%;
+  transition: transform 0.5s ease-in-out;
+  animation: moveUp 1s ease-in-out 3s forwards;
+}
+
+@keyframes moveUp {
+  to {
+    transform: translateY(-75%);
+  }
+}
+
+.parent-container {
+  display: flex;
+  justify-content: center;
+  background-color: transparent;
+}
+
+.control-panel {
+  width: 410px;
+  height: auto;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: whitesmoke;
+  margin: 25px;
+  padding: 25px;
+}
+
+.settings {
+  width: 90%;
+  border: 1px solid black;
+  margin: 10px;
+  margin-bottom: 0;
+  padding: 20px;
+  padding-bottom: 0;
+}
+
+.row-container {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
+}
+
+h1 {
+  font-family: 'Impact', sans-serif;
+  font-size: 80px;
+  color: black;
+  text-shadow: 3px 3px 5px rgba(255, 255, 255, 0.8);
+  margin: 0;
+  padding: 0;
+}
+
+.logo {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.flex-component {
+  flex-grow: 1; /* Makes the mat-slider take up all available space */
+}
