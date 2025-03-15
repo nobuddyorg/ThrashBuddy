@@ -18,7 +18,7 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     MatFormFieldModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
@@ -88,10 +88,14 @@ export class AppComponent {
   }
 
   openFiles() {
-    console.log('Opening files from parent!' + this.selectedMemory);
+    const newPort = 32001;
+    const newURL = `${window.location.protocol}//${window.location.hostname}:${newPort}/`;
+    window.open(newURL, '_blank');
   }
 
   openMonitoring() {
-    console.log('Opening monitoring from parent!' + this.loadAgents);
+    const newPort = 32002;
+    const newURL = `${window.location.protocol}//${window.location.hostname}:${newPort}/`;
+    window.open(newURL, '_blank');
   }
 }

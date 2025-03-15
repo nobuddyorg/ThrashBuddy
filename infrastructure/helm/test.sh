@@ -20,7 +20,7 @@ echo "Helm chart is valid."
 echo "Unit testing Helm chart..."
 helm plugin install https://github.com/quintush/helm-unittest || true
 helm plugin update unittest
-helm unittest .
+helm unittest . --strict
 echo "Helm chart unit tests passed."
 
 popd > /dev/null

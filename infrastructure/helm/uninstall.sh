@@ -2,6 +2,6 @@
 
 pushd $(dirname $0) > /dev/null
 
-helm uninstall ingress-nginx minio cloud-thrash
+helm uninstall ingress-nginx minio influxdb cloud-thrash
 
 popd > /dev/null
