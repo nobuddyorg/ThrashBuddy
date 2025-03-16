@@ -63,5 +63,5 @@ h1 {
 }
 
 .flex-component {
-  flex-grow: 1; /* Makes the mat-slider take up all available space */
+  flex-grow: 1; 
 }

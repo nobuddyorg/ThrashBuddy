@@ -5,8 +5,10 @@
       <h1>CloudThrash</h1>
 
       <div class="row-container">
-        <app-configurable-button icon="play_arrow" text="Run Test" [action]="runTest.bind(this)"></app-configurable-button>
-        <app-configurable-button icon="stop" text="Stop Test" [action]="stopTest.bind(this)"></app-configurable-button>
+        <app-configurable-button [icon]="isRunning() ? 'autorenew' : 'play_arrow'" text="Run Test"
+          [action]="runTest.bind(this)" [disabled]="!isIdle()"></app-configurable-button>
+        <app-configurable-button [icon]="isStopping() ? 'autorenew' : 'stop'" text="Stop Test"
+          [action]="stopTest.bind(this)" [disabled]="!isRunning()"></app-configurable-button>
       </div>
 
       <div class="row-container">

@@ -1,4 +1,3 @@
-// configurable-button.component.ts
 import { Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,9 +16,10 @@ export class ConfigurableButtonComponent {
   @Input() tooltip!: string;
   @Input() type: string = 'mat-flat-button';
   @Input() action?: () => void;
+  @Input() disabled: boolean = false;
 
   handleClick() {
-    if (this.action) {
+    if (!this.disabled && this.action) {
       this.action();
     }
   }

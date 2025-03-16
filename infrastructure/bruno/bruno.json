@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "CloudThrash",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

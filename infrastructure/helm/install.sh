@@ -23,7 +23,7 @@ helm upgrade --install minio minio/minio \
   --set replicas=1 \
   --set persistence.enabled=false \
   --set mode=standalone \
-  --set rootUser=$AWS_ACCESS_KEY_ID,rootPassword=$AWS_SECRET_ACCESS_KEY \
+  --set rootUser=$USERNAME,rootPassword=$PASSWORD \
   --set service.type=ClusterIP \
   --set consoleService.type=NodePort \
   --set consoleService.nodePort=32001 \
@@ -38,8 +38,8 @@ helm upgrade --install influxdb influxdata/influxdb2 \
   --set persistence.enabled=false \
   --set adminUser.organization=cloud-thrash \
   --set adminUser.bucket=metrics \
-  --set adminUser.user=$AWS_ACCESS_KEY_ID \
-  --set adminUser.password=$AWS_SECRET_ACCESS_KEY \
+  --set adminUser.user=$USERNAME \
+  --set adminUser.password=$PASSWORD \
   --set adminUser.token=$INFLUXDB_API_TOKEN \
   --set service.type=NodePort \
   --set service.nodePort=32002

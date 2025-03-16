@@ -1,7 +1,8 @@
-<button mat-flat-button *ngIf="type == 'mat-flat-button'" (click)="handleClick()"
+<button mat-flat-button *ngIf="type == 'mat-flat-button'" (click)="handleClick()" [disabled]="disabled"
   style="min-width: 200px; border-radius: 0 !important;">
-  <mat-icon *ngIf="icon">{{ icon }}</mat-icon> {{ text }}
+  <mat-icon *ngIf="icon" [class.rotate]="icon === 'autorenew'">{{ icon }}</mat-icon> {{ text }}
 </button>
-<span *ngIf="type == 'mat-icon-hover'" matTooltip="{{ tooltip}}">
+
+<span *ngIf="type == 'mat-icon-hover'" matTooltip="{{ tooltip }}">
   <mat-icon *ngIf="icon">{{ icon }}</mat-icon>
 </span>
