@@ -2,7 +2,7 @@
 
 go install go.k6.io/xk6/cmd/xk6@latest
 xk6 build --with github.com/grafana/xk6-output-influxdb
-. ../../../../infrastructure/helm/.env
+. ../../../infrastructure/helm/.env
 export K6_INFLUXDB_ORGANIZATION="cloud-thrash"
 export K6_INFLUXDB_BUCKET="metrics"
 export K6_INFLUXDB_TOKEN=$INFLUXDB_API_TOKEN

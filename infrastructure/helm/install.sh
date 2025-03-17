@@ -6,6 +6,10 @@ pushd $(dirname $0) > /dev/null
 . ./.env
 ./test.sh
 
+echo "Setting up AWS credentials..."
+kubectl delete secret cloudthrash-secrets || true
+kubectl create secret generic cloudthrash-secrets --from-env-file=.env
+
 echo "(Re-)Installing ingress-nginx..."
 helm repo add ingress-nginx-repo https://kubernetes.github.io/ingress-nginx
 helm repo update

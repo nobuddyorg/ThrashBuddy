@@ -70,6 +70,12 @@ export class AppComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.testStatus.set(response);
           console.log('Updated Status:', response);
+          if (response.status === 'ERROR') {
+            this.snackBar.open(`${response.message}: ${response.message || 'Unknown error'}`, 'Close', {
+              duration: 10000,
+              panelClass: ['error-snackbar'],
+            });
+          }
         },
         error: (err) => {
           console.error('Error getting test status:', err);

@@ -18,6 +18,7 @@ spec:
       labels:
         app: {{ $deployment.name }}
     spec:
+      serviceAccountName: cloudthrash-runner-sa
       containers:
         - name: {{ $deployment.name }}
           image: "{{ $deployment.image }}"
@@ -36,4 +37,10 @@ spec:
               cpu: {{ $deployment.resources.limits.cpu }}
               memory: {{ $deployment.resources.limits.memory }}
               ephemeral-storage: {{ $deployment.resources.limits.ephemeralStorage }}
+          env:
+            - name: INFLUXDB_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cloudthrash-secrets
+                  key: INFLUXDB_API_TOKEN
 {{- end }}

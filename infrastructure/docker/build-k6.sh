@@ -6,7 +6,7 @@ pushd $(dirname $0) > /dev/null
 . ../helm/.env
 
 pushd ../../ > /dev/null
-pushd services/backend/k6 > /dev/null
+pushd services/k6 > /dev/null
 
 echo "==========================================="
 echo "Start building image for k6 test:"
