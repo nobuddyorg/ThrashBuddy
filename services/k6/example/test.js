@@ -5,6 +5,9 @@ import { Gauge, Counter } from "k6/metrics";
 export let options = {
     vus: 2,
     duration: "2m",
+    tags: {
+        host: __ENV.K6_INSTANCE_ID || "unknown-host"
+    },
     summaryTrendStats: ["avg", "min", "max", "p(90)", "p(95)"],
 };
 

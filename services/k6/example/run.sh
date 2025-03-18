@@ -7,4 +7,5 @@ export K6_INFLUXDB_ORGANIZATION="cloud-thrash"
 export K6_INFLUXDB_BUCKET="metrics"
 export K6_INFLUXDB_TOKEN=$INFLUXDB_API_TOKEN
 export K6_INFLUXDB_ADDR="http://localhost:32002" 
+export K6_INSTANCE_ID="k6-instance-1"
 ./k6.exe run test.js -o xk6-influxdb
