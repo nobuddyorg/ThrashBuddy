@@ -8,9 +8,9 @@ export class TestService {
 
   constructor(private http: HttpClient) {}
 
-  startTest(): Observable<any> {
-    return this.http.post(`${this.baseUrl}/start`, {});
-  }
+  startTest(payload: { cpu: string; memory: string; loadAgents: number; envVars: { name: string; value: string; }[] }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/start`, payload);
+  }  
 
   stopTest(): Observable<any> {
     return this.http.post(`${this.baseUrl}/stop`, {});

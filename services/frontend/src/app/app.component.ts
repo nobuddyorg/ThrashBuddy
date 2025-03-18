@@ -47,10 +47,10 @@ export class AppComponent implements OnInit, OnDestroy {
   isRunning = computed(() => this.testStatus()?.status === 'RUNNING');
   isStopping = computed(() => this.testStatus()?.status === 'STOPPING');
 
-  cpuOptions: string[] = ['512', '1024', '2048', '4096', '8192', '16384'];
+  cpuOptions: string[] = ['512m', '1024m', '2048m', '4096m', '8192m', '16384m'];
   memoryOptions: string[] = [];
-  selectedCpu: string = '512';
-  selectedMemory: string = '1024';
+  selectedCpu: string = '512m';
+  selectedMemory: string = '1024Mi';
   loadAgents: number = 5;
   envVars: string = '';
 
@@ -71,10 +71,14 @@ export class AppComponent implements OnInit, OnDestroy {
           this.testStatus.set(response);
           console.log('Updated Status:', response);
           if (response.status === 'ERROR') {
-            this.snackBar.open(`${response.message}: ${response.message || 'Unknown error'}`, 'Close', {
-              duration: 10000,
-              panelClass: ['error-snackbar'],
-            });
+            this.snackBar.open(
+              `${response.message}: ${response.message || 'Unknown error'}`,
+              'Close',
+              {
+                duration: 10000,
+                panelClass: ['error-snackbar'],
+              }
+            );
           }
         },
         error: (err) => {
@@ -91,38 +95,38 @@ export class AppComponent implements OnInit, OnDestroy {
   onCpuChange(): void {
     this.memoryOptions = [];
     switch (this.selectedCpu) {
-      case '512':
-        this.memoryOptions = ['1024', '2048', '3072', '4096'];
+      case '512m':
+        this.memoryOptions = ['1024Mi', '2048Mi', '3072Mi', '4096Mi'];
         break;
-      case '1024':
+      case '1024m':
         this.memoryOptions = [
-          '2048',
-          '3072',
-          '4096',
-          '5120',
-          '6144',
-          '7168',
-          '8192',
+          '2048Mi',
+          '3072Mi',
+          '4096Mi',
+          '5120Mi',
+          '6144Mi',
+          '7168Mi',
+          '8192Mi',
         ];
         break;
-      case '2048':
+      case '2048m':
         for (let i = 4; i <= 16; i++) {
-          this.memoryOptions.push((i * 1024).toString());
+          this.memoryOptions.push((i * 1024).toString() + 'Mi');
         }
         break;
-      case '4096':
+      case '4096m':
         for (let i = 8; i <= 30; i++) {
-          this.memoryOptions.push((i * 1024).toString());
+          this.memoryOptions.push((i * 1024).toString() + 'Mi');
         }
         break;
-      case '8192':
+      case '8192m':
         for (let i = 16; i <= 60; i += 4) {
-          this.memoryOptions.push((i * 1024).toString());
+          this.memoryOptions.push((i * 1024).toString() + 'Mi');
         }
         break;
-      case '16384':
+      case '16384m':
         for (let i = 32; i <= 120; i += 8) {
-          this.memoryOptions.push((i * 1024).toString());
+          this.memoryOptions.push((i * 1024).toString() + 'Mi');
         }
         break;
     }
@@ -132,23 +136,52 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private showError(message: string, error: any) {
     console.error(message, error);
-    this.snackBar.open(`${message}: ${error.message || 'Unknown error'}`, 'Close', {
-      duration: 10000,
-      panelClass: ['error-snackbar'],
-    });
+    this.snackBar.open(
+      `${message}: ${error.message || 'Unknown error'}`,
+      'Close',
+      {
+        duration: 10000,
+        panelClass: ['error-snackbar'],
+      }
+    );
   }
 
   async runTest() {
-    this.testService.startTest().subscribe({
+    this.testStatus.set({ status: 'RUNNING' });
+    const payload = {
+      cpu: this.selectedCpu,
+      memory: this.selectedMemory,
+      loadAgents: this.loadAgents,
+      envVars: this.envVars
+        ? this.envVars
+            .split('\n')
+            .map((env) => env.trim())
+            .filter((env) => env.includes('='))
+            .map((env) => {
+              const [key, value] = env.split('=').map((part) => part.trim());
+              return { name: key, value: value };
+            })
+        : [],
+    };
+
+    this.testService.startTest(payload).subscribe({
       next: (response) => this.testStatus.set(response),
-      error: (err) => this.showError('Error starting the test', err),
+      error: (err) => {
+        this.showError('Error starting the test', err);
+        this.testStatus.set({ status: 'ERROR' }); // Revert if request fails
+      },
     });
   }
 
   async stopTest() {
+    this.testStatus.set({ status: 'STOPPING' });
+
     this.testService.stopTest().subscribe({
       next: (response) => this.testStatus.set(response),
-      error: (err) => this.showError('Error stopping the test', err),
+      error: (err) => {
+        this.showError('Error stopping the test', err);
+        this.testStatus.set({ status: 'ERROR' }); // Revert if request fails
+      },
     });
   }
 

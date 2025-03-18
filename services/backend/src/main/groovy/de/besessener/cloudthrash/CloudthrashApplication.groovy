@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 @SpringBootApplication
 class CloudthrashApplication {
 
-	static void main(String[] args) {
-		SpringApplication.run(CloudthrashApplication, args)
-	}
+    static void main(String[] args) {
+        SpringApplication.run(CloudthrashApplication, args)
+    }
 
 }

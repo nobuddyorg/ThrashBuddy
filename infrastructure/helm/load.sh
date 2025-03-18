@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 pushd $(dirname $0) > /dev/null
 
 kubectl get nodes --no-headers -o custom-columns=":status.conditions[-1].type"
