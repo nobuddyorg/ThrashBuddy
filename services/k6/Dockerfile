@@ -17,7 +17,11 @@ ENV MINIO_SECRET_KEY=""
 ENV MINIO_BUCKET=""
 
 WORKDIR /app
+
+COPY ./telegraf.conf /etc/telegraf/telegraf.conf
+RUN wget -q https://dl.influxdata.com/telegraf/releases/telegraf-1.34.0_linux_amd64.tar.gz && tar xf telegraf-1.34.0_linux_amd64.tar.gz && cp telegraf-1.34.0/usr/bin/telegraf /usr/bin/ && telegraf --config /etc/telegraf/telegraf.conf --test
+
 COPY run-test.sh /app/run-test.sh
 RUN chmod +x /app/run-test.sh
 
-ENTRYPOINT ["/app/run-test.sh"]
+ENTRYPOINT ["/bin/sh", "-c", "mkdir -p /var/log/telegraf && (telegraf --config /etc/telegraf/telegraf.conf &) && /app/run-test.sh"]
