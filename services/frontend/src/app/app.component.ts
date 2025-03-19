@@ -14,10 +14,13 @@ import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { TestService } from './test.service';
-import { interval, Subject } from 'rxjs';
+import { TestService } from './services/test.service';
+import { FileService } from './services/file.service';
+import { Subject, interval } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DropzoneComponent } from './components/dropzone/dropzone.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-root',
@@ -31,6 +34,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
+    DropzoneComponent,
+    MatIconModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
@@ -38,10 +43,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class AppComponent implements OnInit, OnDestroy {
   title = 'CloudThrash';
   private testService = inject(TestService);
+  private fileService = inject(FileService);
   private snackBar = inject(MatSnackBar);
   private destroy$ = new Subject<void>();
 
-  testStatus = signal<{ status: string } | null>(null);
+  testStatus = signal<{ status: string; data?: { filename: string; lastModified: string }[] } | null>(null);
+  files = signal<{ filename: string; lastModified: string }[]>([]);
 
   isIdle = computed(() => this.testStatus()?.status === 'IDLE');
   isRunning = computed(() => this.testStatus()?.status === 'RUNNING');
@@ -69,10 +76,11 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.testStatus.set(response);
+          this.files.set(response.data || []);
           console.log('Updated Status:', response);
           if (response.status === 'ERROR') {
             this.snackBar.open(
-              `${response.message}: ${response.message || 'Unknown error'}`,
+              `${response.message || 'Unknown error'}`,
               'Close',
               {
                 duration: 10000,
@@ -81,9 +89,7 @@ export class AppComponent implements OnInit, OnDestroy {
             );
           }
         },
-        error: (err) => {
-          console.error('Error getting test status:', err);
-        },
+        error: (err) => this.showError('Error getting test status', err),
       });
   }
 
@@ -136,8 +142,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private showError(message: string, error: any) {
     console.error(message, error);
+  
+    const errorMsg = error?.error?.message || error?.message || 'Unknown error';
+  
     this.snackBar.open(
-      `${message}: ${error.message || 'Unknown error'}`,
+      `${message}: ${errorMsg}`,
       'Close',
       {
         duration: 10000,
@@ -145,6 +154,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     );
   }
+  
 
   async runTest() {
     this.testStatus.set({ status: 'RUNNING' });
@@ -168,7 +178,7 @@ export class AppComponent implements OnInit, OnDestroy {
       next: (response) => this.testStatus.set(response),
       error: (err) => {
         this.showError('Error starting the test', err);
-        this.testStatus.set({ status: 'ERROR' }); // Revert if request fails
+        this.testStatus.set({ status: 'ERROR' });
       },
     });
   }
@@ -180,14 +190,17 @@ export class AppComponent implements OnInit, OnDestroy {
       next: (response) => this.testStatus.set(response),
       error: (err) => {
         this.showError('Error stopping the test', err);
-        this.testStatus.set({ status: 'ERROR' }); // Revert if request fails
+        this.testStatus.set({ status: 'ERROR' });
       },
     });
   }
 
   async getStatus() {
     this.testService.getStatus().subscribe({
-      next: (response) => this.testStatus.set(response),
+      next: (response) => {
+        this.testStatus.set(response);
+        this.files.set(response.data || []);
+      },
       error: (err) => this.showError('Error getting test status', err),
     });
   }
@@ -202,5 +215,12 @@ export class AppComponent implements OnInit, OnDestroy {
     const newPort = 32002;
     const newURL = `${window.location.protocol}//${window.location.hostname}:${newPort}/`;
     window.open(newURL, '_blank');
+  }
+
+  deleteFile(fileName: string) {
+    this.fileService.deleteFile(fileName).subscribe({
+      next: () => this.getStatus(),
+      error: (err) => this.showError(`Error deleting file: ${fileName}`, err),
+    });
   }
 }

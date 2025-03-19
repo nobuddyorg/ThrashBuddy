@@ -1,0 +1,16 @@
+<ngx-dropzone (change)="onSelect($event)">
+  <ngx-dropzone-label>Drag & drop files here or click to select</ngx-dropzone-label>
+</ngx-dropzone>
+
+<!-- File List Preview (Table Style) -->
+<div class="preview-container" *ngIf="files.length > 0">
+  <table>
+    <tr *ngFor="let fileObj of files">
+      <td class="filename">{{ fileObj.file.name }} ({{ (fileObj.file.size / 1024).toFixed(2) }} KB)</td>
+      <td class="actions">
+        <button (click)="onRemove(fileObj)"><mat-icon>delete</mat-icon></button>
+      </td>
+    </tr>
+  </table>
+  <button class="upload-btn" (click)="uploadAll()">Upload All</button>
+</div>

@@ -18,7 +18,7 @@
 }
 
 .control-panel {
-  width: 410px;
+  width: 500px;
   height: auto;
   z-index: 15;
   display: flex;
@@ -49,7 +49,7 @@
 
 h1 {
   font-family: 'Impact', sans-serif;
-  font-size: 80px;
+  font-size: 94px;
   color: black;
   text-shadow: 3px 3px 5px rgba(255, 255, 255, 0.8);
   margin: 0;
@@ -64,4 +64,46 @@ h1 {
 
 .flex-component {
   flex-grow: 1; 
+}
+
+.file-section {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #f9f9f9;
+}
+
+.uploaded-files-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Ensures it spans the full width */
+}
+
+.file-section h3 {
+  margin: 0 0 10px;
+}
+
+.file-section table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.file-section th, .file-section td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.file-section th {
+  text-align: left;
+}
+
+.file-section button {
+  cursor: pointer;
+}
+
+app-dropzone {
+  width: 100%;
 }

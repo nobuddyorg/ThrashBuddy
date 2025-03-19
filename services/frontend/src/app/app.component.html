@@ -37,7 +37,7 @@
           <mat-slider min="1" max="25" step="1" showTickMarks discrete class="flex-component">
             <input matSliderThumb [(ngModel)]="loadAgents">
           </mat-slider>
-          <app-configurable-button [type]="'mat-icon-hover'" icon="info" [action]="openFiles"
+          <app-configurable-button [type]="'mat-icon-hover'" icon="info"
             tooltip="Defines the number of started agents that create load in parallel."></app-configurable-button>
         </div>
 
@@ -46,6 +46,41 @@
             <mat-label>Environment Variables</mat-label>
             <textarea matInput [(ngModel)]="envVars"></textarea>
           </mat-form-field>
+        </div>
+
+        <div class="row-container">
+          <div *ngIf="files().length > 0" class="file-section">
+            <div class="uploaded-files-header">
+              <h3>Uploaded Files</h3>
+              <app-configurable-button [type]="'mat-icon-hover'" icon="info"
+                tooltip="A 'test.js' file is required as entrypoint to k6 runs.">
+              </app-configurable-button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Filename</th>
+                  <th>Last Modified</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let file of files()">
+                  <td>{{ file.filename }}</td>
+                  <td>{{ file.lastModified | date:'short' }}</td>
+                  <td>
+                    <button mat-icon-button color="warn" (click)="deleteFile(file.filename)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="row-container">
+          <app-dropzone></app-dropzone>
         </div>
       </div>
     </div>

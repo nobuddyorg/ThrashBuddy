@@ -30,17 +30,23 @@ spec:
             periodSeconds: 10
           resources:
             requests:
-              cpu: {{ $deployment.resources.requests.cpu }}
-              memory: {{ $deployment.resources.requests.memory }}
-              ephemeral-storage: {{ $deployment.resources.requests.ephemeralStorage }}
+              cpu: {{ $deployment.resources.requests.cpu | quote }}
+              memory: {{ $deployment.resources.requests.memory | quote }}
+              ephemeral-storage: {{ $deployment.resources.requests.ephemeralStorage | quote }}
             limits:
-              cpu: {{ $deployment.resources.limits.cpu }}
-              memory: {{ $deployment.resources.limits.memory }}
-              ephemeral-storage: {{ $deployment.resources.limits.ephemeralStorage }}
+              cpu: {{ $deployment.resources.limits.cpu | quote }}
+              memory: {{ $deployment.resources.limits.memory | quote }}
+              ephemeral-storage: {{ $deployment.resources.limits.ephemeralStorage | quote }}
           env:
             - name: INFLUXDB_API_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: cloudthrash-secrets
                   key: INFLUXDB_API_TOKEN
+            {{- if $deployment.env }}
+            {{- range $key, $value := $deployment.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- end }}
 {{- end }}
