@@ -6,16 +6,17 @@ import io.fabric8.kubernetes.client.KubernetesClient
 import io.fabric8.kubernetes.client.KubernetesClientBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ByteArrayResource
-import org.springframework.web.multipart.MultipartFile
 import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
 import org.springframework.http.HttpStatus
-import java.io.InputStream
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+
 import java.io.IOException
+import java.io.InputStream
 import java.util.concurrent.Executors
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -25,7 +26,9 @@ class CloudthrashController {
 
     private static final Logger log = LoggerFactory.getLogger(CloudthrashController)
 
-    private enum Status { IDLE, RUNNING, STOPPING, ERROR, INIT }
+    private enum Status {
+        IDLE, RUNNING, STOPPING, ERROR, INIT
+    }
 
     private volatile Status status = Status.INIT
     private String errorMessage = ""
@@ -104,7 +107,7 @@ class CloudthrashController {
                 executorService.submit {
                     futures*.get()
                     deleteAllK6Jobs()
-                    if (statusList.any{ Status.ERROR }) {
+                    if (statusList.any { Status.ERROR }) {
                         handleError("Error running K6 jobs")
                     } else {
                         status = Status.IDLE
@@ -135,22 +138,22 @@ class CloudthrashController {
 
     @GetMapping("/status")
     ResponseEntity<Map> getStatus() {
-        return status == Status.ERROR ? 
-            buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Service internal error: $errorMessage") : 
-            buildResponse(HttpStatus.OK, status.name())
+        return status == Status.ERROR ?
+                buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Service internal error: $errorMessage") :
+                buildResponse(HttpStatus.OK, status.name())
     }
 
     private Job createK6Job(String cpu, String memory, List<EnvVar> envVars, int index) {
-        String jobName = "cloudthrash-job-${index}";
-        log.info("Creating Job in Kubernetes: " + jobName);
+        String jobName = "cloudthrash-job-${index}"
+        log.info("Creating Job in Kubernetes: " + jobName)
 
-        List<EnvVar> updatedEnvVars = new ArrayList<>(envVars);
-        updatedEnvVars.add(new EnvVar("MINIO_URL", System.getenv("MINIO_URL"), null));
-        updatedEnvVars.add(new EnvVar("MINIO_ACCESS_KEY", System.getenv("MINIO_ACCESS_KEY"), null));
-        updatedEnvVars.add(new EnvVar("MINIO_SECRET_KEY", System.getenv("MINIO_SECRET_KEY"), null));
-        updatedEnvVars.add(new EnvVar("MINIO_BUCKET", System.getenv("MINIO_BUCKET"), null));
-        updatedEnvVars.add(new EnvVar("K6_INSTANCE_ID", jobName, null));
-        updatedEnvVars.add(new EnvVar("K6_INFLUXDB_TOKEN", System.getenv("K6_INFLUXDB_TOKEN"), null));
+        List<EnvVar> updatedEnvVars = new ArrayList<>(envVars)
+        updatedEnvVars.add(new EnvVar("MINIO_URL", System.getenv("MINIO_URL"), null))
+        updatedEnvVars.add(new EnvVar("MINIO_ACCESS_KEY", System.getenv("MINIO_ACCESS_KEY"), null))
+        updatedEnvVars.add(new EnvVar("MINIO_SECRET_KEY", System.getenv("MINIO_SECRET_KEY"), null))
+        updatedEnvVars.add(new EnvVar("MINIO_BUCKET", System.getenv("MINIO_BUCKET"), null))
+        updatedEnvVars.add(new EnvVar("K6_INSTANCE_ID", jobName, null))
+        updatedEnvVars.add(new EnvVar("K6_INFLUXDB_TOKEN", System.getenv("K6_INFLUXDB_TOKEN"), null))
 
         Job job = new JobBuilder()
                 .withNewMetadata().withName(jobName).withNamespace(NAMESPACE).addToLabels("app", "cloudthrash-job").endMetadata()
