@@ -7,7 +7,7 @@
 
 @keyframes moveUp {
   to {
-    transform: translateY(-75%);
+    transform: translateY(-80%);
   }
 }
 

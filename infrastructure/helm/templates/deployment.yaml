@@ -38,7 +38,7 @@ spec:
               memory: {{ $deployment.resources.limits.memory | quote }}
               ephemeral-storage: {{ $deployment.resources.limits.ephemeralStorage | quote }}
           env:
-            - name: INFLUXDB_API_TOKEN
+            - name: K6_INFLUXDB_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: cloudthrash-secrets

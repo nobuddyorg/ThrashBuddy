@@ -3,7 +3,7 @@ RUN go install go.k6.io/xk6/cmd/xk6@latest && \
     xk6 build --with github.com/grafana/xk6-output-influxdb
 
 FROM alpine:latest
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates curl aws-cli
 COPY --from=builder /go/k6 /usr/local/bin/k6
 
 ENV K6_INFLUXDB_ORGANIZATION="cloud-thrash"
@@ -11,6 +11,13 @@ ENV K6_INFLUXDB_BUCKET="metrics"
 ENV K6_INFLUXDB_ADDR="http://influxdb-influxdb2.default.svc.cluster.local:80"
 ENV K6_INFLUXDB_TOKEN=""
 
+ENV MINIO_URL=""
+ENV MINIO_ACCESS_KEY=""
+ENV MINIO_SECRET_KEY=""
+ENV MINIO_BUCKET=""
+
 WORKDIR /app
-COPY example/test.js /app/test.js
-ENTRYPOINT ["k6", "run", "/app/test.js", "-o", "xk6-influxdb"]
+COPY run-test.sh /app/run-test.sh
+RUN chmod +x /app/run-test.sh
+
+ENTRYPOINT ["/app/run-test.sh"]
