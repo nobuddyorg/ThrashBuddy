@@ -1,0 +1,59 @@
+name: EKS Create Cluster
+run-name: EKS Create Cluster - ${{ inputs.environment }}
+
+on:
+    workflow_dispatch:
+        inputs:
+            environment:
+                description: "Environment to deploy cluster to"
+                required: true
+                default: "stage"
+                type: choice
+                options:
+                    - "stage"
+                    - "prod"
+
+jobs:
+    create:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Write .env file
+              run: |
+                  echo "${{ secrets.DOT_ENV }}" > ./infrastructure/helm/.env
+
+            - name: Install eksctl
+              run: |
+                  curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+                  sudo mv /tmp/eksctl /usr/local/bin
+
+            - name: Install kubectl
+              run: |
+                  curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                  chmod +x kubectl
+                  sudo mv kubectl /usr/local/bin
+
+            - name: Docker Cleanup
+              run: |
+                  docker stop $(docker ps -q) || true
+                  docker rm -f $(docker ps -aq) || true
+                  docker rmi -f $(docker images --filter "dangling=true" -q) || true
+                  docker system prune -a --volumes -f
+                  docker builder prune -a -f
+                  docker ps -aq
+                  docker images
+                  docker volume ls
+                  docker network ls
+
+            - name: Create EKS Cluster
+              env:
+                  ENVIRONMENT: ${{ inputs.environment }}
+                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+              run: |
+                  ./infrastructure/aws/create-cluster.sh
+                  ./infrastructure/helm/install.sh -remote

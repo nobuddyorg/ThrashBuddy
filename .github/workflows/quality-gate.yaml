@@ -1,0 +1,221 @@
+name: Quality Gate
+
+on:
+    pull_request:
+        branches: [develop]
+
+    push:
+        branches: [develop]
+
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    issues: read
+    checks: write
+    pull-requests: write
+
+jobs:
+    backend:
+        name: Backend Analysis
+        runs-on: ubuntu-latest
+        steps:
+            - name: Set up Python 3.11
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.11"
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  submodules: true
+                  fetch-depth: 0
+            - name: Install Dependencies and Run Unit Tests
+              working-directory: ./services/backend
+              run: |
+                  pip install tox
+                  tox
+            - name: Publish Test Results
+              uses: EnricoMi/publish-unit-test-result-action/linux@v2
+              if: always()
+              with:
+                  check_name: "Backend Unit Tests"
+                  files: |
+                      services/backend/reports/test-results.xml
+            - name: SonarCloud Scan
+              if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+              uses: SonarSource/sonarqube-scan-action@v4
+              with:
+                  projectBaseDir: services/backend
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                  sonar.pullrequest.key: ${{ github.event.pull_request.number }}
+                  sonar.pullrequest.branch: ${{ github.head_ref }}
+                  sonar.pullrequest.base: ${{ github.base_ref }}
+
+    runner:
+        name: Runner Analysis
+        runs-on: ubuntu-latest
+        steps:
+            - name: Set up Python 3.11
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.11"
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  submodules: true
+                  fetch-depth: 0
+            - name: Install Dependencies and Run Unit Tests
+              working-directory: ./services/runner
+              run: |
+                  pip install tox
+                  tox
+            - name: Publish Test Results
+              uses: EnricoMi/publish-unit-test-result-action/linux@v2
+              if: always()
+              with:
+                  check_name: "Runner Unit Tests"
+                  files: |
+                      services/runner/reports/test-results.xml
+            - name: SonarCloud Scan
+              if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+              uses: SonarSource/sonarqube-scan-action@v4
+              with:
+                  projectBaseDir: services/runner
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                  sonar.pullrequest.key: ${{ github.event.pull_request.number }}
+                  sonar.pullrequest.branch: ${{ github.head_ref }}
+                  sonar.pullrequest.base: ${{ github.base_ref }}
+
+    frontend:
+        name: Frontend Analysis
+        runs-on: ubuntu-latest
+        steps:
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "23"
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  submodules: true
+                  fetch-depth: 0
+            - name: Install Dependencies
+              working-directory: ./services/frontend
+              run: npm install
+            - name: Unit Tests and Coverage
+              working-directory: ./services/frontend
+              run: npm test
+            - name: Lint
+              working-directory: ./services/frontend
+              run: npm run lint
+            - name: Publish Test Results
+              uses: EnricoMi/publish-unit-test-result-action/linux@v2
+              if: always()
+              with:
+                  check_name: "Frontend Unit Tests"
+                  files: |
+                      services/frontend/junit.xml
+            - name: SonarCloud Scan
+              if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+              uses: SonarSource/sonarqube-scan-action@v4
+              with:
+                  projectBaseDir: services/frontend
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                  sonar.pullrequest.key: ${{ github.event.pull_request.number }}
+                  sonar.pullrequest.branch: ${{ github.head_ref }}
+                  sonar.pullrequest.base: ${{ github.base_ref }}
+
+    infra-and-images:
+        concurrency:
+            group: "test--infra-group-${{ github.event.pull_request.number }}"
+            cancel-in-progress: false
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' # takes too long for pushes
+        needs: [backend, runner, frontend]
+        name: Infrastructure and Images
+        runs-on: proxmox
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+              with:
+                  submodules: true
+            - name: Write .env file
+              run: |
+                  echo "${{ secrets.DOT_ENV }}" > ./infrastructure/helm/.env
+            - uses: hadolint/hadolint-action@v3.1.0
+              with:
+                  dockerfile: ./services/backend/dockerfile.api
+            - uses: hadolint/hadolint-action@v3.1.0
+              with:
+                  dockerfile: ./services/backend/dockerfile.celery
+            - uses: hadolint/hadolint-action@v3.1.0
+              with:
+                  dockerfile: ./services/runner/dockerfile.runner
+            - uses: hadolint/hadolint-action@v3.1.0
+              with:
+                  dockerfile: ./services/runner/dockerfile.jmetercontroller
+                  ignore: DL3018
+            - uses: hadolint/hadolint-action@v3.1.0
+              with:
+                  dockerfile: ./services/runner/dockerfile.jmeterworker
+                  ignore: DL3018
+            - uses: hadolint/hadolint-action@v3.1.0
+              with:
+                  dockerfile: ./services/frontend/Dockerfile
+
+            - name: Docker Cleanup
+              run: |
+                  docker stop $(docker ps -q) || true
+                  docker rm -f $(docker ps -aq) || true
+                  docker rmi -f $(docker images --filter "dangling=true" -q) || true
+                  docker system prune -a --volumes -f
+                  docker builder prune -a -f
+                  docker ps -aq
+                  docker images
+                  docker volume ls
+                  docker network ls
+
+            - name: Build Docker Images
+              run: |
+                  infrastructure/docker/build-images/build-images-for-all.sh
+                  docker images
+
+            - name: Set up Kubernetes with Minikube
+              working-directory: ./infrastructure/helm
+              run: |
+                  minikube delete --all
+                  minikube start --driver=docker
+                  ./load.sh
+            - name: Helm
+              working-directory: ./infrastructure/helm
+              run: |
+                  ./install.sh
+            - name: frontend tests
+              working-directory: ./services/frontend-test
+              env:
+                  XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
+                  XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
+              run: |
+                  nohup minikube tunnel > /dev/null 2>&1 &
+                  # Wait for the ingress-nginx-controller to be ready before setting the BASE_URL for Playwright tests
+                  sleep 10
+                  INGRESS_IP=$(kubectl get svc ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                  export BASE_URL="http://$INGRESS_IP/app/index.html"
+                  npm ci
+                  npx playwright install --with-deps chromium
+                  npx playwright test
+            - name: Archive Playwright Test Results
+              uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: report.zip
+                  path: services/frontend-test/test-results
+                  retention-days: 7
+            - name: Minikube delete cluster
+              if: always()
+              run: minikube delete --all

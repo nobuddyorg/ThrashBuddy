@@ -1,0 +1,54 @@
+name: EKS Delete Cluster
+run-name: EKS Delete Cluster - ${{ inputs.environment || 'Scheduled Run' }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to delete cluster from"
+        required: true
+        default: "stage"
+        type: choice
+        options:
+          - "stage"
+          - "prod"
+
+  schedule:
+    - cron: "0 0 * * *" # Runs daily at midnight UTC
+
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ${{ github.event_name == 'schedule' && fromJson('["stage", "prod"]') || fromJson(format('["{0}"]', inputs.environment)) }}
+
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Write .env file
+        run: |
+            echo "${{ secrets.DOT_ENV }}" > ./infrastructure/helm/.env
+
+      - name: Install eksctl
+        run: |
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+            sudo mv /tmp/eksctl /usr/local/bin
+
+      - name: Install kubectl
+        run: |
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            chmod +x kubectl
+            sudo mv kubectl /usr/local/bin
+
+      - name: Delete EKS Cluster
+        env:
+            ENVIRONMENT: ${{ matrix.environment }}
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        run: |
+            ./infrastructure/helm/uninstall.sh -remote
+            ./infrastructure/aws/delete-cluster.sh

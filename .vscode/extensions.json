@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "mhutchie.git-graph",
+    "maattdd.gitless",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-playwright.playwright",
+    "ryanrosello-og.playwright-vscode-trace-viewer",
+    "streetsidesoftware.code-spell-checker",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
+    "vscode-icons-team.vscode-icons",
+  ]
+}
