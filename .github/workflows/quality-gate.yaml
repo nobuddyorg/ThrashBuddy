@@ -35,7 +35,7 @@ jobs:
               with:
                   check_name: "Backend Unit Tests"
                   files: |
-                      build/test-results/**/*.xml
+                      ./services/backend/build/test-results/**/*.xml
 
     frontend:
         name: Frontend Analysis
@@ -61,7 +61,7 @@ jobs:
               with:
                   check_name: "Frontend Unit Tests"
                   files: |
-                      services/frontend/junit.xml
+                      ./services/frontend/junit.xml
 
     infra-and-images:
         concurrency:
