@@ -17,6 +17,7 @@ export class ConfigurableButtonComponent {
     @Input() type: string = "mat-flat-button";
     @Input() action?: () => void;
     @Input() disabled: boolean = false;
+    @Input() width?: string = "243px";
 
     handleClick() {
         if (!this.disabled && this.action) {

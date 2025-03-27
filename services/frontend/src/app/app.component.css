@@ -30,9 +30,10 @@
 }
 
 .settings {
-  width: 90%;
+  width: 91%;
   border: 1px solid black;
   margin: 10px;
+  margin-left: 8px;
   margin-bottom: 0;
   padding: 20px;
   padding-bottom: 0;
@@ -46,6 +47,16 @@
   width: 100%;
   margin-top: 10px;
 }
+
+.row-container button {
+  flex: 1 1 0;             /* makes buttons evenly spaced */
+  width: 100%;             /* ensure buttons take full flex width */
+  border-radius: 0 !important;
+  white-space: nowrap;     /* ensures button text/icon stay in a single line */
+  overflow: hidden;        /* prevents overflow issues */
+  text-overflow: ellipsis; /* shows ellipsis (...) if content overflows */
+}
+
 
 h1 {
   font-family: 'Impact', sans-serif;

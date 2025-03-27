@@ -12,9 +12,12 @@
       </div>
 
       <div class="row-container">
-        <app-configurable-button icon="folder" text="Files" [action]="openFiles.bind(this)"></app-configurable-button>
-        <app-configurable-button icon="visibility" text="Monitoring"
-          [action]="openMonitoring.bind(this)"></app-configurable-button>
+        <app-configurable-button icon="folder" text="Files" [action]="openFiles.bind(this)"
+          [width]="'159px'"></app-configurable-button>
+        <app-configurable-button icon="assessment" text="Data" [action]="openData.bind(this)"
+          [width]="'158px'"></app-configurable-button>
+        <app-configurable-button icon="visibility" text="Monitoring" [action]="openMonitoring.bind(this)"
+          [width]="'159px'"></app-configurable-button>
       </div>
 
       <div class="settings">

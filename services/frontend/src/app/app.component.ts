@@ -167,6 +167,12 @@ export class AppComponent implements OnInit, OnDestroy {
         window.open(newURL, "_blank");
     }
 
+    openData() {
+        const newPort = 32002;
+        const newURL = `${window.location.protocol}//${window.location.hostname}:${newPort}/`;
+        window.open(newURL, "_blank");
+    }
+
     deleteFile(fileName: string) {
         this.fileService.deleteFile(fileName).subscribe({
             next: () => this.getStatus(),
