@@ -122,8 +122,8 @@ jobs:
                   INGRESS_IP=$(kubectl get svc ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
                   export BASE_URL="http://$INGRESS_IP/app/index.html"
                   npm ci
-                  npx playwright install --with-deps chromium
-                  npx playwright test
+                  ./npmw install 
+                  ./npmw test
             - name: Archive Playwright Test Results
               uses: actions/upload-artifact@v4
               if: always()
