@@ -42,3 +42,4 @@ testem.log
 Thumbs.db
 
 eslint-report.json
+TESTS-Chrome_Headless_*.xml
