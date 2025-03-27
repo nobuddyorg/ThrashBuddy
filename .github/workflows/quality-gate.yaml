@@ -36,17 +36,6 @@ jobs:
                   check_name: "Backend Unit Tests"
                   files: |
                       build/test-results/**/*.xml
-            - name: SonarCloud Scan
-              if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
-              uses: SonarSource/sonarqube-scan-action@v4
-              with:
-                  projectBaseDir: services/backend
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-                  sonar.pullrequest.key: ${{ github.event.pull_request.number }}
-                  sonar.pullrequest.branch: ${{ github.head_ref }}
-                  sonar.pullrequest.base: ${{ github.base_ref }}
 
     frontend:
         name: Frontend Analysis
@@ -73,17 +62,6 @@ jobs:
                   check_name: "Frontend Unit Tests"
                   files: |
                       services/frontend/junit.xml
-            - name: SonarCloud Scan
-              if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
-              uses: SonarSource/sonarqube-scan-action@v4
-              with:
-                  projectBaseDir: services/frontend
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-                  sonar.pullrequest.key: ${{ github.event.pull_request.number }}
-                  sonar.pullrequest.branch: ${{ github.head_ref }}
-                  sonar.pullrequest.base: ${{ github.base_ref }}
 
     infra-and-images:
         concurrency:
