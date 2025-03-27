@@ -51,7 +51,7 @@ jobs:
               run: ./npmw install
             - name: Unit Tests and Coverage
               working-directory: ./services/frontend
-              run: ./npmw test -- --browsers ChromeHeadless --watch=false
+              run: ./npmw run test:ci
             - name: Lint
               working-directory: ./services/frontend
               run: ./npmw run lint
@@ -61,7 +61,7 @@ jobs:
               with:
                   check_name: "Frontend Unit Tests"
                   files: |
-                      ./services/frontend/junit.xml
+                      ./services/frontend/TESTS-Chrome_Headless_*.xml
 
     infra-and-images:
         concurrency:
