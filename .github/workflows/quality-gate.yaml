@@ -28,7 +28,7 @@ jobs:
             - name: Install Dependencies and Run Unit Tests
               working-directory: ./services/backend
               run: |
-                  ./gradlew clean jacocoTestReport 
+                  ./gradlew clean jacocoTestReport
             - name: Publish Test Results
               uses: EnricoMi/publish-unit-test-result-action/linux@v2
               if: always()
@@ -92,7 +92,7 @@ jobs:
         if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' # takes too long for pushes
         needs: [backend, frontend]
         name: Infrastructure and Images
-        runs-on: proxmox
+        runs-on: ubuntu-latest
         steps:
             - name: Checkout Code
               uses: actions/checkout@v4
