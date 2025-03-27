@@ -1,6 +1,7 @@
 package de.besessener.cloudthrash
 
 import io.minio.*
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
@@ -9,16 +10,10 @@ class MinioService {
     private final MinioClient minioClient
     private final String bucketName
 
-    MinioService() {
-        def endpoint = System.getenv('MINIO_URL') ?: 'http://localhost:9000/'
-        def accessKey = System.getenv('MINIO_ACCESS_KEY') ?: 'minioadmin'
-        def secretKey = System.getenv('MINIO_SECRET_KEY') ?: 'minioadmin'
-        bucketName = System.getenv('MINIO_BUCKET') ?: 'cloud-thrash'
-
-        this.minioClient = MinioClient.builder()
-                .endpoint(endpoint)
-                .credentials(accessKey, secretKey)
-                .build()
+    @Autowired
+    MinioService(MinioClient minioClient, String bucketName) {
+        this.minioClient = minioClient
+        this.bucketName = bucketName
     }
 
     void uploadFile(String objectName, InputStream fileStream) {

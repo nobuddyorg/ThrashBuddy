@@ -52,10 +52,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
     cpuOptions: string[] = ["512m", "1024m", "2048m", "4096m", "8192m", "16384m"];
     memoryOptions: string[] = [];
-    selectedCpu: string = "512m";
-    selectedMemory: string = "1024Mi";
-    loadAgents: number = 5;
-    envVars: string = "";
+    selectedCpu = "512m";
+    selectedMemory = "1024Mi";
+    loadAgents = 5;
+    envVars = "";
 
     constructor() {
         this.onCpuChange();
@@ -122,7 +122,9 @@ export class AppComponent implements OnInit, OnDestroy {
         };
 
         this.testService.startTest(payload).subscribe({
-            next: (response) => this.testStatus.set(response),
+            next: (response) => {
+                this.testStatus.set(response);
+            },
             error: (err) => {
                 this.showError("Start", err);
                 this.testStatus.set({ status: "ERROR" });
@@ -134,7 +136,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.testStatus.set({ status: "STOPPING" });
 
         this.testService.stopTest().subscribe({
-            next: (response) => this.testStatus.set(response),
+            next: (response) => {
+                this.testStatus.set(response);
+            },
             error: (err) => {
                 this.showError("Stop", err);
                 this.testStatus.set({ status: "ERROR" });
@@ -176,7 +180,9 @@ export class AppComponent implements OnInit, OnDestroy {
     deleteFile(fileName: string) {
         this.fileService.deleteFile(fileName).subscribe({
             next: () => this.getStatus(),
-            error: (err) => this.showError(`Delete: ${fileName}`, err),
+            error: (err) => {
+                this.showError(`Delete: ${fileName}`, err);
+            },
         });
     }
 }

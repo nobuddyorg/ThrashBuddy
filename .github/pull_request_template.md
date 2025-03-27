@@ -22,8 +22,6 @@ Provide an overview of the changes and their purpose. Highlight any problems sol
 - [ ] The PR description clearly explains the changes and their purpose.
 
 ### Code Review
-- [ ] Code meets project [style and quality standards](https://qytera.atlassian.net/wiki/spaces/QO/pages/3800727592/QTAF+-+Coding+Standards).
-- [ ] Commits follow [naming conventions](https://qytera.atlassian.net/wiki/spaces/WIS/pages/3861348360/Commit+und+PR+Konventionen+f+r+QTAF).
 - [ ] Changes handle edge cases and errors appropriately.
 
 ### Feedback and Communication

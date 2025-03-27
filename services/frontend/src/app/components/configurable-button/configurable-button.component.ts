@@ -14,9 +14,9 @@ export class ConfigurableButtonComponent {
     @Input() icon!: string;
     @Input() text!: string;
     @Input() tooltip!: string;
-    @Input() type: string = "mat-flat-button";
+    @Input() type = "mat-flat-button";
     @Input() action?: () => void;
-    @Input() disabled: boolean = false;
+    @Input() disabled = false;
     @Input() width?: string = "243px";
 
     handleClick() {

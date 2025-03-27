@@ -1,7 +1,12 @@
 package de.besessener.cloudthrash
 
-import io.fabric8.kubernetes.api.model.*
-import io.fabric8.kubernetes.api.model.batch.v1.*
+
+import io.fabric8.kubernetes.api.model.EnvVar
+import io.fabric8.kubernetes.api.model.EnvVarBuilder
+import io.fabric8.kubernetes.api.model.Quantity
+import io.fabric8.kubernetes.api.model.ResourceRequirementsBuilder
+import io.fabric8.kubernetes.api.model.batch.v1.Job
+import io.fabric8.kubernetes.api.model.batch.v1.JobBuilder
 import io.fabric8.kubernetes.client.KubernetesClient
 import io.fabric8.kubernetes.client.KubernetesClientBuilder
 import org.slf4j.Logger
@@ -15,8 +20,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
-import java.io.IOException
-import java.io.InputStream
 import java.util.concurrent.Executors
 
 @CrossOrigin(origins = "http://localhost:4200")

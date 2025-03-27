@@ -19,7 +19,7 @@ export class DropzoneComponent {
     constructor(private http: HttpClient) {}
 
     onSelect(event: any) {
-        for (let file of event.addedFiles) {
+        for (const file of event.addedFiles) {
             this.files.push({ file });
         }
     }
@@ -29,7 +29,9 @@ export class DropzoneComponent {
     }
 
     uploadAll() {
-        this.files.forEach((fileObj) => this.uploadFile(fileObj.file));
+        this.files.forEach((fileObj) => {
+            this.uploadFile(fileObj.file);
+        });
     }
 
     uploadFile(file: File) {

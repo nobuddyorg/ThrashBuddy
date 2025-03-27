@@ -1,6 +1,7 @@
 plugins {
     id 'groovy'
-    id 'org.springframework.boot' version '3.4.3'
+    id 'jacoco'
+    id 'org.springframework.boot' version '3.4.4'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -18,15 +19,36 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.apache.groovy:groovy:4.0.26'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.apache.groovy:groovy'
     implementation 'io.fabric8:kubernetes-client:7.1.0'
     implementation 'io.minio:minio:8.5.17'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.spockframework:spock-spring:2.4-M5-groovy-4.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('html')
+    }
 }
