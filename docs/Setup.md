@@ -14,10 +14,12 @@ CloudThrash consists of multiple containerized services running in a Kubernetes 
    - Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop). Docker Desktop includes an easy-to-use Kubernetes integration for local development.
 
 2. **Additional Dependencies**
-   - Install NodeJS, Python, Helm, Visual Studio Code, and other required tools with the following command:
+   - Install Helm, Visual Studio Code, and other required tools with the following command:
      ```shell
-     scoop install nodejs python311 helm vscode eksctl aws
+     scoop install helm vscode eksctl aws
      ```
+
+     Both the frontend and backend come with their own package managers and their wrappers `npmw` and `gradlew`. They will install themselves and their dependencies.
 
 ### Building the Docker Images
 
@@ -29,7 +31,7 @@ The Docker images are built using predefined scripts in the project directory. T
 2. Navigate to the project root directory.
 3. Run the following script to build all images at once:
    ```shell
-   ./infrastructure/docker/build-images/build-images-for-all.sh
+   ./infrastructure/docker/build-all.sh
    ```
 4. Verify the created images with:
    ```shell
@@ -49,8 +51,7 @@ A Kubernetes cluster is required to run CloudThrash. For local development, Dock
 
 - **Provide Secrets**
   1. Open KeePass and locate the entry `CloudThrash`.
-  2. Download the `.env` file from the `Attachments` section.
-  3. Copy the file to `infrastructure/helm/.env`.
+  2. Create a `infrastructure/helm/.env` file containing `USERNAME`, `PASSWORD` and `INFLUXDB_API_TOKEN` of your choice..
 
 ### Starting the Cluster
 
@@ -88,16 +89,10 @@ To test frontend changes without rebuilding Docker images, you can run the front
 1. **Start the cluster:**
    Start the Kubernetes cluster as described above.
 
-2. **Configure the frontend:**
-   Create a `.env.local` file in the frontend directory with the following content:
-   ```plaintext
-   REACT_APP_CLOUDTHRASH_API_HOST=http://localhost
-   ```
-
-3. **Start the frontend locally:**
+2. **Start the frontend locally:**
    Run the following command in the frontend directory:
    ```shell
-   npm start --watch
+   ng serve --open
    ```
    A browser should open automatically, and the frontend will be ready. It will connect to the backend running in the Kubernetes cluster.
 

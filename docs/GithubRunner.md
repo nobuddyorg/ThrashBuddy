@@ -1,38 +1,33 @@
-# Self-Hosted GitHub Runner
+# Self-Hosted GitHub Runner  
 
-Diese README beschreibt die Installation und Konfiguration eines self-hosted GitHub Runners in unserer Entwicklungsinfrastruktur.
+This README describes the installation and configuration of a self-hosted GitHub Runner. This can be useful, because GitHub default runners might not have enough free working hours or too few resources. I usually use a NUC mini PC. But this process is completely optional.
 
-## Installation und Konfiguration
+---
 
-Zugriff auf die VM erfolgt ausschließlich über das Proxmox-Webinterface im lokalen Firmennetzwerk.
+## Installation and Configuration  
 
-1. Melde dich im Proxmox-Webinterface an (Zugangsdaten siehe [Confluence](https://qytera.atlassian.net/wiki/x/AYC4xQ)).
+1. Access your machine (virtual or physical). 
 
-2. Öffne die Konsole der entsprechenden VM (GithubRunner).
-
-3. Führe darauf das vorbereitende Script aus:
+2. Execute the setup script:  
    ```bash
    ./infrastructure/github-runner/prepare-runner.sh
-   ```
+   ```  
 
-Das Script installiert alle notwendigen Abhängigkeiten, wie `curl`, `unzip` und systemd-Komponenten. Gleichzeitig setzt es auch Rechte für den User um beispielsweise Docker ohne `sudo` starten zu können. Der Github Runner sollte so konfiguriert sein, dass er nach einem Neustart alle benötigten Services startet.
+   The script installs all necessary dependencies, such as `curl`, `unzip`, and systemd components. Additionally, it configures permissions, allowing the user to run Docker without `sudo`. The GitHub Runner should be set up to start all required services automatically after a reboot. It is designed for Ubuntu runners. 
 
-## Hinzufügen des Runners zu Github
+---
 
-1. Öffne die GitHub-Seite des entsprechenden Repositories oder der Organisation.
+## Adding the Runner to GitHub  
 
-2. Navigiere zu **Settings > Actions > Runners** und klicke auf **New self-hosted runner**.
+1. Open the GitHub page of the respective repository or organization.  
 
-3. Folge den Anweisungen, um die Konfigurationsbefehle für den Runner zu generieren.
+2. Navigate to **Settings > Actions > Runners** and click **New self-hosted runner**.  
 
-4. Kopiere die generierten Befehle und führe sie in der Proxmox-VM-Konsole aus:
-   - Das Runner-Tool wird heruntergeladen.
-   - Der Runner wird konfiguriert.
-   - Der Runner wird als Systemdienst gestartet.
+3. Follow the instructions to generate the configuration commands for the runner.  
 
-5. Überprüfe in GitHub, dass der Runner als aktiv angezeigt wird.
+4. Copy the generated commands and execute them on your runner:  
+   - The runner tool is downloaded.  
+   - The runner is configured.  
+   - The runner is started as a system service.  
 
-## Hinweise zur Umgebung
-
-- Die VM ist nur über das Proxmox-Webinterface im lokalen Firmennetzwerk zugänglich.
-- Details zur Proxmox-Konfiguration und Zugangsdaten findest du in unserem Confluence: [Confluence-Link](https://qytera.atlassian.net/wiki/x/AYC4xQ).
+5. Verify in GitHub that the runner appears as active.   

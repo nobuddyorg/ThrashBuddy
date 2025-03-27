@@ -82,17 +82,17 @@ This script is automatically executed during cluster creation via `create-cluste
 
 ---
 
-## Kubernetes Deployment (Remote)  
-
-Once the EKS cluster is set up and images are pushed, **CloudThrash** can be deployed using Helm charts. The preconfigured script with the `-remote` flag ensures deployment to the remote cluster:  
-
-```shell
-./infrastructure/helm/install.sh -remote
-```  
-
 ### Accessing CloudThrash  
 
-After installation, **CloudThrash** is accessible via a Kubernetes tunnel at `http://localhost:80`. Currently, there is no public internet endpoint. However, even the tunnel is **TLS encrypted**, making it sufficient for development purposes.  
+After installation, **CloudThrash** is accessible via a Kubernetes tunnel at `http://localhost:80`. Currently, there is no public internet endpoint. However, even the tunnel is **TLS encrypted**, making it sufficient for development purposes. 
+
+If your Kubernetes context switched in the meantime, you can reconnect to the EKS cluster again by running:
+
+```shell
+./infrastructure/aws/connect.sh
+```
+
+This will also establish the secure tunnel again, to make the Web-UI accessible in your browser.
 
 ---
 
