@@ -1,19 +1,7 @@
 version: 2
 updates:
-  - package-ecosystem: "pip"
+  - package-ecosystem: "gradle"
     directory: "services/backend"
-    schedule:
-      interval: "weekly"
-    groups:
-      minor-and-patch:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
-
-  - package-ecosystem: "pip"
-    directory: "services/runner"
     schedule:
       interval: "weekly"
     groups:
@@ -50,18 +38,6 @@ updates:
 
   - package-ecosystem: "docker"
     directory: "services/backend"
-    schedule:
-      interval: "weekly"
-    groups:
-      minor-and-patch:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
-
-  - package-ecosystem: "docker"
-    directory: "services/runner"
     schedule:
       interval: "weekly"
     groups:

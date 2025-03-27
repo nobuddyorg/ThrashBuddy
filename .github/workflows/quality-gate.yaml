@@ -20,10 +20,6 @@ jobs:
         name: Backend Analysis
         runs-on: ubuntu-latest
         steps:
-            - name: Set up Python 3.11
-              uses: actions/setup-python@v5
-              with:
-                  python-version: "3.11"
             - name: Checkout
               uses: actions/checkout@v4
               with:
@@ -32,8 +28,8 @@ jobs:
             - name: Install Dependencies and Run Unit Tests
               working-directory: ./services/backend
               run: |
-                  pip install tox
-                  tox
+                  ./gradlew test
+                  ./gradlew jacocoTestReport
             - name: Publish Test Results
               uses: EnricoMi/publish-unit-test-result-action/linux@v2
               if: always()
@@ -53,51 +49,10 @@ jobs:
                   sonar.pullrequest.branch: ${{ github.head_ref }}
                   sonar.pullrequest.base: ${{ github.base_ref }}
 
-    runner:
-        name: Runner Analysis
-        runs-on: ubuntu-latest
-        steps:
-            - name: Set up Python 3.11
-              uses: actions/setup-python@v5
-              with:
-                  python-version: "3.11"
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  submodules: true
-                  fetch-depth: 0
-            - name: Install Dependencies and Run Unit Tests
-              working-directory: ./services/runner
-              run: |
-                  pip install tox
-                  tox
-            - name: Publish Test Results
-              uses: EnricoMi/publish-unit-test-result-action/linux@v2
-              if: always()
-              with:
-                  check_name: "Runner Unit Tests"
-                  files: |
-                      services/runner/reports/test-results.xml
-            - name: SonarCloud Scan
-              if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
-              uses: SonarSource/sonarqube-scan-action@v4
-              with:
-                  projectBaseDir: services/runner
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-                  sonar.pullrequest.key: ${{ github.event.pull_request.number }}
-                  sonar.pullrequest.branch: ${{ github.head_ref }}
-                  sonar.pullrequest.base: ${{ github.base_ref }}
-
     frontend:
         name: Frontend Analysis
         runs-on: ubuntu-latest
         steps:
-            - name: Set up Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "23"
             - name: Checkout
               uses: actions/checkout@v4
               with:
@@ -105,13 +60,13 @@ jobs:
                   fetch-depth: 0
             - name: Install Dependencies
               working-directory: ./services/frontend
-              run: npm install
+              run: ./npmw install
             - name: Unit Tests and Coverage
               working-directory: ./services/frontend
-              run: npm test
+              run: ./npmw test
             - name: Lint
               working-directory: ./services/frontend
-              run: npm run lint
+              run: ./npmw run lint
             - name: Publish Test Results
               uses: EnricoMi/publish-unit-test-result-action/linux@v2
               if: always()
@@ -136,7 +91,7 @@ jobs:
             group: "test--infra-group-${{ github.event.pull_request.number }}"
             cancel-in-progress: false
         if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' # takes too long for pushes
-        needs: [backend, runner, frontend]
+        needs: [backend, frontend]
         name: Infrastructure and Images
         runs-on: proxmox
         steps:
@@ -149,21 +104,7 @@ jobs:
                   echo "${{ secrets.DOT_ENV }}" > ./infrastructure/helm/.env
             - uses: hadolint/hadolint-action@v3.1.0
               with:
-                  dockerfile: ./services/backend/dockerfile.api
-            - uses: hadolint/hadolint-action@v3.1.0
-              with:
-                  dockerfile: ./services/backend/dockerfile.celery
-            - uses: hadolint/hadolint-action@v3.1.0
-              with:
-                  dockerfile: ./services/runner/dockerfile.runner
-            - uses: hadolint/hadolint-action@v3.1.0
-              with:
-                  dockerfile: ./services/runner/dockerfile.jmetercontroller
-                  ignore: DL3018
-            - uses: hadolint/hadolint-action@v3.1.0
-              with:
-                  dockerfile: ./services/runner/dockerfile.jmeterworker
-                  ignore: DL3018
+                  dockerfile: ./services/backend/Dockerfile
             - uses: hadolint/hadolint-action@v3.1.0
               with:
                   dockerfile: ./services/frontend/Dockerfile
@@ -182,7 +123,7 @@ jobs:
 
             - name: Build Docker Images
               run: |
-                  infrastructure/docker/build-images/build-images-for-all.sh
+                  infrastructure/docker/build-all.sh
                   docker images
 
             - name: Set up Kubernetes with Minikube
@@ -197,9 +138,6 @@ jobs:
                   ./install.sh
             - name: frontend tests
               working-directory: ./services/frontend-test
-              env:
-                  XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
-                  XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
               run: |
                   nohup minikube tunnel > /dev/null 2>&1 &
                   # Wait for the ingress-nginx-controller to be ready before setting the BASE_URL for Playwright tests
