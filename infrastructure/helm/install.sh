@@ -48,6 +48,16 @@ helm upgrade --install influxdb influxdata/influxdb2 \
   --set service.type=NodePort \
   --set service.nodePort=32002
 
+echo "(Re-)Installing Grafana..."
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm upgrade --install grafana grafana/grafana \
+  --create-namespace \
+  --set adminUser=$USERNAME \
+  --set adminPassword=$PASSWORD \
+  --set datasources.datasources\\.yaml.datasources[0].secureJsonData.token=$INFLUXDB_API_TOKEN \
+  --values grafana-values.yaml
+
 helm upgrade --install cloud-thrash . \
   -f values.yaml \
   --set deployments.backend.env.MINIO_ACCESS_KEY="$USERNAME" \

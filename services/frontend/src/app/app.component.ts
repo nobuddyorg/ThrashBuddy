@@ -162,7 +162,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     openMonitoring() {
-        const newPort = 32002;
+        const newPort = 32000;
         const newURL = `${window.location.protocol}//${window.location.hostname}:${newPort}/`;
         window.open(newURL, "_blank");
     }
