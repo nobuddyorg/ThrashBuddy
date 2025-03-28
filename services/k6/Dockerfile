@@ -2,7 +2,7 @@ FROM golang:1.24.1 AS builder
 RUN go install go.k6.io/xk6/cmd/xk6@latest && \
     xk6 build --with github.com/grafana/xk6-output-influxdb
 
-FROM alpine:latest
+FROM alpine:3
 RUN apk add --no-cache ca-certificates curl aws-cli
 COPY --from=builder /go/k6 /usr/local/bin/k6
 
