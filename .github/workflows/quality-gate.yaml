@@ -85,6 +85,9 @@ jobs:
             - uses: hadolint/hadolint-action@v3.1.0
               with:
                   dockerfile: ./services/frontend/Dockerfile
+            - uses: hadolint/hadolint-action@v3.1.0
+              with:
+                  dockerfile: ./services/k6/Dockerfile
 
             - name: Docker Cleanup
               run: |
