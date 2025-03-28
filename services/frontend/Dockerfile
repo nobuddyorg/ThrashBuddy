@@ -2,7 +2,7 @@ FROM node:22 AS build
 
 WORKDIR /app
 
-RUN npm install -g @angular/cli
+RUN npm install -g @angular/cli@19.2.1
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
