@@ -1,0 +1,19 @@
+meta {
+  name: delete
+  type: http
+  seq: 6
+}
+
+delete {
+  url: http://{{host}}/api/delete?fileName=test.js
+  body: multipartForm
+  auth: none
+}
+
+params:query {
+  fileName: test.js
+}
+
+body:multipart-form {
+  file: @file(C:\Repos\besessener\CloudThrash\services\k6\example\test.js) @contentType(multipart/form-data)
+}

@@ -1,0 +1,15 @@
+meta {
+  name: upload
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://{{host}}/api/upload
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  file: @file(C:\Repos\besessener\CloudThrash\services\k6\example\test.js) @contentType(multipart/form-data)
+}

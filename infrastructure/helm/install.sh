@@ -27,7 +27,7 @@ helm upgrade --install minio minio/minio \
   --set replicas=1 \
   --set persistence.enabled=false \
   --set mode=standalone \
-  --set rootUser=$USERNAME,rootPassword=$PASSWORD \
+  --set rootUser=$USERNAME_TOOLS,rootPassword=$PASSWORD_TOOLS \
   --set service.type=ClusterIP \
   --set consoleService.type=NodePort \
   --set consoleService.nodePort=32001 \
@@ -42,8 +42,8 @@ helm upgrade --install influxdb influxdata/influxdb2 \
   --set persistence.enabled=false \
   --set adminUser.organization=cloud-thrash \
   --set adminUser.bucket=metrics \
-  --set adminUser.user=$USERNAME \
-  --set adminUser.password=$PASSWORD \
+  --set adminUser.user=$USERNAME_TOOLS \
+  --set adminUser.password=$PASSWORD_TOOLS \
   --set adminUser.token=$INFLUXDB_API_TOKEN \
   --set service.type=NodePort \
   --set service.nodePort=32002
@@ -60,8 +60,8 @@ helm upgrade --install grafana grafana/grafana \
 
 helm upgrade --install cloud-thrash . \
   -f values.yaml \
-  --set deployments.backend.env.MINIO_ACCESS_KEY="$USERNAME" \
-  --set deployments.backend.env.MINIO_SECRET_KEY="$PASSWORD"
+  --set deployments.backend.env.MINIO_ACCESS_KEY="$USERNAME_TOOLS" \
+  --set deployments.backend.env.MINIO_SECRET_KEY="$PASSWORD_TOOLS"
 
 echo "integration test running..."
 kubectl get pods -n default --no-headers | grep -vE 'test-' | awk '{print $1}' | \

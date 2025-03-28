@@ -51,7 +51,7 @@ A Kubernetes cluster is required to run CloudThrash. For local development, Dock
 
 - **Provide Secrets**
   1. Open KeePass and locate the entry `CloudThrash`.
-  2. Create a `infrastructure/helm/.env` file containing `USERNAME`, `PASSWORD` and `INFLUXDB_API_TOKEN` of your choice..
+  2. Create a `infrastructure/helm/.env` file containing `USERNAME_TOOLS`, `PASSWORD_TOOLS` and `INFLUXDB_API_TOKEN` of your choice..
 
 ### Starting the Cluster
 
