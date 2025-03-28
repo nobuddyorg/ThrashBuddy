@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ConfigurableButtonComponent } from "./configurable-button.component";
 import { By } from "@angular/platform-browser";

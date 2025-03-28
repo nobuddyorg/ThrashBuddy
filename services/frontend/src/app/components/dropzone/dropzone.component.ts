@@ -18,7 +18,7 @@ export class DropzoneComponent {
 
     constructor(private http: HttpClient) {}
 
-    onSelect(event: any) {
+    onSelect(event: { addedFiles: File[] }) {
         for (const file of event.addedFiles) {
             this.files.push({ file });
         }

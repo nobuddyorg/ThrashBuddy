@@ -1,3 +1,9 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { Component, computed, inject, signal, OnInit, OnDestroy } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { ConfigurableButtonComponent } from "./components/configurable-button/configurable-button.component";
@@ -9,7 +15,7 @@ import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
 import { TestService } from "./services/test.service";
 import { FileService } from "./services/file.service";
-import { Subject, interval, of } from "rxjs";
+import { Subject, interval } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DropzoneComponent } from "./components/dropzone/dropzone.component";
@@ -65,7 +71,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.getStatus();
         interval(10000)
             .pipe(takeUntil(this.destroy$))
-            .subscribe(() => this.getStatus());
+            .subscribe(() => {
+                this.getStatus();
+            });
     }
 
     ngOnDestroy() {
@@ -83,7 +91,7 @@ export class AppComponent implements OnInit, OnDestroy {
             "16384m": this.generateMemoryOptions(32, 120, 8),
         };
 
-        this.memoryOptions = memoryMap[this.selectedCpu] || [];
+        this.memoryOptions = memoryMap[this.selectedCpu] ?? [];
         this.selectedMemory = this.memoryOptions[0];
     }
 
@@ -96,14 +104,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
     private showError(message: string, error: any) {
         console.error(message, error);
-        const errorMsg = error?.error?.message || error?.message || "Unknown error";
+        const errorMsg = error?.error?.message ?? error?.message ?? "Unknown error";
         this.snackBar.open(`${message}: ${errorMsg}`, "Close", {
             duration: 30000,
             panelClass: ["error-snackbar"],
         });
     }
 
-    async runTest() {
+    runTest() {
         this.testStatus.set({ status: "RUNNING" });
         const payload = {
             cpu: this.selectedCpu,
@@ -132,7 +140,7 @@ export class AppComponent implements OnInit, OnDestroy {
         });
     }
 
-    async stopTest() {
+    stopTest() {
         this.testStatus.set({ status: "STOPPING" });
 
         this.testService.stopTest().subscribe({
@@ -146,15 +154,17 @@ export class AppComponent implements OnInit, OnDestroy {
         });
     }
 
-    async getStatus() {
+    getStatus() {
         this.testService.getStatus().subscribe({
             next: (response) => {
                 this.testStatus.set(response);
-                this.files.set(response.data || []);
+                this.files.set(response.data ?? []);
             },
             error: (err) => {
                 this.showError("Status", err);
-                setTimeout(() => this.getStatus(), 1000);
+                setTimeout(() => {
+                    this.getStatus();
+                }, 1000);
             },
         });
     }
@@ -179,7 +189,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
     deleteFile(fileName: string) {
         this.fileService.deleteFile(fileName).subscribe({
-            next: () => this.getStatus(),
+            next: () => {
+                this.getStatus();
+            },
             error: (err) => {
                 this.showError(`Delete: ${fileName}`, err);
             },

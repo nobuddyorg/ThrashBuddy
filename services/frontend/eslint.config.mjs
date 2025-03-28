@@ -27,7 +27,6 @@ export default tseslint.config(
             "@typescript-eslint/no-unused-vars": "warn",
             "react/react-in-jsx-scope": "off",
             "prettier/prettier": "warn",
-            "multiline-comment-style": ["warn", "starred-block"],
         },
     },
     { files: ["**/*.mjs"], ...tseslint.configs.disableTypeChecked },
