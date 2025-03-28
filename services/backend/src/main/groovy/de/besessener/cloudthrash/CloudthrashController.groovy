@@ -85,36 +85,50 @@ class CloudthrashController {
 
     @PostMapping("/start")
     ResponseEntity<Map> start(@RequestBody Map<String, Object> payload) {
-        if (status != Status.IDLE) return buildResponse(HttpStatus.BAD_REQUEST, "Cannot start while not idle")
+        if (status != Status.IDLE)
+            return buildResponse(HttpStatus.BAD_REQUEST, "Cannot start while not idle")
 
         def fileList = listFiles()
-        if (fileList.isEmpty() || !fileList.any { it.filename == 'test.js' }) return buildResponse(HttpStatus.BAD_REQUEST, "A 'test.js' file is required")
+        if (fileList.isEmpty() || !fileList.any { it.filename == 'test.js' })
+            return buildResponse(HttpStatus.BAD_REQUEST, "A 'test.js' file is required")
 
         executorService.submit {
             try {
-                def (cpu, memory, loadAgents) = [payload.cpu as String, payload.memory as String, payload.loadAgents as Integer]
-                def envVars = (payload.envVars as List<Map<String, String>>).collect { new EnvVarBuilder().withName(it.name).withValue(it.value).build() }
+                def (cpu, memory, loadAgents) = [
+                    payload.cpu as String,
+                    payload.memory as String,
+                    payload.loadAgents as Integer
+                ]
+                def envVars = (payload.envVars as List<Map<String, String>>).collect {
+                    new EnvVarBuilder().withName(it.name).withValue(it.value).build()
+                }
 
                 log.info "Starting K6 test with $loadAgents agents (CPU: $cpu, Memory: $memory)"
 
-                def statusList = []
                 def futures = (1..loadAgents).collect { index ->
                     executorService.submit {
-                        log.info "Starting K6 job for agent #$index"
-                        def job = createK6Job(cpu, memory, envVars, index)
-                        statusList << waitForJobCompletion(job)
-                        log.info "K6 job for agent #$index finished"
+                        try {
+                            log.info "Starting K6 job for agent #$index"
+                            def job = createK6Job(cpu, memory, envVars, index)
+                            def result = waitForJobCompletion(job)
+                            log.info "K6 job for agent #$index finished with status: $result"
+                            return result
+                        } catch (Exception e) {
+                            log.error("Job #$index failed: ${e.message}", e)
+                            return Status.ERROR
+                        }
                     }
                 }
 
                 executorService.submit {
-                    futures*.get()
+                    def results = futures*.get()
                     deleteAllK6Jobs()
-                    if (statusList.any { Status.ERROR }) {
+
+                    if (results.any { it == Status.ERROR }) {
                         handleError("Error running K6 jobs")
                     } else {
                         status = Status.IDLE
-                        log.info "All K6 jobs completed, status reset to IDLE"
+                        log.info "All K6 jobs completed successfully, status reset to IDLE"
                     }
                 }
             } catch (Exception e) {
