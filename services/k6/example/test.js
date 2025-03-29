@@ -21,6 +21,8 @@ export default function () {
         console.log(`K6_INFLUXDB_BUCKET: ${__ENV.K6_INFLUXDB_BUCKET || "Not Set"}`);
         console.log(`K6_INFLUXDB_ADDR: ${__ENV.K6_INFLUXDB_ADDR || "Not Set"}`);
         console.log(`K6_INFLUXDB_TOKEN: ${__ENV.K6_INFLUXDB_TOKEN || "Not Set"}`);
+        console.log(`DUMMY_1: ${__ENV.DUMMY_1 || "Not Set"}`);
+        console.log(`DUMMY_2: ${__ENV.DUMMY_2 || "Not Set"}`);
     }
 
     vuGauge.add(__VU);
