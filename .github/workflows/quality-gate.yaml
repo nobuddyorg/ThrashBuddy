@@ -52,7 +52,7 @@ jobs:
                   fail_below_min: true
                   format: markdown
                   output: both
-                  thresholds: "25 80"
+                  thresholds: "60 80"
             - name: Append Coverage Report to GitHub Summary
               if: always()
               run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
