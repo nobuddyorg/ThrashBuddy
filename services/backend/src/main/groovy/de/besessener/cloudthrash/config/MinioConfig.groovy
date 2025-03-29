@@ -1,6 +1,7 @@
-package de.besessener.cloudthrash
+package de.besessener.cloudthrash.config
 
 import io.minio.MinioClient
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -10,11 +11,11 @@ import org.springframework.context.annotation.Configuration
 class MinioConfig {
 
     @Bean
-    MinioClient minioClient() {
-        def endpoint = System.getenv('MINIO_URL') ?: 'http://localhost:9000/'
-        def accessKey = System.getenv('MINIO_ACCESS_KEY') ?: 'minioadmin'
-        def secretKey = System.getenv('MINIO_SECRET_KEY') ?: 'minioadmin'
-
+    MinioClient minioClient(
+            @Value('${MINIO_URL:http://localhost:9000/}') String endpoint,
+            @Value('${MINIO_ACCESS_KEY:minioadmin}') String accessKey,
+            @Value('${MINIO_SECRET_KEY:minioadmin}') String secretKey
+    ) {
         MinioClient.builder()
                 .endpoint(endpoint)
                 .credentials(accessKey, secretKey)
@@ -26,4 +27,3 @@ class MinioConfig {
         'cloud-thrash'
     }
 }
-

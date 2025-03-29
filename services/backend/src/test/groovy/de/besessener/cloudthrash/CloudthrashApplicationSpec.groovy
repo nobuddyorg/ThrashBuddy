@@ -8,6 +8,8 @@ class CloudthrashApplicationTests {
 
     @Test
     void contextLoads() {
+        CloudthrashApplication.main(new String[0])
     }
 
 }
+

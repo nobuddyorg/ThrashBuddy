@@ -1,5 +1,6 @@
-package de.besessener.cloudthrash
+package de.besessener.cloudthrash.service
 
+import de.besessener.cloudthrash.CloudthrashApplication
 import io.minio.*
 import io.minio.messages.Item
 import org.springframework.beans.factory.annotation.Autowired

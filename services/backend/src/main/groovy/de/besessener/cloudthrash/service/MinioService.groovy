@@ -1,4 +1,4 @@
-package de.besessener.cloudthrash
+package de.besessener.cloudthrash.service
 
 import io.minio.*
 import org.springframework.beans.factory.annotation.Autowired
