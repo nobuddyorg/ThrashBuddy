@@ -117,7 +117,7 @@ jobs:
         if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' # takes too long for pushes
         needs: [backend, frontend]
         name: Infrastructure and Images
-        runs-on: self-hosted
+        runs-on: ubuntu-latest
         steps:
             - name: Checkout Code
               uses: actions/checkout@v4
