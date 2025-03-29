@@ -35,17 +35,28 @@ jobs:
                   check_name: "Backend Unit Tests"
                   files: |
                       ./services/backend/build/test-results/**/*.xml
-            - name: Generate Backend Coverage Summary
+            - name: Install ReportGenerator
+              run: |
+                  dotnet tool install --global dotnet-reportgenerator-globaltool
+            - name: Convert JaCoCo to Cobertura
+              run: |
+                  reportgenerator \
+                    -reports:./services/backend/build/reports/jacoco/test/jacocoTestReport.xml \
+                    -targetdir:coverage-report \
+                    -reporttypes:Cobertura
+            - name: Generate Coverage Report Summary
               uses: irongut/CodeCoverageSummary@v1.3.0
               with:
-                  filename: ./services/backend/build/reports/jacoco/test/jacocoTestReport.xml
+                  filename: coverage-report/Cobertura.xml
+                  badge: true
+                  fail_below_min: true
                   format: markdown
                   output: both
-                  badge: true
-            - name: Add Coverage Report to GitHub Summary
+                  thresholds: "60 80"
+            - name: Append Coverage Report to GitHub Summary
               if: always()
               run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
-            - name: Comment Backend Coverage on PR
+            - name: Post Coverage Comment to PR
               if: github.event_name == 'pull_request'
               uses: peter-evans/create-or-update-comment@v4
               with:
