@@ -79,6 +79,13 @@ jobs:
             - name: Unit Tests and Coverage
               working-directory: ./services/frontend
               run: ./npmw run test:ci
+            - name: Publish Test Results
+              uses: EnricoMi/publish-unit-test-result-action/linux@v2
+              if: always()
+              with:
+                  check_name: "Frontend Unit Tests"
+                  files: |
+                      ./services/frontend/TESTS-Chrome_Headless_*.xml
             - name: Show Coverage Summary in PR
               uses: irongut/CodeCoverageSummary@v1.3.0
               with:
@@ -102,13 +109,6 @@ jobs:
             - name: Lint
               working-directory: ./services/frontend
               run: ./npmw run lint
-            - name: Publish Test Results
-              uses: EnricoMi/publish-unit-test-result-action/linux@v2
-              if: always()
-              with:
-                  check_name: "Frontend Unit Tests"
-                  files: |
-                      ./services/frontend/TESTS-Chrome_Headless_*.xml
 
     infra-and-images:
         concurrency:
