@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { Component, computed, inject, signal, OnInit, OnDestroy } from "@angular/core";
@@ -13,7 +12,7 @@ import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
-import { TestService } from "./services/test.service";
+import { TestService, StartTestPayload } from "./services/test.service";
 import { FileService } from "./services/file.service";
 import { Subject, interval } from "rxjs";
 import { takeUntil } from "rxjs/operators";
@@ -50,6 +49,7 @@ export class AppComponent implements OnInit, OnDestroy {
         status: string;
         data?: { filename: string; lastModified: string }[];
     } | null>(null);
+
     files = signal<{ filename: string; lastModified: string }[]>([]);
 
     isIdle = computed(() => this.testStatus()?.status === "IDLE");
@@ -113,25 +113,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
     runTest() {
         this.testStatus.set({ status: "RUNNING" });
-        const payload = {
+
+        const payload: StartTestPayload = {
             cpu: this.selectedCpu,
             memory: this.selectedMemory,
             loadAgents: this.loadAgents,
-            envVars: this.envVars
-                ? this.envVars
-                      .split("\n")
-                      .map((env) => env.trim())
-                      .filter((env) => env.includes("="))
-                      .map((env) => {
-                          const [key, value] = env.split("=").map((part) => part.trim());
-                          return { name: key, value: value };
-                      })
-                : [],
+            envVars: this.parseEnvVars(this.envVars),
         };
 
         this.testService.startTest(payload).subscribe({
-            next: (response) => {
-                this.testStatus.set(response);
+            next: () => {
+                this.getStatus();
             },
             error: (err) => {
                 this.showError("Start", err);
@@ -144,8 +136,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this.testStatus.set({ status: "STOPPING" });
 
         this.testService.stopTest().subscribe({
-            next: (response) => {
-                this.testStatus.set(response);
+            next: () => {
+                this.getStatus();
             },
             error: (err) => {
                 this.showError("Stop", err);
@@ -196,5 +188,16 @@ export class AppComponent implements OnInit, OnDestroy {
                 this.showError(`Delete: ${fileName}`, err);
             },
         });
+    }
+
+    private parseEnvVars(input: string): { name: string; value: string }[] {
+        return input
+            .split("\n")
+            .map((env) => env.trim())
+            .filter((env) => env.includes("="))
+            .map((env) => {
+                const [name, value] = env.split("=").map((part) => part.trim());
+                return { name, value };
+            });
     }
 }

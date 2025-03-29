@@ -1,8 +1,28 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+
+interface EnvVar {
+    name: string;
+    value: string;
+}
+
+export interface StartTestPayload {
+    cpu: string;
+    memory: string;
+    loadAgents: number;
+    envVars: EnvVar[];
+}
+
+interface ApiResponse {
+    success: boolean;
+    message?: string;
+}
+
+export interface StatusResponse {
+    status: string; // e.g., "IDLE" | "RUNNING" | "STOPPING"
+    data?: { filename: string; lastModified: string }[];
+}
 
 @Injectable({ providedIn: "root" })
 export class TestService {
@@ -10,20 +30,15 @@ export class TestService {
 
     constructor(private http: HttpClient) {}
 
-    startTest(payload: {
-        cpu: string;
-        memory: string;
-        loadAgents: number;
-        envVars: { name: string; value: string }[];
-    }): Observable<any> {
-        return this.http.post(`${this.baseUrl}/start`, payload);
+    startTest(payload: StartTestPayload): Observable<ApiResponse> {
+        return this.http.post<ApiResponse>(`${this.baseUrl}/start`, payload);
     }
 
-    stopTest(): Observable<any> {
-        return this.http.post(`${this.baseUrl}/stop`, {});
+    stopTest(): Observable<ApiResponse> {
+        return this.http.post<ApiResponse>(`${this.baseUrl}/stop`, {});
     }
 
-    getStatus(): Observable<any> {
-        return this.http.get(`${this.baseUrl}/status`);
+    getStatus(): Observable<StatusResponse> {
+        return this.http.get<StatusResponse>(`${this.baseUrl}/status`);
     }
 }

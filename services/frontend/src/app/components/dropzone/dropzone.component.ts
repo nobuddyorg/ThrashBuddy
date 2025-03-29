@@ -42,7 +42,7 @@ export class DropzoneComponent {
             next: (response) => {
                 console.log(`Upload successful: ${file.name}, Response:`, response);
                 this.onRemove({ file });
-                this.appComponent.getStatus(); // Refresh file list after upload
+                this.appComponent.getStatus();
             },
             error: (error) => {
                 console.error(`Upload failed: ${file.name}, Error:`, error);
