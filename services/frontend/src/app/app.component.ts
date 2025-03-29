@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import { Component, computed, inject, signal, OnInit, OnDestroy } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { ConfigurableButtonComponent } from "./components/configurable-button/configurable-button.component";
@@ -19,6 +14,16 @@ import { takeUntil } from "rxjs/operators";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DropzoneComponent } from "./components/dropzone/dropzone.component";
 import { MatIconModule } from "@angular/material/icon";
+
+interface FileMeta {
+    filename: string;
+    lastModified: string;
+}
+
+interface StatusResponse {
+    status: string;
+    data?: FileMeta[];
+}
 
 @Component({
     selector: "app-root",
@@ -45,16 +50,23 @@ export class AppComponent implements OnInit, OnDestroy {
     private snackBar = inject(MatSnackBar);
     private destroy$ = new Subject<void>();
 
-    testStatus = signal<{
-        status: string;
-        data?: { filename: string; lastModified: string }[];
-    } | null>(null);
+    testStatus = signal<StatusResponse | null>(null);
+    files = signal<FileMeta[]>([]);
 
-    files = signal<{ filename: string; lastModified: string }[]>([]);
+    isIdle = computed(() => {
+        const status = this.testStatus();
+        return status !== null && status.status === "IDLE";
+    });
 
-    isIdle = computed(() => this.testStatus()?.status === "IDLE");
-    isRunning = computed(() => this.testStatus()?.status === "RUNNING");
-    isStopping = computed(() => this.testStatus()?.status === "STOPPING");
+    isRunning = computed(() => {
+        const status = this.testStatus();
+        return status !== null && status.status === "RUNNING";
+    });
+
+    isStopping = computed(() => {
+        const status = this.testStatus();
+        return status !== null && status.status === "STOPPING";
+    });
 
     cpuOptions: string[] = ["512m", "1024m", "2048m", "4096m", "8192m", "16384m"];
     memoryOptions: string[] = [];
@@ -98,14 +110,16 @@ export class AppComponent implements OnInit, OnDestroy {
     generateMemoryOptions(from: number, to: number, step = 1): string[] {
         return Array.from(
             { length: Math.floor((to - from) / step) + 1 },
-            (_, idx) => `${(from + idx * step) * 1024}Mi`,
+            (_, idx) => `${String((from + idx * step) * 1024)}Mi`,
         );
     }
 
-    private showError(message: string, error: any) {
+    private showError(message: string, error: unknown) {
         console.error(message, error);
-        const errorMsg = error?.error?.message ?? error?.message ?? "Unknown error";
-        this.snackBar.open(`${message}: ${errorMsg}`, "Close", {
+        const err = error as { error?: { message?: string }; message?: string };
+        const errorMsg = err.error?.message ?? err.message ?? "Unknown error";
+
+        this.snackBar.open(`${message}: ${String(errorMsg)}`, "Close", {
             duration: 30000,
             panelClass: ["error-snackbar"],
         });
@@ -162,21 +176,20 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     openFiles() {
-        const newPort = 32001;
-        const newURL = `${window.location.protocol}//${window.location.hostname}:${newPort}/`;
-        window.open(newURL, "_blank");
+        this.openExternal(32001);
     }
 
     openMonitoring() {
-        const newPort = 32000;
-        const newURL = `${window.location.protocol}//${window.location.hostname}:${newPort}/`;
-        window.open(newURL, "_blank");
+        this.openExternal(32000);
     }
 
     openData() {
-        const newPort = 32002;
-        const newURL = `${window.location.protocol}//${window.location.hostname}:${newPort}/`;
-        window.open(newURL, "_blank");
+        this.openExternal(32002);
+    }
+
+    private openExternal(port: number) {
+        const url = `${window.location.protocol}//${window.location.hostname}:${String(port)}/`;
+        window.open(url, "_blank");
     }
 
     deleteFile(fileName: string) {
