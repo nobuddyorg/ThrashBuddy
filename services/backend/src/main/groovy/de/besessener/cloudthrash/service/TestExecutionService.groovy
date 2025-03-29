@@ -1,6 +1,5 @@
 package de.besessener.cloudthrash.service
 
-
 import io.fabric8.kubernetes.api.model.EnvVar
 import io.fabric8.kubernetes.api.model.EnvVarBuilder
 import io.fabric8.kubernetes.api.model.Quantity
@@ -8,7 +7,6 @@ import io.fabric8.kubernetes.api.model.ResourceRequirementsBuilder
 import io.fabric8.kubernetes.api.model.batch.v1.Job
 import io.fabric8.kubernetes.api.model.batch.v1.JobBuilder
 import io.fabric8.kubernetes.client.KubernetesClient
-import io.fabric8.kubernetes.client.KubernetesClientBuilder
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -24,16 +22,25 @@ class TestExecutionService {
         IDLE, RUNNING, STOPPING, ERROR, INIT
     }
 
+    protected final executorService = Executors.newCachedThreadPool()
+
     private static final log = LoggerFactory.getLogger(TestExecutionService)
     private static final String NAMESPACE = "default"
 
-    private final executorService = Executors.newCachedThreadPool()
-    private final KubernetesClient client = new KubernetesClientBuilder().build()
     private volatile Status status = Status.INIT
     private String errorMessage = ""
 
     @Autowired
     FileService fileService
+
+    @Autowired
+    KubernetesClient client
+
+    TestExecutionService(FileService fileService, KubernetesClient client) {
+        this.fileService = fileService
+        this.client = client
+    }
+
 
     ResponseEntity<Map> startTest(Map<String, Object> payload) {
         if (status != Status.IDLE)
@@ -74,10 +81,6 @@ class TestExecutionService {
                 buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error: $errorMessage") :
                 buildResponse(HttpStatus.OK, status.name())
     }
-
-    // -------------------------------
-    // INTERNAL
-    // -------------------------------
 
     private void executeJobs(String cpu, String memory, int count, List<EnvVar> envVars) {
         try {

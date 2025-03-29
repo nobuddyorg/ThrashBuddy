@@ -20,7 +20,7 @@ interface ApiResponse {
 }
 
 export interface StatusResponse {
-    status: string; // e.g., "IDLE" | "RUNNING" | "STOPPING"
+    status: string;
     data?: { filename: string; lastModified: string }[];
 }
 

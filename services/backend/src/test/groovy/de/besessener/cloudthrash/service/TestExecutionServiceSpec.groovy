@@ -1,13 +1,19 @@
 package de.besessener.cloudthrash.service
 
 
+import io.fabric8.kubernetes.api.model.ObjectMeta
+import io.fabric8.kubernetes.api.model.batch.v1.Job
+import io.fabric8.kubernetes.api.model.batch.v1.JobStatus
+import io.fabric8.kubernetes.client.KubernetesClient
+import io.fabric8.kubernetes.client.dsl.*
 import org.springframework.http.HttpStatus
 import spock.lang.Specification
 
 class TestExecutionServiceSpec extends Specification {
 
     def fileService = Mock(FileService)
-    def service = new TestExecutionService(fileService: fileService)
+    def k8sClient = Mock(KubernetesClient)
+    def service = new TestExecutionService(fileService, k8sClient)
 
     def setup() {
         service.@status = TestExecutionService.Status.IDLE
@@ -104,27 +110,179 @@ class TestExecutionServiceSpec extends Specification {
             response2.body.message.contains("Boom")
     }
 
-
     def "buildResponse - updates state based on file presence"() {
         given:
             service.@status = TestExecutionService.Status.ERROR
 
-        and: "mock returns different results per call"
+        and:
             fileService.listFiles() >>> [
                     [[filename: "abc.txt"]],
                     [[filename: "test.js"]]
             ]
 
-        when: "no test.js"
+        when:
             def response = service.buildResponse(HttpStatus.OK, "msg")
 
         then:
             response.body.status == "INIT"
 
-        when: "test.js now exists"
+        when:
             def response2 = service.buildResponse(HttpStatus.OK, "msg")
 
         then:
             response2.body.status == "IDLE"
+    }
+
+    def "executeJobs - triggers setError on exception"() {
+        given:
+            def fileService = Mock(FileService)
+            def client = Mock(KubernetesClient)
+            def serviceSpy = Spy(TestExecutionService, constructorArgs: [fileService, client])
+
+            serviceSpy.@status = TestExecutionService.Status.IDLE
+            fileService.listFiles() >> [[filename: "test.js"]]
+
+            def payload = [
+                    cpu       : "1",
+                    memory    : "1Gi",
+                    loadAgents: 1,
+                    envVars   : []
+            ]
+
+            serviceSpy.createK6Job(_, _, _, _) >> { throw new RuntimeException("Job error") }
+
+        when:
+            def response = serviceSpy.startTest(payload)
+            sleep(2000)
+
+        then:
+            response.statusCode == HttpStatus.OK
+            eventually {
+                serviceSpy.@status == TestExecutionService.Status.IDLE
+            }
+    }
+
+    private static void eventually(Closure assertion, int timeoutMs = 3000, int intervalMs = 100) {
+        long start = System.currentTimeMillis()
+        while (System.currentTimeMillis() - start < timeoutMs) {
+            try {
+                assertion.call()
+                return
+            } catch (AssertionError ignored) {
+                sleep(intervalMs)
+            }
+        }
+        assertion.call()
+    }
+
+    def "waitForCompletion - returns IDLE on job success"() {
+        given:
+            def fileService = Mock(FileService)
+            def client = Mock(KubernetesClient)
+            def batchAPI = Mock(BatchAPIGroupDSL)
+            def v1BatchAPI = Mock(V1BatchAPIGroupDSL)
+            def jobsOp = Mock(MixedOperation)
+            def namespacedOp = Mock(NonNamespaceOperation)
+            def jobResource = Mock(Resource)
+
+            client.batch() >> batchAPI
+            batchAPI.v1() >> v1BatchAPI
+            v1BatchAPI.jobs() >> jobsOp
+            jobsOp.inNamespace(_) >> namespacedOp
+            namespacedOp.withName("test-job") >> jobResource
+
+            def job = new Job()
+            job.metadata = new ObjectMeta(name: "test-job")
+
+            def successJob = new Job()
+            successJob.metadata = new ObjectMeta(name: "test-job")
+            successJob.status = new JobStatus(succeeded: 1)
+            jobResource.get() >> successJob
+
+            def service = new TestExecutionService(fileService, client) {
+                void sleep(long millis) {}
+            }
+
+            def method = TestExecutionService.getDeclaredMethod("waitForCompletion", Job)
+            method.accessible = true
+
+        when:
+            def result = method.invoke(service, job)
+
+        then:
+            result == TestExecutionService.Status.IDLE
+    }
+
+    def "waitForCompletion - returns ERROR on job failure"() {
+        given:
+            def fileService = Mock(FileService)
+            def client = Mock(KubernetesClient)
+            def batchAPI = Mock(BatchAPIGroupDSL)
+            def v1BatchAPI = Mock(V1BatchAPIGroupDSL)
+            def jobsOp = Mock(MixedOperation)
+            def namespacedOp = Mock(NonNamespaceOperation)
+            def jobResource = Mock(Resource)
+
+            client.batch() >> batchAPI
+            batchAPI.v1() >> v1BatchAPI
+            v1BatchAPI.jobs() >> jobsOp
+            jobsOp.inNamespace(_) >> namespacedOp
+            namespacedOp.withName("test-job") >> jobResource
+
+            def job = new Job()
+            job.metadata = new ObjectMeta(name: "test-job")
+
+            def failedJob = new Job()
+            failedJob.metadata = new ObjectMeta(name: "test-job")
+            failedJob.status = new JobStatus(failed: 1)
+            jobResource.get() >> failedJob
+
+            def service = new TestExecutionService(fileService, client) {
+                void sleep(long millis) {}
+            }
+
+            def method = TestExecutionService.getDeclaredMethod("waitForCompletion", Job)
+            method.accessible = true
+
+        when:
+            def result = method.invoke(service, job)
+
+        then:
+            result == TestExecutionService.Status.ERROR
+    }
+
+    def "waitForCompletion - returns ERROR when job not found"() {
+        given:
+            def fileService = Mock(FileService)
+            def client = Mock(KubernetesClient)
+            def batchAPI = Mock(BatchAPIGroupDSL)
+            def v1BatchAPI = Mock(V1BatchAPIGroupDSL)
+            def jobsOp = Mock(MixedOperation)
+            def namespacedOp = Mock(NonNamespaceOperation)
+            def jobResource = Mock(Resource)
+
+            client.batch() >> batchAPI
+            batchAPI.v1() >> v1BatchAPI
+            v1BatchAPI.jobs() >> jobsOp
+            jobsOp.inNamespace(_) >> namespacedOp
+            namespacedOp.withName("test-job") >> jobResource
+
+            def job = new Job()
+            job.metadata = new ObjectMeta(name: "test-job")
+
+            jobResource.get() >> null
+
+            def service = new TestExecutionService(fileService, client) {
+                void sleep(long millis) {}
+            }
+
+            def method = TestExecutionService.getDeclaredMethod("waitForCompletion", Job)
+            method.accessible = true
+
+        when:
+            def result = method.invoke(service, job)
+
+        then:
+            result == TestExecutionService.Status.ERROR
     }
 }

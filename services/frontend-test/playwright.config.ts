@@ -6,7 +6,7 @@ export default defineConfig({
     forbidOnly: !!process.env.CI,
     retries: 1,
     workers: 1,
-    reporter: "html",
+    reporter: [["junit", { outputFile: "test-results/results.xml" }], ["html"]],
     use: {
         trace: "on-first-retry",
     },

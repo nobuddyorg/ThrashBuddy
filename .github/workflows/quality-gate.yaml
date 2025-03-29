@@ -50,6 +50,7 @@ jobs:
                   filename: coverage-report/Cobertura.xml
                   badge: true
                   fail_below_min: true
+                  hide_complexity: true
                   format: markdown
                   output: both
                   thresholds: "60 80"
@@ -92,6 +93,7 @@ jobs:
                   filename: ./services/frontend/coverage/cloud-thrash/coverage.xml
                   badge: true
                   fail_below_min: true
+                  hide_complexity: true
                   format: markdown
                   output: both
                   thresholds: "60 80" # optional: warn under 80%, fail under 60%
@@ -176,7 +178,13 @@ jobs:
                   export BASE_URL="http://$INGRESS_IP/app/index.html"
                   npm ci
                   ./npmw install 
-                  ./npmw test
+                  npx playwright test
+            - name: Publish Playwright Test Results
+              uses: EnricoMi/publish-unit-test-result-action/linux@v2
+              if: always()
+              with:
+                  check_name: "Playwright UI Tests"
+                  files: ./services/frontend-test/test-results/results.xml
             - name: Archive Playwright Test Results
               uses: actions/upload-artifact@v4
               if: always()
