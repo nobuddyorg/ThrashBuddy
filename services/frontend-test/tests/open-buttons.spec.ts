@@ -1,67 +1,87 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Page, Locator } from "@playwright/test";
 import * as dotenv from "dotenv";
 import path from "path";
+import { BASE_CONFIG } from "./config";
 
 dotenv.config({ path: path.resolve(__dirname, "../../../infrastructure/helm/.env") });
 
-test("open minio and login", async ({ page }) => {
-    await page.goto("http://localhost");
-
-    const [newPage] = await Promise.all([page.waitForEvent("popup"), page.click("text=Files")]);
-
-    await newPage.waitForLoadState();
-
-    expect(newPage.url()).not.toBe("");
-
-    const usernameInput = newPage.locator("#accessKey");
-    const passwordInput = newPage.locator("#secretKey");
+async function loginToPage({
+    usernameInput,
+    passwordInput,
+    loginButton,
+}: {
+    usernameInput: Locator;
+    passwordInput: Locator;
+    loginButton: Locator;
+}) {
     await usernameInput.fill(process.env.USERNAME_TOOLS || "");
     await passwordInput.fill(process.env.PASSWORD_TOOLS || "");
-    await newPage.locator("button:has-text('Login')").click();
+    await loginButton.click();
+}
 
-    await expect(newPage.locator("text=cloud-thrash")).toBeVisible();
-});
+async function openPopup(page: Page, triggerText: string): Promise<Page> {
+    const [popup] = await Promise.all([page.waitForEvent("popup"), page.click(`text=${triggerText}`)]);
+    await popup.waitForLoadState();
+    expect(popup.url()).not.toBe("");
+    return popup;
+}
 
-test("open influxdb and login", async ({ page }) => {
-    await page.goto("http://localhost");
+test.describe("Tool dashboards login", () => {
+    test("open Minio and login", async ({ page }) => {
+        await page.goto(BASE_CONFIG.BASE_URL);
 
-    const [newPage] = await Promise.all([page.waitForEvent("popup"), page.click("text=Data")]);
+        const newPage = await openPopup(page, "Files");
 
-    await newPage.waitForLoadState();
+        await loginToPage({
+            usernameInput: newPage.locator("#accessKey"),
+            passwordInput: newPage.locator("#secretKey"),
+            loginButton: newPage.locator("button:has-text('Login')"),
+        });
 
-    expect(newPage.url()).not.toBe("");
+        await expect(newPage.locator("text=cloud-thrash")).toBeVisible();
+    });
 
-    const usernameInput = newPage.locator("#login");
-    const passwordInput = newPage.locator("#password");
-    await usernameInput.fill(process.env.USERNAME_TOOLS || "");
-    await passwordInput.fill(process.env.PASSWORD_TOOLS || "");
-    await newPage.locator("button:has-text('SIGN IN')").click();
+    test("open InfluxDB and login", async ({ page }) => {
+        await page.goto(BASE_CONFIG.BASE_URL);
 
-    await newPage.getByTestId("tree-nav-toggle").click();
-    await newPage.getByTestId("nav-item-load-data").click();
-    await newPage.locator("text=Buckets").click();
+        const newPage = await openPopup(page, "Data");
 
-    await expect(newPage.locator("text=metrics")).toBeVisible();
-    await expect(newPage.locator("text=_monitoring")).toBeVisible();
-});
+        await loginToPage({
+            usernameInput: newPage.locator("#login"),
+            passwordInput: newPage.locator("#password"),
+            loginButton: newPage.locator("button:has-text('SIGN IN')"),
+        });
 
-test("open grafana and login", async ({ page }) => {
-    await page.goto("http://localhost");
+        await newPage.getByTestId("tree-nav-toggle").click();
+        await newPage.getByTestId("nav-item-load-data").click();
+        await newPage.locator("text=Buckets").click();
 
-    const [newPage] = await Promise.all([page.waitForEvent("popup"), page.click("text=Monitoring")]);
+        await expect(newPage.locator("text=metrics")).toBeVisible();
+        await expect(newPage.locator("text=_monitoring")).toBeVisible();
+    });
 
-    await newPage.waitForLoadState();
+    test("open Grafana and login", async ({ page }) => {
+        await page.goto(BASE_CONFIG.BASE_URL);
 
-    expect(newPage.url()).not.toBe("");
+        const newPage = await openPopup(page, "Monitoring");
 
-    const usernameInput = newPage.getByTestId("data-testid Username input field");
-    const passwordInput = newPage.getByTestId("data-testid Password input field");
-    await usernameInput.fill(process.env.USERNAME_TOOLS || "");
-    await passwordInput.fill(process.env.PASSWORD_TOOLS || "");
-    await newPage.locator("button:has-text('Log in')").click();
+        await loginToPage({
+            usernameInput: newPage.getByTestId("data-testid Username input field"),
+            passwordInput: newPage.getByTestId("data-testid Password input field"),
+            loginButton: newPage.locator("button:has-text('Log in')"),
+        });
 
-    await newPage.locator("text=Dashboards").first().click();
+        await newPage.locator("text=Dashboards").first().click();
 
-    await expect(newPage.locator("text=Cluster metrics")).toBeVisible();
-    await expect(newPage.locator("text=k6 metrics")).toBeVisible();
+        await expect(newPage.locator("text=Cluster metrics")).toBeVisible();
+        await expect(newPage.locator("text=k6 metrics")).toBeVisible();
+
+        await newPage.locator("text=Cluster metrics").click();
+        await expect(newPage.locator("text=No data").first()).toBeVisible();
+
+        await newPage.goBack();
+
+        await newPage.locator("text=k6 metrics").click();
+        await expect(newPage.locator("text=No data").first()).toBeVisible();
+    });
 });

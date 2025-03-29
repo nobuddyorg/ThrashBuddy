@@ -7,11 +7,13 @@
 * nginx-ingress
 * Minio
 * InfluxDB
+* Grafana
 
 ## Internal Components
 
 * backend
 * frontend
+* k6 setup
 * configurations:
   * roles
   * services

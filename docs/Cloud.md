@@ -6,7 +6,7 @@ In AWS, we use a **Fargate-based EKS cluster** to run **CloudThrash**. This setu
 
 ## EKS with Fargate: Overview  
 
-AWS Fargate is a serverless compute engine for containers. When combined with EKS, it allows Kubernetes pods to run without managing worker nodes (VMs). Fargate automatically scales and ensures that each pod gets dedicated resources (CPU, RAM) according to the Kubernetes resource limits.  
+AWS Fargate is a serverless compute engine for containers. When combined with EKS, it allows Kubernetes pods to run without managing worker nodes (VMs). Fargate automatically scales and ensures that each pod gets dedicated resources (CPU, RAM) according to the Kubernetes resource limits. Fargate has limited storage persistence. It does not work with EBS, but might require network storage solutions like EFS. that's why currently there is no permanent storage in place. For most use cases this won't be required anyway.
 
 ---
 

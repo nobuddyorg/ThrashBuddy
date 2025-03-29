@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pushd $(dirname $0) > /dev/null
+
 ../docker/build-all.sh
 
 # Get AWS details
@@ -31,3 +33,5 @@ docker images --format "{{.Repository}}:{{.Tag}}" | grep ^cloud-thrash/ | while 
   echo "Pushing $target_image"
   docker push "$target_image"
 done
+
+popd > /dev/null
