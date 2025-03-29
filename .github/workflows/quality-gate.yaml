@@ -55,7 +55,7 @@ jobs:
             - name: Show Coverage Summary in PR
               uses: irongut/CodeCoverageSummary@v1.3.0
               with:
-                  filename: ./services/frontend/coverage/coverage.xml
+                  filename: ./services/frontend/coverage/cloud-thrash/coverage.xml
                   badge: true
                   fail_below_min: true
                   format: markdown
