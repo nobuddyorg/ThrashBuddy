@@ -2,7 +2,13 @@
 
 This guide explains how to build the Docker images for CloudThrash, set up a local Kubernetes cluster, and prepare the frontend for local development. The goal is to establish a simple and efficient development workflow.
 
----
+## Prerequisites
+
+-   AWS EksCtl
+-   Docker
+-   Bash Shell (Git Bash on Windows is sufficient)
+-   AWS credentials in your user home: `~/.aws/credentials` and `~/.aws/config`
+-   Optional: Bruno for API
 
 ## Building Docker Images
 
