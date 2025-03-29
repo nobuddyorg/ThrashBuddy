@@ -10,7 +10,7 @@ export default tseslint.config(
     ...tseslint.configs.stylisticTypeChecked,
     eslintPluginPrettierRecommended,
     {
-        ignores: ["build/", "node_modules/", "reports/", "scripts/", "coverage/"],
+        ignores: ["build/", "node_modules/", "reports/", "scripts/", "coverage/", "**/*.spec.ts"],
     },
     {
         languageOptions: {
