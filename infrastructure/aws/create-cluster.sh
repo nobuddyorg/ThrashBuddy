@@ -2,9 +2,9 @@
 
 pushd $(dirname $0) > /dev/null
 
-./push-images.sh
+. ./env.sh
 
-. ./env
+./push-images.sh
 
 eksctl create cluster \
   --name $CLUSTER_NAME \

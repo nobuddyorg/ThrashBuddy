@@ -4,6 +4,7 @@
     "main": "index.js",
     "scripts": {
         "test": "playwright test",
+        "headedTest": "playwright test --headed",
         "install": "playwright install --with-deps chromium"
     },
     "keywords": [],

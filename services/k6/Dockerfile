@@ -3,7 +3,7 @@ RUN go install go.k6.io/xk6/cmd/xk6@latest && \
     xk6 build --with github.com/grafana/xk6-output-influxdb
 
 FROM alpine:3
-RUN apk add --no-cache ca-certificates curl aws-cli
+RUN apk add --no-cache ca-certificates aws-cli
 COPY --from=builder /go/k6 /usr/local/bin/k6
 
 ENV K6_INFLUXDB_ORGANIZATION="cloud-thrash"
@@ -19,7 +19,10 @@ ENV MINIO_BUCKET=""
 WORKDIR /app
 
 COPY ./telegraf.conf /etc/telegraf/telegraf.conf
-RUN wget -q https://dl.influxdata.com/telegraf/releases/telegraf-1.34.0_linux_amd64.tar.gz && tar xf telegraf-1.34.0_linux_amd64.tar.gz && cp telegraf-1.34.0/usr/bin/telegraf /usr/bin/ && telegraf --config /etc/telegraf/telegraf.conf --test
+RUN wget -q https://dl.influxdata.com/telegraf/releases/telegraf-1.34.0_linux_amd64.tar.gz && \
+    tar xf telegraf-1.34.0_linux_amd64.tar.gz && \
+    cp telegraf-1.34.0/usr/bin/telegraf /usr/bin/ && \
+    rm -rf telegraf-1.34.0_linux_amd64.tar.gz telegraf-1.34.0
 
 COPY run-test.sh /app/run-test.sh
 RUN chmod +x /app/run-test.sh

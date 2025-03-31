@@ -2,13 +2,9 @@
 
 In AWS, we use a **Fargate-based EKS cluster** to run **CloudThrash**. This setup combines the benefits of a fully managed Kubernetes service with the flexibility of AWS Fargate for container orchestration.  
 
----
-
 ## EKS with Fargate: Overview  
 
 AWS Fargate is a serverless compute engine for containers. When combined with EKS, it allows Kubernetes pods to run without managing worker nodes (VMs). Fargate automatically scales and ensures that each pod gets dedicated resources (CPU, RAM) according to the Kubernetes resource limits. Fargate has limited storage persistence. It does not work with EBS, but might require network storage solutions like EFS. that's why currently there is no permanent storage in place. For most use cases this won't be required anyway.
-
----
 
 ## Prerequisites for EKS and Fargate  
 
@@ -23,7 +19,7 @@ AWS Fargate is a serverless compute engine for containers. When combined with EK
 3. **Install kubectl**  
    - You need `kubectl` to interact with Kubernetes. Install it.
 
----
+Best use your favorite package manager like `scoop` or `homebrew`.
 
 ## EKSCTL  
 
@@ -33,13 +29,9 @@ AWS CloudFormation is a service that allows you to define and manage AWS resourc
 
 CloudFormation offers an advantage over Terraform as it is fully integrated with AWS and does not require separate state files. This makes resource creation and deletion easier while ensuring better visibility for AWS support in case of issues.  
 
----
+### Creating a Cluster with `eksctl`  
 
-## Creating a Cluster with `eksctl`  
-
-A Fargate-based EKS cluster is created using a preconfigured script.  
-
-### Create the Cluster  
+A Fargate-based EKS cluster is created using a preconfigured script.   
 
 ```shell
 ./infrastructure/aws/create-cluster.sh
@@ -54,15 +46,18 @@ Once the cluster is created, the local Kubernetes context is switched accordingl
 
 ### Delete the Cluster  
   
-   ```shell
-   ./infrastructure/aws/delete-cluster.sh
-   ```  
+```shell
+./infrastructure/aws/delete-cluster.sh
+```  
 
-After deletion, the local Kubernetes context is restored.  
+After deletion, the local Kubernetes context is restored. 
+If you also want to get rid of the ECR repository and local docker images, you can run:
 
----
+```shell
+./infrastructure/aws/cleanup.sh
+```
 
-## Pushing Docker Images to ECR  
+### Pushing Docker Images to ECR  
 
 AWS EKS requires Docker images to be uploaded to Amazon Elastic Container Registry (ECR). A preconfigured script is available for this:  
 
@@ -70,9 +65,8 @@ AWS EKS requires Docker images to be uploaded to Amazon Elastic Container Regist
 ./infrastructure/aws/push-images.sh
 ```  
 
-This script is automatically executed during cluster creation via `create-cluster.sh`. However, it can also be run later to update Docker images.  
-
-### Steps:  
+This script is automatically executed during cluster creation via `create-cluster.sh`. However, it can also be run later to update Docker images. The script runs: 
+ 
 1. **Authenticate with ECR:**  
    The script handles authentication automatically.  
 2. **Build images:**  
@@ -80,11 +74,9 @@ This script is automatically executed during cluster creation via `create-cluste
 3. **Push images:**  
    The images are uploaded to ECR so they can be used within the EKS cluster.  
 
----
+## Accessing CloudThrash  
 
-### Accessing CloudThrash  
-
-After installation, **CloudThrash** is accessible via a Kubernetes tunnel at `http://localhost:80`. Currently, there is no public internet endpoint. However, even the tunnel is **TLS encrypted**, making it sufficient for development purposes. 
+After cluster creation, **CloudThrash** is accessible via a Kubernetes tunnel at `http://localhost:80`. Currently, there is no public internet endpoint. However, even the tunnel is **TLS encrypted**, making it sufficient for development purposes. 
 
 If your Kubernetes context switched in the meantime, you can reconnect to the EKS cluster again by running:
 
@@ -93,8 +85,6 @@ If your Kubernetes context switched in the meantime, you can reconnect to the EK
 ```
 
 This will also establish the secure tunnel again, to make the Web-UI accessible in your browser.
-
----
 
 ## AWS Configuration Notes  
 
@@ -105,5 +95,5 @@ Example using environment variables:
 ```shell
 export AWS_ACCESS_KEY_ID=<your-access-key>
 export AWS_SECRET_ACCESS_KEY=<your-secret-key>
-export AWS_REGION=<region>
+export AWS_DEFAULT_REGION=<region>
 ```  

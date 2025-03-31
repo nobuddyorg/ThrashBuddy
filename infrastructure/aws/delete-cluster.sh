@@ -2,7 +2,7 @@
 
 pushd $(dirname $0) > /dev/null
 
-. ./env
+. ./env.sh
 
 ./connect.sh
 ../helm/uninstall.sh

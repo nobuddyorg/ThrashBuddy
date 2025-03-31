@@ -8,6 +8,7 @@ export default defineConfig({
     workers: 1,
     reporter: [["junit", { outputFile: "test-results/results.xml" }], ["html"]],
     use: {
+        timeout: 10_000,
         trace: "on-first-retry",
     },
 

@@ -5,10 +5,10 @@ pushd $(dirname $0) > /dev/null
 ../docker/build-all.sh
 
 # Get AWS details
-. ./env
+. ./env.sh
 
 # Login to ECR
-aws sts get-caller-identity --query Account --output text
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
 
 # Push all images starting with cloud-thrash/ into separate repositories

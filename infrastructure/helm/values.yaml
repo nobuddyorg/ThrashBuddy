@@ -60,3 +60,6 @@ ingress:
       pathType: Prefix
       serviceName: backend
       servicePort: 8080
+
+global:
+  imageRepoPrefix: ""

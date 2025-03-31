@@ -12,7 +12,7 @@ import { AppComponent } from "../../app.component";
     imports: [NgxDropzoneModule, CommonModule, MatIconModule],
 })
 export class DropzoneComponent {
-    private baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/api`;
+    private baseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port === "4200" ? ":8080" : `:${window.location.port}`}/api`;
     private appComponent = inject(AppComponent);
     files: { file: File }[] = [];
 

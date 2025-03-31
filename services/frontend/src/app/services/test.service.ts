@@ -26,7 +26,7 @@ export interface StatusResponse {
 
 @Injectable({ providedIn: "root" })
 export class TestService {
-    private baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/api`;
+    private baseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port === "4200" ? ":8080" : `:${window.location.port}`}/api`;
 
     constructor(private http: HttpClient) {}
 

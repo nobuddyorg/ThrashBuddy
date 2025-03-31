@@ -21,7 +21,7 @@ spec:
       serviceAccountName: cloudthrash-runner-sa
       containers:
         - name: {{ $deployment.name }}
-          image: "{{ $deployment.image }}"
+          image: "{{ $.Values.global.imageRepoPrefix }}{{ $deployment.image }}"
           imagePullPolicy: IfNotPresent
           readinessProbe:
             tcpSocket:
@@ -38,15 +38,17 @@ spec:
               memory: {{ $deployment.resources.limits.memory | quote }}
               ephemeral-storage: {{ $deployment.resources.limits.ephemeralStorage | quote }}
           env:
-            - name: K6_INFLUXDB_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: cloudthrash-secrets
-                  key: INFLUXDB_API_TOKEN
-            {{- if $deployment.env }}
-            {{- range $key, $value := $deployment.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
-            {{- end }}
+          - name: IMAGE_REPO_PREFIX
+            value: "{{ $.Values.global.imageRepoPrefix }}"
+          - name: K6_INFLUXDB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: cloudthrash-secrets
+                key: INFLUXDB_API_TOKEN
+          {{- if $deployment.env }}
+          {{- range $key, $value := $deployment.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          {{- end }}
 {{- end }}
