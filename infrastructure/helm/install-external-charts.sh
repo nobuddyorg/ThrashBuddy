@@ -19,7 +19,11 @@ helm upgrade --install ingress-nginx ingress-nginx-repo/ingress-nginx \
   --set controller.service.type=LoadBalancer \
   --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-type"="external"
 
-sleep 10
+echo "Waiting for ingress-nginx controller pod..."
+kubectl wait --namespace default \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/component=controller \
+  --timeout=90s
 
 echo "(Re-)Installing minio..."
 helm repo add minio https://charts.min.io/
@@ -34,11 +38,16 @@ helm upgrade --install minio minio/minio \
   --set mode=standalone \
   --set rootUser=$USERNAME_TOOLS,rootPassword=$PASSWORD_TOOLS \
   --set service.type=ClusterIP \
-  --set consoleService.type=NodePort \
-  --set consoleService.nodePort=32001 \
   --set buckets[0].name=cloud-thrash,buckets[0].policy=none,buckets[0].purge=false \
   --set podDisruptionBudget.enabled=true \
-  --set podDisruptionBudget.minAvailable=1
+  --set podDisruptionBudget.minAvailable=1 \
+  --set consoleIngress.enabled=true \
+  --set consoleIngress.hosts[0]=minio.localhost \
+  --set consoleIngress.ingressClassName=nginx \
+  --set "consoleIngress.path='/'" \
+  --set consoleIngress.pathType=Prefix
+kubectl patch ingress minio-console -p '{"spec":{"ingressClassName":"nginx"}}'
+
 
 echo "(Re-)Installing InfluxDB..."
 helm repo add influxdata https://helm.influxdata.com/
@@ -54,8 +63,12 @@ helm upgrade --install influxdb influxdata/influxdb2 \
   --set adminUser.user=$USERNAME_TOOLS \
   --set adminUser.password=$PASSWORD_TOOLS \
   --set adminUser.token=$INFLUXDB_API_TOKEN \
-  --set service.type=NodePort \
-  --set service.nodePort=32002
+  --set ingress.enabled=true \
+  --set ingress.hostname=influx.localhost \
+  --set "ingress.path='/'" \
+  --set ingress.pathType=Prefix \
+  --set ingress.ingressClassName=nginx
+kubectl patch ingress influxdb-influxdb2 -p '{"spec":{"ingressClassName":"nginx"}}'
 
 echo "(Re-)Installing Grafana..."
 helm repo add grafana https://grafana.github.io/helm-charts
@@ -69,6 +82,12 @@ helm upgrade --install grafana grafana/grafana \
   --set resources.requests.memory=256Mi \
   --set resources.limits.cpu=200m \
   --set resources.limits.memory=256Mi \
+  --set ingress.enabled=true \
+  --set ingress.ingressClassName=nginx \
+  --set ingress.hosts[0]=grafana.localhost \
+  --set "ingress.path='/'" \
+  --set ingress.pathType=Prefix \
   --values grafana-values.yaml
+kubectl patch ingress grafana -p '{"spec":{"ingressClassName":"nginx"}}'
 
 popd > /dev/null

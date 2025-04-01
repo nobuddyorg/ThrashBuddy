@@ -121,6 +121,7 @@ test("open Grafana and login", async ({ page }) => {
     await newPage.locator("button:has-text('Log in')").click();
 
     await newPage.locator("text=Dashboards").first().click();
+    await newPage.locator("text=Dashboards").first().click();
 
     await expect(newPage.locator("text=Cluster metrics")).toBeVisible();
     await expect(newPage.locator("text=k6 metrics")).toBeVisible();

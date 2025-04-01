@@ -72,6 +72,7 @@ test.describe("Tool dashboards login", () => {
         });
 
         await newPage.locator("text=Dashboards").first().click();
+        await newPage.locator("text=Dashboards").first().click();
 
         await expect(newPage.locator("text=Cluster metrics")).toBeVisible();
         await expect(newPage.locator("text=k6 metrics")).toBeVisible();

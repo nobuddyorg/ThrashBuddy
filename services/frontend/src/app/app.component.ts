@@ -176,19 +176,19 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     openFiles() {
-        this.openExternal(32001);
+        this.openExternal("minio");
     }
 
     openMonitoring() {
-        this.openExternal(32000);
+        this.openExternal("grafana");
     }
 
     openData() {
-        this.openExternal(32002);
+        this.openExternal("influx");
     }
 
-    private openExternal(port: number) {
-        const url = `${window.location.protocol}//${window.location.hostname}:${String(port)}/`;
+    private openExternal(sub: string) {
+        const url = `${window.location.protocol}//${sub}.${window.location.hostname}:${window.location.port}/`;
         window.open(url, "_blank");
     }
 
