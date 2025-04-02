@@ -3,6 +3,7 @@
 set -e
 
 pushd $(dirname $0) > /dev/null
+../helm/check-env.sh
 . ../helm/.env
 
 pushd ../../ > /dev/null

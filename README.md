@@ -23,6 +23,11 @@ By adopting this approach, teams can validate performance early and often in the
 
 <img src="docs/images/screenshot.png" alt="Screenshot" width="500" />
 
+## Getting Started
+
+To get started with CloudThrash, see the [Getting Started Guide](docs/getting-started.md) and [Architecture Overview](docs/architecture.md).
+Entrypoint is anyway `./cloud-thrash.sh`, so feel free calling it to get a usage message.
+
 ## Performance Testing
 
 **Performance testing** is a type of [non-functional testing](https://en.wikipedia.org/wiki/Non-functional_testing) that evaluates how a system behaves under expected or extreme workloads. It helps identify bottlenecks, ensures reliability, and verifies that your application meets key performance requirements before it reaches end users.
@@ -50,10 +55,6 @@ As systems grow more complex and distributed, running tests from a single machin
 The image below shows the used tools of this project:
 
 ![](docs/images/technology-map.drawio.png)
-
-## Getting Started
-
-To get started with CloudThrash, see the [Getting Started Guide](docs/getting-started.md) and [Architecture Overview](docs/architecture.md).
 
 ## Contributing
 

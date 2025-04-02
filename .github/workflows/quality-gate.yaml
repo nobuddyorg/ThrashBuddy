@@ -155,7 +155,7 @@ jobs:
 
             - name: Build Docker Images
               run: |
-                  infrastructure/docker/build-all.sh
+                  ./cloud-thrash.sh docker build-all
                   docker images
 
             - name: Set up Kubernetes with Minikube

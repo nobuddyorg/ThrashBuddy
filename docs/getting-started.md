@@ -37,12 +37,12 @@ The Docker images are built using predefined scripts in the project directory. T
 
 #### Steps to Build Images
 
-1. Start Docker Desktop (with Kubernetes enabled).
+1. Start Docker Desktop.
 2. Open a **Bash shell**.
 3. Navigate to the project root directory.
 4. Run the following script to build all images at once:
    ```shell
-   ./infrastructure/docker/build-all.sh
+   ./cloud-thrash docker build-all
    ```
 5. Verify the created images with:
    ```shell
@@ -55,11 +55,7 @@ A Kubernetes cluster is required to run CloudThrash. For local development, Dock
 
 ### Prerequisites
 
-- **Enable Kubernetes in Docker Desktop**:
-  Go to Docker Desktop: `Settings -> Kubernetes` and enable Kubernetes.
-
-- **Provide Secrets**:
-   Create a `infrastructure/helm/.env` file containing `USERNAME_TOOLS`, `PASSWORD_TOOLS` and `INFLUXDB_API_TOKEN` of your choice.
+**Enable Kubernetes in Docker Desktop**: Go to Docker Desktop: `Settings -> Kubernetes` and enable Kubernetes.
 
 ### Starting the Cluster
 
@@ -69,7 +65,7 @@ A Kubernetes cluster is required to run CloudThrash. For local development, Dock
 2. **install into Kubernetes cluster:**
    Run the following script to start the cluster:
    ```shell
-   ./infrastructure/helm/install.sh
+   ./cloud-thrash helm install
    ```
 
 ## Resetting or Stopping the Kubernetes Cluster
@@ -137,7 +133,7 @@ Running tests in the actual cluster environment ensures that all dependencies ar
 
 ### API Tests
 
-With `Bruno` the API can be tested manually. It is not integrated in an automated way. The bruno files were used for developing the API. But API- and E2E-Tests would be almost identical, I decided against API-Test automation.
+With `Bruno` the API can be tested manually. It is not integrated in an automated way. The Bruno files were used for developing the API. But API- and E2E-Tests would be almost identical, I decided against API-Test automation.
 
 ### End-to-End Tests  
 

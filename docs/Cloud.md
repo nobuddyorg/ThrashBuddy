@@ -4,7 +4,7 @@ In AWS, we use a **Fargate-based EKS cluster** to run **CloudThrash**. This setu
 
 ## EKS with Fargate: Overview  
 
-AWS Fargate is a serverless compute engine for containers. When combined with EKS, it allows Kubernetes pods to run without managing worker nodes (VMs). Fargate automatically scales and ensures that each pod gets dedicated resources (CPU, RAM) according to the Kubernetes resource limits. Fargate has limited storage persistence. It does not work with EBS, but might require network storage solutions like EFS. that's why currently there is no permanent storage in place. For most use cases this won't be required anyway.
+AWS Fargate is a serverless compute engine for containers. When combined with EKS, it allows Kubernetes pods to run without managing worker nodes. Fargate automatically scales and ensures that each pod gets dedicated resources (CPU, RAM) according to the Kubernetes resource limits. Fargate has limited storage persistence. It does not work with EBS, but might require network storage solutions like EFS. that's why currently there is no permanent storage in place. For most use cases this won't be required anyway.
 
 ## Prerequisites for EKS and Fargate  
 
@@ -34,27 +34,28 @@ CloudFormation offers an advantage over Terraform as it is fully integrated with
 A Fargate-based EKS cluster is created using a preconfigured script.   
 
 ```shell
-./infrastructure/aws/create-cluster.sh
+./cloud-thrash.sh aws create-cluster
 ```  
 
 This script sets up:  
 - The EKS control plane.  
 - Networking resources such as VPCs, subnets, and security groups.  
-- A Fargate profile that is automatically used for running pods.  
+- A Fargate profile that is automatically used for running pods.
+- A node group for EC2 instances as well: the ingress runs there for public access  
 
 Once the cluster is created, the local Kubernetes context is switched accordingly. Even if a local Kubernetes cluster is running, `kubectl` will now connect to the AWS EKS cluster without requiring additional configuration. Running `kubectl get pods` will list all active pods in the EKS cluster, but no longer the local ones. This remains the case until the context is manually changed or the EKS cluster is deleted.  
 
 ### Delete the Cluster  
   
 ```shell
-./infrastructure/aws/delete-cluster.sh
+./cloud-thrash aws delete-cluster
 ```  
 
 After deletion, the local Kubernetes context is restored. 
 If you also want to get rid of the ECR repository and local docker images, you can run:
 
 ```shell
-./infrastructure/aws/cleanup.sh
+./cloud-thrash aws cleanup
 ```
 
 ### Pushing Docker Images to ECR  
@@ -62,10 +63,10 @@ If you also want to get rid of the ECR repository and local docker images, you c
 AWS EKS requires Docker images to be uploaded to Amazon Elastic Container Registry (ECR). A preconfigured script is available for this:  
 
 ```shell
-./infrastructure/aws/push-images.sh
+./cloud-thrash aws push-images
 ```  
 
-This script is automatically executed during cluster creation via `create-cluster.sh`. However, it can also be run later to update Docker images. The script runs: 
+This script is automatically executed during cluster creation via `create-cluster`. However, it can also be run later to update Docker images. The script runs: 
  
 1. **Authenticate with ECR:**  
    The script handles authentication automatically.  
@@ -76,15 +77,13 @@ This script is automatically executed during cluster creation via `create-cluste
 
 ## Accessing CloudThrash  
 
-After cluster creation, **CloudThrash** is accessible via a Kubernetes tunnel at `http://localhost:80`. Currently, there is no public internet endpoint. However, even the tunnel is **TLS encrypted**, making it sufficient for development purposes. 
+After cluster creation, **CloudThrash** is accessible via its ingress IP, printed in the console log after creation has finished.
 
 If your Kubernetes context switched in the meantime, you can reconnect to the EKS cluster again by running:
 
 ```shell
-./infrastructure/aws/connect.sh
+./cloud-thrash aws connect
 ```
-
-This will also establish the secure tunnel again, to make the Web-UI accessible in your browser.
 
 ## AWS Configuration Notes  
 

@@ -11,6 +11,7 @@ for arg in "$@"; do
   fi
 done
 
+./check-env.sh
 . ./.env
 
 echo "(Re-)Installing ingress-nginx..."
