@@ -51,6 +51,7 @@ services:
 ingress:
   enabled: true
   className: nginx
+  host: ""
   rules:
     - path: /
       pathType: Prefix

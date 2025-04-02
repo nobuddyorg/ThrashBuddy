@@ -1,0 +1,22 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: cloud-thrash-stage
+  region: us-east-1
+
+nodeGroups:
+  - name: ingress-nginx-ec2
+    instanceType: t3.small
+    desiredCapacity: 1
+    minSize: 1
+    maxSize: 2
+    volumeSize: 20
+    labels:
+      dedicated: ingress
+    tags:
+      Name: ingress-nginx-ec2
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+    availabilityZones: ["us-east-1a"]

@@ -2,6 +2,20 @@
 
 pushd $(dirname $0) > /dev/null
 
-helm uninstall ingress-nginx minio influxdb grafana cloud-thrash
+# Parse arguments
+IS_REMOTE=false
+for arg in "$@"; do
+  if [ "$arg" = "-remote" ]; then
+    IS_REMOTE=true
+  fi
+done
+
+if [ "$IS_REMOTE" = true ]; then
+  helm uninstall ingress-nginx -n ingress-ec2
+else
+  helm uninstall ingress-nginx
+fi
+
+helm uninstall minio influxdb grafana cloud-thrash
 
 popd > /dev/null
