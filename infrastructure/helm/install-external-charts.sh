@@ -22,10 +22,10 @@ if [ "$IS_REMOTE" = true ]; then
   helm upgrade --install ingress-nginx ingress-nginx-repo/ingress-nginx \
     --namespace ingress-ec2 \
     --create-namespace \
-    --set controller.resources.requests.cpu=200m \
-    --set controller.resources.requests.memory=192Mi \
-    --set controller.resources.limits.cpu=200m \
-    --set controller.resources.limits.memory=192Mi \
+    --set controller.resources.requests.cpu=1200m \
+    --set controller.resources.requests.memory=1200Mi \
+    --set controller.resources.limits.cpu=1200m \
+    --set controller.resources.limits.memory=1200Mi \
     --set controller.replicaCount=1 \
     --set controller.podDisruptionBudget.enabled=true \
     --set controller.podDisruptionBudget.minAvailable=1 \
