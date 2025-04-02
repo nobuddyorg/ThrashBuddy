@@ -191,21 +191,21 @@ describe("AppComponent", () => {
             const { componentInstance } = TestBed.createComponent(AppComponent);
             spyOn(window, "open");
             componentInstance.openFiles();
-            expect(window.open).toHaveBeenCalledWith(jasmine.stringMatching(/32001/), "_blank");
+            expect(window.open).toHaveBeenCalledWith(jasmine.stringMatching(/minio/), "_blank");
         });
 
         it("should open correct URL for openMonitoring", () => {
             const { componentInstance } = TestBed.createComponent(AppComponent);
             spyOn(window, "open");
             componentInstance.openMonitoring();
-            expect(window.open).toHaveBeenCalledWith(jasmine.stringMatching(/32000/), "_blank");
+            expect(window.open).toHaveBeenCalledWith(jasmine.stringMatching(/grafana/), "_blank");
         });
 
         it("should open correct URL for openData", () => {
             const { componentInstance } = TestBed.createComponent(AppComponent);
             spyOn(window, "open");
             componentInstance.openData();
-            expect(window.open).toHaveBeenCalledWith(jasmine.stringMatching(/32002/), "_blank");
+            expect(window.open).toHaveBeenCalledWith(jasmine.stringMatching(/influx/), "_blank");
         });
     });
 
