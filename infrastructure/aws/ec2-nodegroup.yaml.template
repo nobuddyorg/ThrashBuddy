@@ -3,14 +3,14 @@ kind: ClusterConfig
 
 metadata:
   name: cloud-thrash-stage
-  region: us-east-1
+  region: $AWS_DEFAULT_REGION
 
 nodeGroups:
   - name: ingress-nginx-ec2
     instanceType: t3.small
     desiredCapacity: 1
     minSize: 1
-    maxSize: 2
+    maxSize: 1
     volumeSize: 20
     labels:
       dedicated: ingress
@@ -19,4 +19,6 @@ nodeGroups:
     iam:
       withAddonPolicies:
         autoScaler: true
-    availabilityZones: ["us-east-1a"]
+    availabilityZones:
+      - $AZ
+      

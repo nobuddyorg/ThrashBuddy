@@ -14,6 +14,12 @@ eksctl create cluster \
 
 eksctl update addon --name coredns --version v1.11.4-eksbuild.2 --cluster $CLUSTER_NAME --force
 
+AZ=$(aws ec2 describe-subnets --region us-east-1 \
+    --filters "Name=tag:alpha.eksctl.io/cluster-name,Values=cloud-thrash-stage" \
+    --query "Subnets[*].AvailabilityZone" --output json | jq -r 'unique | .[0]')
+cp ec2-nodegroup.yaml.template ec2-nodegroup.yaml
+sed -i "s|\$AZ|$AZ|g" ec2-nodegroup.yaml
+sed -i "s|\$AWS_DEFAULT_REGION|$AWS_DEFAULT_REGION|g" ec2-nodegroup.yaml
 eksctl create nodegroup -f ec2-nodegroup.yaml
 
 VPC_ID=$(aws ec2 describe-vpcs --query "Vpcs[0].VpcId" --output text --region $AWS_DEFAULT_REGION)
