@@ -57,10 +57,10 @@ if [ "$IS_REMOTE" = true ]; then
   SUFFIX=":30080"
 fi
 
-echo "✅ All components installed. Access URLs:"
-echo "🔹 App:      http://${PUBLIC_IP}${SUFFIX}"
-echo "🔹 Grafana:  http://grafana.${PUBLIC_IP}${SUFFIX}"
-echo "🔹 MinIO:    http://minio.${PUBLIC_IP}${SUFFIX}"
-echo "🔹 InfluxDB: http://influx.${PUBLIC_IP}${SUFFIX}"
+echo -e "\e[1m✅ All components installed. Access URLs:\e[0m"
+echo -e "\e[36m🔹 App:      http://${PUBLIC_IP}${SUFFIX}\e[0m"
+echo -e "\e[33m🔹 Grafana:  http://grafana.${PUBLIC_IP}${SUFFIX}\e[0m"
+echo -e "\e[35m🔹 MinIO:    http://minio.${PUBLIC_IP}${SUFFIX}\e[0m"
+echo -e "\e[34m🔹 InfluxDB: http://influx.${PUBLIC_IP}${SUFFIX}\e[0m"
 
 popd > /dev/null
