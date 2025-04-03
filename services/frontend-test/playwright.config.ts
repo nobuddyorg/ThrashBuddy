@@ -9,7 +9,8 @@ export default defineConfig({
     reporter: [["junit", { outputFile: "test-results/results.xml" }], ["html"]],
     use: {
         timeout: 10_000,
-        trace: "on-first-retry",
+        trace: "retain-on-failure",
+        screenshot: "only-on-failure",
     },
 
     projects: [

@@ -20,7 +20,7 @@ CloudThrash consists of multiple containerized services running in a Kubernetes 
    - Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop). Docker Desktop includes an easy-to-use Kubernetes integration for local development. Activate the Kubernetes support in the Docker Desktop settings.
 
 2. **Additional Dependencies**
-   - Install Helm, Visual Studio Code, and other required tools with the following command:
+   - Install Helm, Visual Studio Code, and other required tools with your favorite package manager (like scoop, homebrew or apt):
      ```shell
      scoop install helm vscode eksctl aws
      ```

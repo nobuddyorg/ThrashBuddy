@@ -27,7 +27,7 @@ for SG_ID in $SECURITY_GROUP_IDS; do
     --protocol tcp \
     --port 30080 \
     --cidr 0.0.0.0/0 \
-    --region $AWS_DEFAULT_REGION || echo "Rule might already exist for $SG_ID"
+    --region $AWS_DEFAULT_REGION || echo "Rule for port 30080 might already exist for $SG_ID"
 done
 
 ../helm/install.sh -remote

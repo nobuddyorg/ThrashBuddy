@@ -28,6 +28,27 @@ By adopting this approach, teams can validate performance early and often in the
 To get started with CloudThrash, see the [Getting Started Guide](docs/getting-started.md) and [Architecture Overview](docs/architecture.md).
 Entrypoint is anyway `./cloud-thrash.sh`, so feel free calling it to get a usage message.
 
+```shell
+Usage: ./cloud-thrash.sh <command-group> <command> [options]
+
+Available command groups:
+
+  aws:
+    connect             - Establish a connection to AWS EKS cluster (if created).
+    cleanup             - Remove persistent resources from AWS (mainly S3 buckets and contents).
+    create-cluster      - Create a new AWS cluster.
+    delete-cluster      - Delete an existing AWS cluster.
+    push-images         - Push Docker images to an AWS container registry (implicitly done with create-cluster).
+
+  docker:
+    build-all           - Build all Docker images required for the project (implicitly done with create-cluster).
+
+  helm:
+    install [-remote]   - Install all Helm charts, including cloud-thrash itself (local or remote cluster).
+    uninstall [-remote] - Uninstall all Helm charts (local or remote cluster).
+    update [-remote]    - Update the Helm chart locally or remotely if '-remote' is specified (local or remote cluster).
+```
+
 ## Performance Testing
 
 **Performance testing** is a type of [non-functional testing](https://en.wikipedia.org/wiki/Non-functional_testing) that evaluates how a system behaves under expected or extreme workloads. It helps identify bottlenecks, ensures reliability, and verifies that your application meets key performance requirements before it reaches end users.
