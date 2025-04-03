@@ -50,6 +50,7 @@ services:
 
 ingress:
   enabled: true
+  basicauth: true
   className: nginx
   host: ""
   rules:

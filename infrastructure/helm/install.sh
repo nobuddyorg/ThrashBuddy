@@ -19,6 +19,10 @@ echo "Setting up AWS credentials..."
 kubectl delete secret cloudthrash-secrets || true
 kubectl create secret generic cloudthrash-secrets --from-env-file=.env
 
+kubectl delete secret basic-auth || true
+printf "$USERNAME_TOOLS:$(openssl passwd -apr1 $PASSWORD_TOOLS)\n" > .auth
+kubectl create secret generic basic-auth --from-file=auth=.auth
+
 if [ "$IS_REMOTE" = true ]; then
   IMAGE_REPO_PREFIX="533267369548.dkr.ecr.us-east-1.amazonaws.com/"
   ./install-external-charts.sh -remote
@@ -35,7 +39,8 @@ helm upgrade --install cloud-thrash . \
   --set deployments.backend.env.MINIO_ACCESS_KEY="$USERNAME_TOOLS" \
   --set deployments.backend.env.MINIO_SECRET_KEY="$PASSWORD_TOOLS" \
   --set global.imageRepoPrefix="$IMAGE_REPO_PREFIX" \
-  --set ingress.host=${PUBLIC_IP}
+  --set ingress.host="${PUBLIC_IP}" \
+  ${IS_REMOTE:+--set ingress.basicauth=true}
 
 echo "integration test running..."
 kubectl get pods -n default --no-headers | grep -vE 'test-' | awk '{print $1}' | \
