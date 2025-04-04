@@ -24,7 +24,9 @@ printf "$USERNAME_TOOLS:$(openssl passwd -apr1 $PASSWORD_TOOLS)\n" > .auth
 kubectl create secret generic basic-auth --from-file=auth=.auth
 
 if [ "$IS_REMOTE" = true ]; then
-  IMAGE_REPO_PREFIX="533267369548.dkr.ecr.us-east-1.amazonaws.com/"
+  . ../aws/env.sh
+  AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+  IMAGE_REPO_PREFIX="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
   ./install-external-charts.sh -remote
   . ./ip.sh
   PUBLIC_IP=${PUBLIC_IP}.nip.io

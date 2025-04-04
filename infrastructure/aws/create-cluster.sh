@@ -14,20 +14,19 @@ eksctl create cluster \
 
 eksctl update addon --name coredns --version v1.11.4-eksbuild.2 --cluster $CLUSTER_NAME --force
 
-AZ=$(aws ec2 describe-subnets --region us-east-1 \
-    --filters "Name=tag:alpha.eksctl.io/cluster-name,Values=cloud-thrash-stage" \
+AZ=$(aws ec2 describe-subnets --region $AWS_DEFAULT_REGION \
+    --filters "Name=tag:alpha.eksctl.io/cluster-name,Values=$CLUSTER_NAME" \
     --query "Subnets[*].AvailabilityZone" --output json | jq -r 'unique | .[0]')
 cp ec2-nodegroup.yaml.template ec2-nodegroup.yaml
 sed -i "s|\$AZ|$AZ|g" ec2-nodegroup.yaml
 sed -i "s|\$AWS_DEFAULT_REGION|$AWS_DEFAULT_REGION|g" ec2-nodegroup.yaml
 eksctl create nodegroup -f ec2-nodegroup.yaml
 
-VPC_ID=$(aws ec2 describe-vpcs --query "Vpcs[0].VpcId" --output text --region $AWS_DEFAULT_REGION)
-SUBNET_IDS=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" --query "Subnets[*].SubnetId" --output text --region $AWS_DEFAULT_REGION)
-SUBNET_IDS_LIST=$(echo $SUBNET_IDS | tr ' ' ',')
-SECURITY_GROUP_IDS=$(aws ec2 describe-network-interfaces --filters "Name=subnet-id,Values=$SUBNET_IDS_LIST" --query "NetworkInterfaces[*].Groups[*].GroupId" --output text --region $AWS_DEFAULT_REGION | tr '\t' '\n' | sort -u)
+SECURITY_GROUP_IDS=$(aws ec2 describe-security-groups \
+  --region $AWS_DEFAULT_REGION \
+  --query "SecurityGroups[?Tags[?Key=='eksctl.cluster.k8s.io/v1alpha1/cluster-name' && Value=='$CLUSTER_NAME'] && Tags[?Key=='alpha.eksctl.io/nodegroup-name' && Value=='ingress-nginx-ec2']].GroupId" \
+  --output text)
 for SG_ID in $SECURITY_GROUP_IDS; do
-  echo "Authorizing security group ingress for $SG_ID on port 30080..."
   aws ec2 authorize-security-group-ingress \
     --group-id $SG_ID \
     --protocol tcp \
