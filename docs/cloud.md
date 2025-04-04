@@ -29,7 +29,7 @@ Best use your favorite package manager like `scoop` or `homebrew`.
 
 AWS CloudFormation is a service that allows you to define and manage AWS resources like VPCs, subnets, security groups, IAM roles, and more in a structured YAML or JSON file. This declarative approach ensures seamless deployment, scaling, and management of infrastructure.
 
-CloudFormation offers an advantage over Terraform as it is fully integrated with AWS and does not require separate state files. This makes resource creation and deletion easier while ensuring better visibility for AWS support in case of issues.  
+CloudFormation offers an advantage over Terraform as it is fully integrated with AWS and does not require separate state files. This makes resource creation and deletion easier while ensuring better visibility for AWS support in case of issues. It may create a vendor-lock, but the rest of the application runs within Kubernetes, it shouldn't be a big issue. 
 
 ### Creating a Cluster with `eksctl`  
 

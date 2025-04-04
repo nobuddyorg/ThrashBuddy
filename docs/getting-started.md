@@ -22,11 +22,11 @@ CloudThrash consists of multiple containerized services running in a Kubernetes 
 2. **Additional Dependencies**
    - Install Helm, Visual Studio Code, and other required tools with your favorite package manager (like scoop, homebrew or apt):
      ```shell
-     scoop install helm vscode eksctl aws
+     scoop install helm vscode eksctl aws kubectl bruno
      ```
      or
      ```shell
-     sudo apt update && sudo apt install -y helm code eksctl awscli
+     sudo apt update && sudo apt install -y helm code eksctl awscli kubectl
      ```
 
      Both the frontend and backend come with their own package managers and their wrappers `npmw` and `gradlew`. They will install themselves and their dependencies.
@@ -94,7 +94,7 @@ To test frontend and backend changes without rebuilding Docker images, you can r
    cd services/frontend
    ng serve --open
    ```
-   A browser should open automatically, and the frontend will be ready. It will connect to the backend running in the Kubernetes cluster.
+   A browser should open automatically, and the frontend will be ready.
 
 Backend and frontend should be connected automatically. This setup is a bit limited though, as Minio, InfluxDB and Grafana are not started. 
 
