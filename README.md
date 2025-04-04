@@ -8,7 +8,7 @@
 
 ## Overview
 
-CloudThrash is a scalable, cloud-native framework for **distributed performance testing** using [k6](https://k6.io), backed by **InfluxDB** for metrics storage and **Grafana** for real-time visualization. It’s designed to run in a containerized environment with **Docker**, and leverages **[AWS EKS](https://aws.amazon.com/eks/)** (Elastic Kubernetes Service) to orchestrate distributed test execution across multiple pods.
+CloudThrash is a scalable, cloud-native framework for **distributed performance testing** using [k6](https://k6.io), backed by **InfluxDB** for metrics storage and **Grafana** for real-time visualization. It’s designed to run in a containerized environment with **Docker**, and leverages **[AWS EKS](https://aws.amazon.com/eks/)** (Elastic Kubernetes Service) to orchestrate distributed test execution across multiple pods. Of course it can easily be used in other clusters as well, due to the simple Helm installation.
 
 The infrastructure is provisioned and managed using **[eksctl](https://eksctl.io/)**, embracing an **Infrastructure as Code (IaC)** approach to ensure reproducibility, scalability, and easy deployment.
 
