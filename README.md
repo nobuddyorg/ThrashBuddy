@@ -49,6 +49,7 @@ Available command groups:
 
   docker:
     build-all           - Build all Docker images required for the project (implicitly done with create-cluster).
+    build-<image>       - Build a specific Docker image (e.g., backend, frontend, k6).
 
   helm:
     install [-remote]   - Install all Helm charts, including cloud-thrash itself (local or remote cluster).
