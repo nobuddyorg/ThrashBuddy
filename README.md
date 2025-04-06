@@ -35,7 +35,7 @@ The image below shows the used tools of this project:
 To get started with CloudThrash, see the [Getting Started Guide](docs/getting-started.md) and [Architecture Overview](docs/architecture.md).
 Entrypoint is anyway `./cloud-thrash.sh`, so feel free calling it to get a usage message.
 
-```shell
+```plaintext
 Usage: ./cloud-thrash.sh <command-group> <command> [options]
 
 Available command groups:
