@@ -1,3 +1,3 @@
 export const BASE_CONFIG = {
-    BASE_URL: "http://localhost",
+    BASE_URL: process.env.BASE_URL || "http://localhost",
 };
