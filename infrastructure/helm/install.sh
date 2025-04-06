@@ -33,7 +33,7 @@ if [ "$IS_REMOTE" = true ]; then
 else
   IMAGE_REPO_PREFIX=""
   ./install-external-charts.sh
-  PUBLIC_IP=localhost
+  PUBLIC_IP=localhost:8080
 fi
 
 helm upgrade --install cloud-thrash . \
