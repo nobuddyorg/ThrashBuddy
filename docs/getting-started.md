@@ -68,6 +68,16 @@ A Kubernetes cluster is required to run CloudThrash. For local development, Dock
    ./cloud-thrash helm install
    ```
 
+_NOTE_: When running this command in a Linux environment, e.g. with Minikube rather than Docker Desktop, you should set a port forwarding. Minikube cannot utilize the host network, unlike Docker on Windows. So for this you must first set a port with `export SUFFIX=:8080` and afterwards run `kubectl port-forward svc/ingress-nginx-controller 8080:80`. So the complete script would be:
+
+```shell
+export SUFFIX=:8080
+./cloud-thrash helm install
+kubectl port-forward svc/ingress-nginx-controller 8080:80
+```
+
+Then you can access the app on `http://localhost:8080`. This will also be written to the console log.
+
 ## Resetting or Stopping the Kubernetes Cluster
 
 - **Reset the cluster:**
