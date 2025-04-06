@@ -59,7 +59,7 @@ done
 kubectl delete pod -l helm.sh/hook=test
 echo "integration test passed."
 
-SUFFIX="8080"
+SUFFIX=":8080"
 if [ "$IS_REMOTE" = true ]; then
   SUFFIX=":30080"
 fi
