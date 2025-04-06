@@ -33,7 +33,7 @@ if [ "$IS_REMOTE" = true ]; then
 else
   IMAGE_REPO_PREFIX=""
   ./install-external-charts.sh
-  PUBLIC_IP=localhost:8080
+  PUBLIC_IP=localhost
 fi
 
 helm upgrade --install cloud-thrash . \
@@ -59,7 +59,7 @@ done
 kubectl delete pod -l helm.sh/hook=test
 echo "integration test passed."
 
-SUFFIX=""
+SUFFIX="8080"
 if [ "$IS_REMOTE" = true ]; then
   SUFFIX=":30080"
 fi
