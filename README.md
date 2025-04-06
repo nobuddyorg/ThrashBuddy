@@ -22,7 +22,14 @@ This setup provides a robust and automated performance testing platform by:
 By adopting this approach, teams can validate performance early and often in the development lifecycle—reducing the risk of production failures and improving user satisfaction.
 
 <img src="docs/images/screenshot.png" alt="Screenshot" width="500" />
+
 <img src="docs/images/screenshot2.png" alt="Screenshot" width="500" />
+
+### Technology Map
+
+The image below shows the used tools of this project:
+
+![](docs/images/technology-map.drawio.png)
 
 ## Getting Started
 
@@ -71,12 +78,6 @@ As systems grow more complex and distributed, running tests from a single machin
 - **[Docker](https://www.docker.com/)**: Containerized environments for consistent, repeatable deployments.
 - **[AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html)**: Automates creation of AWS components (e.g., ECR for storing Docker images).
 - **[eksctl](https://eksctl.io/)**: Simplifies Kubernetes cluster management on AWS using IaC powered by CloudFormation.
-
-### Technology Map
-
-The image below shows the used tools of this project:
-
-![](docs/images/technology-map.drawio.png)
 
 ## Contributing
 
