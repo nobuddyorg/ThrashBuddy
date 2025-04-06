@@ -69,5 +69,7 @@ echo -e "\e[36m🔹 App:      http://${PUBLIC_IP}${SUFFIX}\e[0m"
 echo -e "\e[33m🔹 Grafana:  http://grafana.${PUBLIC_IP}${SUFFIX}\e[0m"
 echo -e "\e[35m🔹 MinIO:    http://minio.${PUBLIC_IP}${SUFFIX}\e[0m"
 echo -e "\e[34m🔹 InfluxDB: http://influx.${PUBLIC_IP}${SUFFIX}\e[0m"
+echo ""
+echo "In a minikube environment a 'kubectl port-forward svc/ingress-nginx-controller 8080:80' might be required."
 
 popd > /dev/null
