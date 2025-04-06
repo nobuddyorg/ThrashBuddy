@@ -22,7 +22,6 @@ This setup provides a robust and automated performance testing platform by:
 By adopting this approach, teams can validate performance early and often in the development lifecycle—reducing the risk of production failures and improving user satisfaction.
 
 <img src="docs/images/screenshot.png" alt="Screenshot" width="500" />
-
 <img src="docs/images/screenshot2.png" alt="Screenshot" width="500" />
 
 ### Technology Map
