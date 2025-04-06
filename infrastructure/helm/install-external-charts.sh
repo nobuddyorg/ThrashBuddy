@@ -61,7 +61,7 @@ else
     --selector=app.kubernetes.io/component=controller \
     --timeout=90s
 
-  PUBLIC_IP=localhost
+  PUBLIC_IP=localhost:8080
 fi
 
 # ===============================
