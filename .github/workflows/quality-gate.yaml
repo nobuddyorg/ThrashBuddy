@@ -171,13 +171,18 @@ jobs:
             - name: frontend tests
               working-directory: ./services/frontend-test
               run: |
-                  nohup minikube tunnel > /dev/null 2>&1 &
-                  # Wait for the ingress-nginx-controller to be ready before setting the BASE_URL for Playwright tests
-                  sleep 10
-                  INGRESS_IP=$(kubectl get svc ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-                  export BASE_URL="http://$INGRESS_IP/app/index.html"
+                  # Start port-forwarding to the ingress-nginx-controller
+                  kubectl port-forward svc/ingress-nginx-controller 8080:80 &
+                  
+                  # Wait for the port-forward to be established
+                  sleep 5
+            
+                  # Set the BASE_URL for Playwright tests
+                  export BASE_URL="http://localhost:8080/app/index.html"
+                
+                  # Run tests
                   ./npmw ci
-                  ./npmw run install 
+                  ./npmw run install
                   ./npmw run test
             - name: Publish Playwright Test Results
               uses: EnricoMi/publish-unit-test-result-action/linux@v2
