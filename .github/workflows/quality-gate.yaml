@@ -121,6 +121,8 @@ jobs:
         name: Infrastructure and Images
         runs-on: self-hosted
         steps:
+            - name: Clean up workspace
+              run: rm -rf $GITHUB_WORKSPACE/*
             - name: Checkout Code
               uses: actions/checkout@v4
               with:
