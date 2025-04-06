@@ -180,7 +180,8 @@ jobs:
                   sleep 5
             
                   # Set the BASE_URL for Playwright tests
-                  export BASE_URL="http://localhost:8080/"
+                  export SUFFIX=":8080"
+                  export BASE_URL="http://localhost${SUFFIX}/"
                 
                   # Run tests
                   ./npmw ci
