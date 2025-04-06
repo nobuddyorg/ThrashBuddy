@@ -180,7 +180,7 @@ jobs:
                   sleep 5
             
                   # Set the BASE_URL for Playwright tests
-                  export BASE_URL="http://localhost:8080/app/index.html"
+                  export BASE_URL="http://localhost:8080/"
                 
                   # Run tests
                   ./npmw ci
@@ -201,4 +201,7 @@ jobs:
                   retention-days: 7
             - name: Minikube delete cluster
               if: always()
-              run: minikube delete --all
+              run: |
+                  pkill kubectl -9
+                  minikube delete --all
+                  
