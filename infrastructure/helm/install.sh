@@ -42,7 +42,7 @@ helm upgrade --install cloud-thrash . \
   --set deployments.backend.env.MINIO_SECRET_KEY="$PASSWORD_TOOLS" \
   --set global.imageRepoPrefix="$IMAGE_REPO_PREFIX" \
   --set ingress.host="${PUBLIC_IP}" \
-  --set ingress.basicauth=${IS_REMOTE:+"false"}
+  --set ingress.basicauth=$([ "$IS_REMOTE" = "true" ] && echo true || echo false)
 
 echo "integration test running..."
 kubectl get pods -n default --no-headers | grep -vE 'test-' | awk '{print $1}' | \
