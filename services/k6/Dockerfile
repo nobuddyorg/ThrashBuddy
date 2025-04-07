@@ -1,4 +1,4 @@
-FROM golang:1.24.1 AS builder
+FROM golang:1.24.2 AS builder
 RUN go install go.k6.io/xk6/cmd/xk6@latest && \
     xk6 build --with github.com/grafana/xk6-output-influxdb
 
