@@ -2,10 +2,10 @@ name: Quality Gate
 
 on:
     pull_request:
-        branches: [develop]
+        branches: [main]
 
     push:
-        branches: [develop]
+        branches: [main]
 
     workflow_dispatch:
 
