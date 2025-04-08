@@ -1,22 +1,27 @@
 package de.besessener.cloudthrash.service
 
 
-import io.fabric8.kubernetes.api.model.ObjectMeta
-import io.fabric8.kubernetes.api.model.batch.v1.Job
-import io.fabric8.kubernetes.api.model.batch.v1.JobStatus
 import io.fabric8.kubernetes.client.KubernetesClient
-import io.fabric8.kubernetes.client.dsl.*
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import spock.lang.Specification
 
+@SpringBootTest
 class TestExecutionServiceSpec extends Specification {
 
+    TestExecutionService service
+
+    @Autowired
+    StatusService statusService
+
     def fileService = Mock(FileService)
+    def k8sService = Mock(K8sService)
     def k8sClient = Mock(KubernetesClient)
-    def service = new TestExecutionService(fileService, k8sClient)
 
     def setup() {
-        service.@status = TestExecutionService.Status.IDLE
+        statusService.setStatus(StatusService.ResponseStatus.IDLE)
+        service = new TestExecutionService(fileService, k8sClient, k8sService, statusService)
     }
 
     def "startTest - success"() {
@@ -28,6 +33,7 @@ class TestExecutionServiceSpec extends Specification {
                     envVars   : [[name: "FOO", value: "BAR"]]
             ]
             fileService.listFiles() >> [[filename: "test.js"]]
+            k8sClient.executeJobs(_, _, _, _) >> { void }
 
         when:
             def response = service.startTest(payload)
@@ -40,7 +46,7 @@ class TestExecutionServiceSpec extends Specification {
 
     def "startTest - already running"() {
         given:
-            service.@status = TestExecutionService.Status.RUNNING
+            statusService.setStatus(StatusService.ResponseStatus.RUNNING)
 
         when:
             def response = service.startTest([:])
@@ -66,7 +72,7 @@ class TestExecutionServiceSpec extends Specification {
 
     def "stopTest - success"() {
         given:
-            service.@status = TestExecutionService.Status.RUNNING
+            statusService.setStatus(StatusService.ResponseStatus.RUNNING)
 
         when:
             def response = service.stopTest()
@@ -79,7 +85,8 @@ class TestExecutionServiceSpec extends Specification {
 
     def "stopTest - when not running"() {
         given:
-            service.@status = TestExecutionService.Status.IDLE
+            fileService.listFiles() >> []
+            statusService.setStatus(StatusService.ResponseStatus.IDLE)
 
         when:
             def response = service.stopTest()
@@ -92,7 +99,7 @@ class TestExecutionServiceSpec extends Specification {
     def "getStatus - normal and error"() {
         given:
             fileService.listFiles() >> [[filename: "test.js"]]
-            service.@status = TestExecutionService.Status.IDLE
+            statusService.setStatus(StatusService.ResponseStatus.IDLE)
 
         when:
             def response1 = service.getStatus()
@@ -101,8 +108,8 @@ class TestExecutionServiceSpec extends Specification {
             response1.body.status == "IDLE"
 
         when:
-            service.@status = TestExecutionService.Status.ERROR
-            service.@errorMessage = "Boom"
+            statusService.setStatus(StatusService.ResponseStatus.ERROR)
+            statusService.setErrorMessage("Boom")
             def response2 = service.getStatus()
 
         then:
@@ -112,7 +119,7 @@ class TestExecutionServiceSpec extends Specification {
 
     def "buildResponse - updates state based on file presence"() {
         given:
-            service.@status = TestExecutionService.Status.ERROR
+            statusService.setStatus(StatusService.ResponseStatus.ERROR)
 
         and:
             fileService.listFiles() >>> [
@@ -137,9 +144,9 @@ class TestExecutionServiceSpec extends Specification {
         given:
             def fileService = Mock(FileService)
             def client = Mock(KubernetesClient)
-            def serviceSpy = Spy(TestExecutionService, constructorArgs: [fileService, client])
+            def serviceSpy = Spy(TestExecutionService, constructorArgs: [fileService, client, k8sService, statusService])
 
-            serviceSpy.@status = TestExecutionService.Status.IDLE
+            statusService.setStatus(StatusService.ResponseStatus.IDLE)
             fileService.listFiles() >> [[filename: "test.js"]]
 
             def payload = [
@@ -158,7 +165,7 @@ class TestExecutionServiceSpec extends Specification {
         then:
             response.statusCode == HttpStatus.OK
             eventually {
-                serviceSpy.@status == TestExecutionService.Status.IDLE
+                statusService.getStatus() == StatusService.ResponseStatus.IDLE
             }
     }
 
@@ -173,116 +180,5 @@ class TestExecutionServiceSpec extends Specification {
             }
         }
         assertion.call()
-    }
-
-    def "waitForCompletion - returns IDLE on job success"() {
-        given:
-            def fileService = Mock(FileService)
-            def client = Mock(KubernetesClient)
-            def batchAPI = Mock(BatchAPIGroupDSL)
-            def v1BatchAPI = Mock(V1BatchAPIGroupDSL)
-            def jobsOp = Mock(MixedOperation)
-            def namespacedOp = Mock(NonNamespaceOperation)
-            def jobResource = Mock(Resource)
-
-            client.batch() >> batchAPI
-            batchAPI.v1() >> v1BatchAPI
-            v1BatchAPI.jobs() >> jobsOp
-            jobsOp.inNamespace(_) >> namespacedOp
-            namespacedOp.withName("test-job") >> jobResource
-
-            def job = new Job()
-            job.metadata = new ObjectMeta(name: "test-job")
-
-            def successJob = new Job()
-            successJob.metadata = new ObjectMeta(name: "test-job")
-            successJob.status = new JobStatus(succeeded: 1)
-            jobResource.get() >> successJob
-
-            def service = new TestExecutionService(fileService, client) {
-                void sleep(long millis) {}
-            }
-
-            def method = TestExecutionService.getDeclaredMethod("waitForCompletion", Job)
-            method.accessible = true
-
-        when:
-            def result = method.invoke(service, job)
-
-        then:
-            result == TestExecutionService.Status.IDLE
-    }
-
-    def "waitForCompletion - returns ERROR on job failure"() {
-        given:
-            def fileService = Mock(FileService)
-            def client = Mock(KubernetesClient)
-            def batchAPI = Mock(BatchAPIGroupDSL)
-            def v1BatchAPI = Mock(V1BatchAPIGroupDSL)
-            def jobsOp = Mock(MixedOperation)
-            def namespacedOp = Mock(NonNamespaceOperation)
-            def jobResource = Mock(Resource)
-
-            client.batch() >> batchAPI
-            batchAPI.v1() >> v1BatchAPI
-            v1BatchAPI.jobs() >> jobsOp
-            jobsOp.inNamespace(_) >> namespacedOp
-            namespacedOp.withName("test-job") >> jobResource
-
-            def job = new Job()
-            job.metadata = new ObjectMeta(name: "test-job")
-
-            def failedJob = new Job()
-            failedJob.metadata = new ObjectMeta(name: "test-job")
-            failedJob.status = new JobStatus(failed: 1)
-            jobResource.get() >> failedJob
-
-            def service = new TestExecutionService(fileService, client) {
-                void sleep(long millis) {}
-            }
-
-            def method = TestExecutionService.getDeclaredMethod("waitForCompletion", Job)
-            method.accessible = true
-
-        when:
-            def result = method.invoke(service, job)
-
-        then:
-            result == TestExecutionService.Status.ERROR
-    }
-
-    def "waitForCompletion - returns ERROR when job not found"() {
-        given:
-            def fileService = Mock(FileService)
-            def client = Mock(KubernetesClient)
-            def batchAPI = Mock(BatchAPIGroupDSL)
-            def v1BatchAPI = Mock(V1BatchAPIGroupDSL)
-            def jobsOp = Mock(MixedOperation)
-            def namespacedOp = Mock(NonNamespaceOperation)
-            def jobResource = Mock(Resource)
-
-            client.batch() >> batchAPI
-            batchAPI.v1() >> v1BatchAPI
-            v1BatchAPI.jobs() >> jobsOp
-            jobsOp.inNamespace(_) >> namespacedOp
-            namespacedOp.withName("test-job") >> jobResource
-
-            def job = new Job()
-            job.metadata = new ObjectMeta(name: "test-job")
-
-            jobResource.get() >> null
-
-            def service = new TestExecutionService(fileService, client) {
-                void sleep(long millis) {}
-            }
-
-            def method = TestExecutionService.getDeclaredMethod("waitForCompletion", Job)
-            method.accessible = true
-
-        when:
-            def result = method.invoke(service, job)
-
-        then:
-            result == TestExecutionService.Status.ERROR
     }
 }
