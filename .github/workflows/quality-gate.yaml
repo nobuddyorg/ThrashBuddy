@@ -179,7 +179,7 @@ jobs:
         working-directory: ./services/frontend-test
         run: |
           # Start port-forwarding to the ingress-nginx-controller
-          kubectl port-forward svc/ingress-nginx-controller 8080:80 &
+          kubectl port-forward svc/ingress-nginx-controller 8080:80 >/dev/null 2>&1 &
 
           # Wait for the port-forward to be established
           sleep 5
