@@ -1,208 +1,212 @@
 name: Quality Gate
 
 on:
-    pull_request:
-        branches: [main]
+  pull_request:
+    branches: [main]
 
-    push:
-        branches: [main]
+  push:
+    branches: [main]
 
-    workflow_dispatch:
+  workflow_dispatch:
 
 permissions:
-    contents: read
-    issues: read
-    checks: write
-    pull-requests: write
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
 
 jobs:
-    backend:
-        name: Backend Analysis
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  submodules: true
-                  fetch-depth: 0
-            - name: Install Dependencies and Run Unit Tests
-              working-directory: ./services/backend
-              run: ./gradlew clean jacocoTestReport
-            - name: Publish Test Results
-              uses: EnricoMi/publish-unit-test-result-action/linux@v2
-              if: always()
-              with:
-                  check_name: "Backend Unit Tests"
-                  files: |
-                      ./services/backend/build/test-results/**/*.xml
-            - name: Install ReportGenerator
-              run: |
-                  dotnet tool install --global dotnet-reportgenerator-globaltool
-            - name: Convert JaCoCo to Cobertura
-              run: |
-                  reportgenerator \
-                    -reports:./services/backend/build/reports/jacoco/test/jacocoTestReport.xml \
-                    -targetdir:coverage-report \
-                    -reporttypes:Cobertura
-            - name: Generate Coverage Report Summary
-              uses: irongut/CodeCoverageSummary@v1.3.0
-              with:
-                  filename: coverage-report/Cobertura.xml
-                  badge: true
-                  fail_below_min: true
-                  hide_complexity: true
-                  format: markdown
-                  output: both
-                  thresholds: "60 80"
-            - name: Append Coverage Report to GitHub Summary
-              if: always()
-              run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
-            - name: Post Coverage Comment to PR
-              if: github.event_name == 'pull_request'
-              uses: peter-evans/create-or-update-comment@v4
-              with:
-                  issue-number: ${{ github.event.pull_request.number }}
-                  body-file: code-coverage-results.md
-                  token: ${{ secrets.GITHUB_TOKEN }}
+  backend:
+    name: Backend Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+      - name: Install Dependencies and Run Unit Tests
+        working-directory: ./services/backend
+        run: ./gradlew clean jacocoTestReport
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/linux@v2
+        if: always()
+        with:
+          check_name: "Backend Unit Tests"
+          files: |
+            ./services/backend/build/test-results/**/*.xml
+      - name: Install ReportGenerator
+        run: |
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+      - name: Convert JaCoCo to Cobertura
+        run: |
+          reportgenerator \
+            -reports:./services/backend/build/reports/jacoco/test/jacocoTestReport.xml \
+            -targetdir:coverage-report \
+            -reporttypes:Cobertura
+      - name: Generate Coverage Report Summary
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: coverage-report/Cobertura.xml
+          badge: true
+          fail_below_min: true
+          hide_complexity: true
+          format: markdown
+          output: both
+          thresholds: "60 80"
+      - name: Append Coverage Report to GitHub Summary
+        if: always()
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+      - name: Post Coverage Comment to PR
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-file: code-coverage-results.md
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-    frontend:
-        name: Frontend Analysis
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                  submodules: true
-                  fetch-depth: 0
-            - name: Install Dependencies
-              working-directory: ./services/frontend
-              run: ./npmw install
-            - name: Unit Tests and Coverage
-              working-directory: ./services/frontend
-              run: ./npmw run test:ci
-            - name: Publish Test Results
-              uses: EnricoMi/publish-unit-test-result-action/linux@v2
-              if: always()
-              with:
-                  check_name: "Frontend Unit Tests"
-                  files: |
-                      ./services/frontend/TESTS-Chrome_Headless_*.xml
-            - name: Show Coverage Summary in PR
-              uses: irongut/CodeCoverageSummary@v1.3.0
-              with:
-                  filename: ./services/frontend/coverage/cloud-thrash/coverage.xml
-                  badge: true
-                  fail_below_min: true
-                  hide_complexity: true
-                  format: markdown
-                  output: both
-                  thresholds: "60 80" # optional: warn under 80%, fail under 60%
-            - name: Append Coverage Report to GitHub Summary
-              if: always()
-              run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
-            - name: Post Coverage Comment to PR
-              if: github.event_name == 'pull_request'
-              uses: peter-evans/create-or-update-comment@v4
-              with:
-                  issue-number: ${{ github.event.pull_request.number }}
-                  body-file: code-coverage-results.md
-                  token: ${{ secrets.GITHUB_TOKEN }}
+  frontend:
+    name: Frontend Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+      - name: Install Dependencies
+        working-directory: ./services/frontend
+        run: ./npmw install
+      - name: Unit Tests and Coverage
+        working-directory: ./services/frontend
+        run: ./npmw run test:ci
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/linux@v2
+        if: always()
+        with:
+          check_name: "Frontend Unit Tests"
+          files: |
+            ./services/frontend/TESTS-Chrome_Headless_*.xml
+      - name: Show Coverage Summary in PR
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: ./services/frontend/coverage/cloud-thrash/coverage.xml
+          badge: true
+          fail_below_min: true
+          hide_complexity: true
+          format: markdown
+          output: both
+          thresholds: "60 80" # optional: warn under 80%, fail under 60%
+      - name: Append Coverage Report to GitHub Summary
+        if: always()
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+      - name: Post Coverage Comment to PR
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-file: code-coverage-results.md
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Lint
-              working-directory: ./services/frontend
-              run: ./npmw run lint
+      - name: Lint
+        working-directory: ./services/frontend
+        run: ./npmw run lint
 
-    infra-and-images:
-        concurrency:
-            group: "test--infra-group-${{ github.event.pull_request.number }}"
-            cancel-in-progress: false
-        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' # takes too long for pushes
-        needs: [backend, frontend]
-        name: Infrastructure and Images
-        runs-on: self-hosted
-        steps:
-            - name: Clean up workspace
-              run: rm -rf $GITHUB_WORKSPACE/*
-            - name: Checkout Code
-              uses: actions/checkout@v4
-              with:
-                  submodules: true
-            - name: Write .env file
-              run: |
-                  echo "${{ secrets.DOT_ENV }}" > ./infrastructure/helm/.env
-            - uses: hadolint/hadolint-action@v3.1.0
-              with:
-                  dockerfile: ./services/backend/Dockerfile
-                  ignore: DL3018
-            - uses: hadolint/hadolint-action@v3.1.0
-              with:
-                  dockerfile: ./services/frontend/Dockerfile
-                  ignore: DL3018
-            - uses: hadolint/hadolint-action@v3.1.0
-              with:
-                  dockerfile: ./services/k6/Dockerfile
-                  ignore: DL3018
+  infra-and-images:
+    concurrency:
+      group: "test--infra-group-${{ github.event.pull_request.number }}"
+      cancel-in-progress: false
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' # takes too long for pushes
+    needs: [backend, frontend]
+    name: Infrastructure and Images
+    runs-on: self-hosted
+    steps:
+      - name: Clean up workspace
+        run: rm -rf $GITHUB_WORKSPACE/*
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Write .env file
+        working-directory: ./infrastructure/helm
+        run: |
+          cat <<EOF > .env
+          USERNAME_TOOLS=User123
+          PASSWORD_TOOLS=Password123
+          INFLUXDB_API_TOKEN=my-secret-api-token
+          EOF
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./services/backend/Dockerfile
+          ignore: DL3018
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./services/frontend/Dockerfile
+          ignore: DL3018
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./services/k6/Dockerfile
+          ignore: DL3018
 
-            - name: Docker Cleanup
-              run: |
-                  docker stop $(docker ps -q) || true
-                  docker rm -f $(docker ps -aq) || true
-                  docker rmi -f $(docker images --filter "dangling=true" -q) || true
-                  docker system prune -a --volumes -f
-                  docker builder prune -a -f
-                  docker ps -aq
-                  docker images
-                  docker volume ls
-                  docker network ls
+      - name: Docker Cleanup
+        run: |
+          docker stop $(docker ps -q) || true
+          docker rm -f $(docker ps -aq) || true
+          docker rmi -f $(docker images --filter "dangling=true" -q) || true
+          docker system prune -a --volumes -f
+          docker builder prune -a -f
+          docker ps -aq
+          docker images
+          docker volume ls
+          docker network ls
 
-            - name: Build Docker Images
-              run: |
-                  ./cloud-thrash.sh docker build-all
-                  docker images
+      - name: Build Docker Images
+        run: |
+          ./cloud-thrash.sh docker build-all
+          docker images
 
-            - name: Set up Kubernetes with Minikube
-              working-directory: ./infrastructure/helm
-              run: |
-                  minikube delete --all
-                  minikube start --driver=docker
-                  ./load-images.sh
-            - name: Helm
-              working-directory: ./infrastructure/helm
-              run: |
-                  ./install.sh
-            - name: frontend tests
-              working-directory: ./services/frontend-test
-              run: |
-                  # Start port-forwarding to the ingress-nginx-controller
-                  kubectl port-forward svc/ingress-nginx-controller 8080:80 &
-                  
-                  # Wait for the port-forward to be established
-                  sleep 5
-            
-                  # Set the BASE_URL for Playwright tests
-                  export SUFFIX=":8080"
-                  export BASE_URL="http://localhost${SUFFIX}/"
-                
-                  # Run tests
-                  ./npmw ci
-                  ./npmw run install
-                  ./npmw run test
-            - name: Publish Playwright Test Results
-              uses: EnricoMi/publish-unit-test-result-action/linux@v2
-              if: always()
-              with:
-                  check_name: "Playwright UI Tests"
-                  files: ./services/frontend-test/test-results/results.xml
-            - name: Archive Playwright Test Results
-              uses: actions/upload-artifact@v4
-              if: always()
-              with:
-                  name: report.zip
-                  path: services/frontend-test/test-results
-                  retention-days: 7
-            - name: Minikube delete cluster
-              if: always()
-              run: |
-                  pkill kubectl -9
-                  minikube delete --all
-                  
+      - name: Set up Kubernetes with Minikube
+        working-directory: ./infrastructure/helm
+        run: |
+          minikube delete --all
+          minikube start --driver=docker
+          ./load-images.sh
+      - name: Helm
+        working-directory: ./infrastructure/helm
+        run: |
+          ./install.sh
+      - name: frontend tests
+        working-directory: ./services/frontend-test
+        run: |
+          # Start port-forwarding to the ingress-nginx-controller
+          kubectl port-forward svc/ingress-nginx-controller 8080:80 &
+
+          # Wait for the port-forward to be established
+          sleep 5
+
+          # Set the BASE_URL for Playwright tests
+          export SUFFIX=":8080"
+          export BASE_URL="http://localhost${SUFFIX}/"
+
+          # Run tests
+          ./npmw ci
+          ./npmw run install
+          ./npmw run test
+      - name: Publish Playwright Test Results
+        uses: EnricoMi/publish-unit-test-result-action/linux@v2
+        if: always()
+        with:
+          check_name: "Playwright UI Tests"
+          files: ./services/frontend-test/test-results/results.xml
+      - name: Archive Playwright Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report.zip
+          path: services/frontend-test/test-results
+          retention-days: 7
+      - name: Minikube delete cluster
+        if: always()
+        run: |
+          pkill kubectl -9
+          minikube delete --all
