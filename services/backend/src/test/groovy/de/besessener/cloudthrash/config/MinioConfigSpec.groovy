@@ -11,7 +11,7 @@ import org.springframework.test.context.TestPropertySource
 import static org.junit.jupiter.api.Assertions.assertEquals
 import static org.junit.jupiter.api.Assertions.assertNotNull
 
-class MinioConfigTest {
+class MinioConfigSpec {
 
     @Nested
     @SpringBootTest(classes = [MinioConfig])

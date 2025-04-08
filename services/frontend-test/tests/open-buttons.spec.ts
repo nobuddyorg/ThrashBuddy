@@ -71,7 +71,11 @@ test.describe("Tool dashboards login", () => {
             loginButton: newPage.locator("button:has-text('Log in')"),
         });
 
-        await newPage.locator("text=Dashboards").first().click();
+         
+        await expect(newPage.locator("text=Welcome to Grafana")).toBeVisible();
+        await newPage.waitForTimeout(3000);
+        await newPage.locator("text=Home").first().click();
+        await newPage.waitForTimeout(3000);
         await newPage.locator("text=Dashboards").first().click();
 
         await expect(newPage.locator("text=Cluster metrics")).toBeVisible();
