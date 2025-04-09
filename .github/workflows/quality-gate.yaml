@@ -129,12 +129,7 @@ jobs:
           submodules: true
       - name: Write .env file
         working-directory: ./infrastructure/helm
-        run: |
-          cat <<EOF > .env
-          USERNAME_TOOLS=User123
-          PASSWORD_TOOLS=Password123
-          INFLUXDB_API_TOKEN=my-secret-api-token
-          EOF
+        run: echo "${{ secrets.DOT_ENV }}" > .env
       - uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: ./services/backend/Dockerfile
