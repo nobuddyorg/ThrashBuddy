@@ -30,4 +30,6 @@ export default function () {
 
     const baseUrl = __ENV.TEST_URL || 'https://test.k6.io';
     http.get(baseUrl);
+
+    sleep(1);
 }
