@@ -3,7 +3,7 @@ import { sleep } from "k6";
 import { Gauge, Counter } from "k6/metrics";
 
 export let options = {
-    vus: 2,
+    vus: __ENV.TEST_VUS || 2,
     duration: "2m",
     tags: {
         host: __ENV.K6_INSTANCE_ID || "unknown-host"
@@ -28,6 +28,6 @@ export default function () {
     vuGauge.add(__VU);
     iterationCounter.add(1);
 
-    http.get("https://test.k6.io");
-    sleep(1);
+    const baseUrl = __ENV.TEST_URL || 'https://test.k6.io';
+    http.get(baseUrl);
 }
