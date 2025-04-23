@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Slide UI</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+
+    .container {
+      display: flex;
+      width: 200vw; /* double the width for two panels side by side */
+      transition: transform 0.7s ease-in-out;
+    }
+
+    .panel {
+      width: 100vw;
+      height: 100vh;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+    }
+
+    .panel-1 {
+      background: #ffe082;
+    }
+
+    .panel-2 {
+      background: #80cbc4;
+    }
+
+    .wrapper.slide-left .container {
+      transform: translateX(-100vw);
+    }
+
+    button {
+      position: absolute;
+      bottom: 30px;
+      left: 30px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="container">
+      <div class="panel panel-1">👋 Hello UI 1</div>
+      <div class="panel panel-2">🎉 Welcome to UI 2</div>
+    </div>
+  </div>
+
+  <button onclick="slide()">Slide It!</button>
+
+  <script>
+    function slide() {
+      document.querySelector('.wrapper').classList.toggle('slide-left');
+    }
+  </script>
+
+</body>
+</html>
