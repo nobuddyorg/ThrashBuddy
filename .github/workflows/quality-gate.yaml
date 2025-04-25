@@ -143,33 +143,24 @@ jobs:
           dockerfile: ./services/k6/Dockerfile
           ignore: DL3018
 
-      - name: Docker Cleanup
+      - name: Set up Kubernetes with Minikube
         run: |
-          docker stop $(docker ps -q) || true
-          docker rm -f $(docker ps -aq) || true
-          docker rmi -f $(docker images --filter "dangling=true" -q) || true
-          docker system prune -a --volumes -f
-          docker builder prune -a -f
-          docker ps -aq
-          docker images
-          docker volume ls
-          docker network ls
-
+          minikube delete --all
+          minikube start --driver=docker
+          eval $(minikube -p minikube docker-env --shell=bash)  # Exports the required Docker environment variables
+          echo "DOCKER_TLS_VERIFY=${DOCKER_TLS_VERIFY}" >> $GITHUB_ENV
+          echo "DOCKER_HOST=${DOCKER_HOST}" >> $GITHUB_ENV
+          echo "DOCKER_CERT_PATH=${DOCKER_CERT_PATH}" >> $GITHUB_ENV
+          echo "MINIKUBE_ACTIVE_DOCKERD=${MINIKUBE_ACTIVE_DOCKERD}" >> $GITHUB_ENV
+        
       - name: Build Docker Images
         run: |
           ./cloud-thrash.sh docker build-all
           docker images
 
-      - name: Set up Kubernetes with Minikube
-        working-directory: ./infrastructure/helm
-        run: |
-          minikube delete --all
-          minikube start --driver=docker
-          ./load-images.sh
       - name: Helm
-        working-directory: ./infrastructure/helm
         run: |
-          ./install.sh
+          ./cloud-thrash.sh helm install
       - name: frontend tests
         working-directory: ./services/frontend-test
         run: |
