@@ -153,7 +153,6 @@ jobs:
           echo "DOCKER_CERT_PATH=${DOCKER_CERT_PATH}" >> $GITHUB_ENV
           echo "MINIKUBE_ACTIVE_DOCKERD=${MINIKUBE_ACTIVE_DOCKERD}" >> $GITHUB_ENV
         
-
       - name: Build Docker Images
         run: |
           ./cloud-thrash.sh docker build-all

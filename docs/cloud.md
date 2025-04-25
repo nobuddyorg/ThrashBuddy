@@ -97,4 +97,10 @@ Example using environment variables:
 export AWS_ACCESS_KEY_ID=<your-access-key>
 export AWS_SECRET_ACCESS_KEY=<your-secret-key>
 export AWS_DEFAULT_REGION=<region>
-```  
+``` 
+
+Obviously the same secrets are also required for the GitHub Actions. The full list of secrets is:
+* AWS_ACCESS_KEY_ID
+* AWS_DEFAULT_REGION
+* AWS_SECRET_ACCESS_KEY
+* DOT_ENV (from /infrastructure/helm/.env)
