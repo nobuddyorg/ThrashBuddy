@@ -144,11 +144,15 @@ jobs:
           ignore: DL3018
 
       - name: Set up Kubernetes with Minikube
-        working-directory: ./infrastructure/helm
         run: |
           minikube delete --all
           minikube start --driver=docker
-          minikube docker-env --shell bash >> $GITHUB_ENV
+          eval $(minikube -p minikube docker-env --shell=bash)  # Exports the required Docker environment variables
+          echo "DOCKER_TLS_VERIFY=${DOCKER_TLS_VERIFY}" >> $GITHUB_ENV
+          echo "DOCKER_HOST=${DOCKER_HOST}" >> $GITHUB_ENV
+          echo "DOCKER_CERT_PATH=${DOCKER_CERT_PATH}" >> $GITHUB_ENV
+          echo "MINIKUBE_ACTIVE_DOCKERD=${MINIKUBE_ACTIVE_DOCKERD}" >> $GITHUB_ENV
+        
 
       - name: Build Docker Images
         run: |
@@ -156,9 +160,8 @@ jobs:
           docker images
 
       - name: Helm
-        working-directory: ./infrastructure/helm
         run: |
-          ./install.sh
+          ./cloud-thrash.sh helm install
       - name: frontend tests
         working-directory: ./services/frontend-test
         run: |
