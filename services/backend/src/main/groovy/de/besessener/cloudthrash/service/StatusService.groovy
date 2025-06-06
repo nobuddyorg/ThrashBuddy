@@ -1,4 +1,4 @@
-package de.besessener.cloudthrash.service
+package de.besessener.thrashbuddy.service
 
 import org.springframework.stereotype.Service
 

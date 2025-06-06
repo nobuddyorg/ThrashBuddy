@@ -1,13 +1,13 @@
-# Contributing to CloudThrash
+# Contributing to ThrashBuddy
 
-Thank you for your interest in contributing to **CloudThrash**! Your contributions help improve the project and make it more useful for everyone.
+Thank you for your interest in contributing to **ThrashBuddy**! Your contributions help improve the project and make it more useful for everyone.
 
 ## How to Contribute
 
 1. **Fork the repository**: Click the "Fork" button at the top right of this page to create your own copy of the repository.
 2. **Clone your fork**: Clone your forked repository to your local machine.
    ```bash
-   git clone https://github.com/your-username/CloudThrash.git
+   git clone https://github.com/your-username/ThrashBuddy.git
    ```
 3. **Create a new branch**: Create a branch for your changes.
    ```bash
@@ -26,8 +26,8 @@ Thank you for your interest in contributing to **CloudThrash**! Your contributio
 
 ## Reporting Issues
 
-If you encounter any bugs or have suggestions for improvements, please [open an issue](https://github.com/besessener/CloudThrash/issues) on the repository. Provide as much detail as possible.
+If you encounter any bugs or have suggestions for improvements, please [open an issue](https://github.com/besessener/ThrashBuddy/issues) on the repository. Provide as much detail as possible.
 
 ---
 
-Thank you again for contributing to CloudThrash!
+Thank you again for contributing to ThrashBuddy!

@@ -1,7 +1,7 @@
 deployments:
   frontend:
     name: frontend
-    image: cloud-thrash/frontend:latest
+    image: thrash-buddy/frontend:latest
     replicas: 1
     pdbMinAvailable: 1
     livenessPort: 80
@@ -17,7 +17,7 @@ deployments:
     env: {}
   backend:
     name: backend
-    image: cloud-thrash/backend:latest
+    image: thrash-buddy/backend:latest
     replicas: 1
     pdbMinAvailable: 1
     livenessPort: 8080
@@ -34,7 +34,7 @@ deployments:
       MINIO_URL: "http://minio.default.svc.cluster.local:9000"
       MINIO_ACCESS_KEY: "minioadmin"
       MINIO_SECRET_KEY: "minioadmin"
-      MINIO_BUCKET: "cloud-thrash"
+      MINIO_BUCKET: "thrash-buddy"
 
 services:
   frontend:

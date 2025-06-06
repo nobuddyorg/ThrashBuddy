@@ -2,7 +2,7 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: cloud-thrash-stage
+  name: thrash-buddy-stage
   region: $AWS_DEFAULT_REGION
 
 nodeGroups:

@@ -1,6 +1,6 @@
-package de.besessener.cloudthrash.controller
+package de.besessener.thrashbuddy.controller
 
-import de.besessener.cloudthrash.service.FileService
+import de.besessener.thrashbuddy.service.FileService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
-class CloudthrashFileController {
+class ThrashBuddyFileController {
 
     @Autowired
     FileService fileService

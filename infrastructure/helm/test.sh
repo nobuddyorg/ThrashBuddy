@@ -14,7 +14,7 @@ KUBE_CONFORM_BINARY="./.deps/kubeconform"
 helm lint .
 helm template . | $KUBE_CONFORM_BINARY -strict -verbose
 helm template . | $KUBE_SCORE_BINARY score -
-helm install cloud-thrash --dry-run --debug .
+helm install thrash-buddy --dry-run --debug .
 echo "Helm chart is valid."
 
 echo "Unit testing Helm chart..."

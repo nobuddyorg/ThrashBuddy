@@ -14,9 +14,9 @@ dashboardProviders:
   dashboardproviders.yaml:
     apiVersion: 1
     providers:
-      - name: 'default'
+      - name: "default"
         orgId: 1
-        folder: ''
+        folder: ""
         type: file
         disableDeletion: false
         editable: true
@@ -810,7 +810,7 @@ datasources:
         isDefault: true
         jsonData:
           version: Flux
-          organization: cloud-thrash
+          organization: thrash-buddy
           defaultBucket: metrics
           tlsSkipVerify: true
         secureJsonData:

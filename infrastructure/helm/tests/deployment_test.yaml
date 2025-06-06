@@ -7,7 +7,7 @@ tests:
       deployments:
         frontend:
           name: frontend
-          image: cloud-thrash/frontend:latest
+          image: thrash-buddy/frontend:latest
           replicas: 2
           livenessPort: 8080
           resources:
@@ -21,7 +21,7 @@ tests:
               ephemeralStorage: "1Gi"
         backend:
           name: backend
-          image: cloud-thrash/backend:latest
+          image: thrash-buddy/backend:latest
           replicas: 1
           livenessPort: 8081
           resources:
@@ -50,7 +50,7 @@ tests:
           value: frontend
       - equal:
           path: spec.template.spec.containers[0].image
-          value: cloud-thrash/frontend:latest
+          value: thrash-buddy/frontend:latest
       - equal:
           path: spec.template.spec.containers[0].readinessProbe.tcpSocket.port
           value: 8080

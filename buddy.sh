@@ -20,7 +20,7 @@ Available command groups:
     build-<image>       - Build a specific Docker image (e.g., backend, frontend, k6).
 
   helm:
-    install [-remote]   - Install all Helm charts, including cloud-thrash itself (local or remote cluster).
+    install [-remote]   - Install all Helm charts, including thrash-buddy itself (local or remote cluster).
     uninstall [-remote] - Uninstall all Helm charts (local or remote cluster).
     update [-remote]    - Update the Helm chart locally or remotely if '-remote' is specified (local or remote cluster).
 "

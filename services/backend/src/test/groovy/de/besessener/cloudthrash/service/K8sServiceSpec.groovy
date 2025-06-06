@@ -1,4 +1,4 @@
-package de.besessener.cloudthrash.service
+package de.besessener.thrashbuddy.service
 
 
 import org.springframework.beans.factory.annotation.Autowired

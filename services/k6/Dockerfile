@@ -6,7 +6,7 @@ FROM alpine:3
 RUN apk add --no-cache ca-certificates aws-cli
 COPY --from=builder /go/k6 /usr/local/bin/k6
 
-ENV K6_INFLUXDB_ORGANIZATION="cloud-thrash"
+ENV K6_INFLUXDB_ORGANIZATION="thrash-buddy"
 ENV K6_INFLUXDB_BUCKET="metrics"
 ENV K6_INFLUXDB_ADDR="http://influxdb-influxdb2.default.svc.cluster.local:80"
 ENV K6_INFLUXDB_TOKEN=""

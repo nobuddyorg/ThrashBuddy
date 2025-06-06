@@ -1,6 +1,6 @@
-package de.besessener.cloudthrash.controller
+package de.besessener.thrashbuddy.controller
 
-import de.besessener.cloudthrash.service.TestExecutionService
+import de.besessener.thrashbuddy.service.TestExecutionService
 import groovy.json.JsonOutput
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class CloudthrashTestControllerSpec extends Specification {
+class ThrashBuddyTestControllerSpec extends Specification {
 
     @Autowired
     MockMvc mockMvc

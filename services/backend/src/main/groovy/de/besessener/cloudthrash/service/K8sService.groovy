@@ -1,4 +1,4 @@
-package de.besessener.cloudthrash.service
+package de.besessener.thrashbuddy.service
 
 import io.fabric8.kubernetes.api.model.EnvVar
 import io.fabric8.kubernetes.api.model.Quantity
@@ -61,7 +61,7 @@ class K8sService {
     void deleteAllK6Jobs() {
         if (client) {
             client.batch().v1().jobs().inNamespace(NAMESPACE)
-                    .withLabel("app", "cloudthrash-job")
+                    .withLabel("app", "thrashbuddy-job")
                     .list()
                     .items
                     .each { job ->
@@ -73,7 +73,7 @@ class K8sService {
     }
 
     private StatusService.ResponseStatus createK6Job(String cpu, String memory, List<EnvVar> envVars, int index) {
-        def jobName = "cloudthrash-job-${index}"
+        def jobName = "thrashbuddy-job-${index}"
         log.info("Creating Kubernetes Job: $jobName")
 
         def fullEnv = new ArrayList<>(envVars) + [
@@ -86,15 +86,15 @@ class K8sService {
         ]
 
         def job = new JobBuilder()
-                .withNewMetadata().withName(jobName).withNamespace(NAMESPACE).addToLabels("app", "cloudthrash-job").endMetadata()
+                .withNewMetadata().withName(jobName).withNamespace(NAMESPACE).addToLabels("app", "thrashbuddy-job").endMetadata()
                 .withNewSpec()
                 .withNewTemplate()
-                .withNewMetadata().addToLabels("app", "cloudthrash-job").endMetadata()
+                .withNewMetadata().addToLabels("app", "thrashbuddy-job").endMetadata()
                 .withNewSpec()
-                .withServiceAccountName("cloudthrash-runner-sa")
+                .withServiceAccountName("thrashbuddy-runner-sa")
                 .addNewContainer()
-                .withName("cloudthrash")
-                .withImage(System.getenv("IMAGE_REPO_PREFIX") + "cloud-thrash/k6-test:latest")
+                .withName("thrashbuddy")
+                .withImage(System.getenv("IMAGE_REPO_PREFIX") + "thrash-buddy/k6-test:latest")
                 .withImagePullPolicy("IfNotPresent")
                 .withEnv(fullEnv)
                 .withResources(new ResourceRequirementsBuilder()

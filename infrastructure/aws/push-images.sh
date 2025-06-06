@@ -11,8 +11,8 @@ pushd $(dirname $0) > /dev/null
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
 
-# Push all images starting with cloud-thrash/ into separate repositories
-docker images --format "{{.Repository}}:{{.Tag}}" | grep ^cloud-thrash/ | while read -r image; do
+# Push all images starting with thrash-buddy/ into separate repositories
+docker images --format "{{.Repository}}:{{.Tag}}" | grep ^thrash-buddy/ | while read -r image; do
   image_name=$(echo "$image" | cut -d':' -f1)
   image_tag=$(echo "$image" | cut -d':' -f2)
   repository_name=$image_name

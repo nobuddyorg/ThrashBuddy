@@ -8,7 +8,7 @@ pushd services/frontend/ > /dev/null
 echo "==========================================="
 echo "Start building image for frontend:"
 echo "==========================================="
-docker build -t cloud-thrash/frontend .
+docker build -t thrash-buddy/frontend .
 
 popd > /dev/null
 popd > /dev/null

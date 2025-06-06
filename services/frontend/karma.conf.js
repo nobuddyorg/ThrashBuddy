@@ -18,7 +18,7 @@ module.exports = function (config) {
       suppressAll: true
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/cloud-thrash'),
+      dir: require('path').join(__dirname, './coverage/thrash-buddy'),
       subdir: '.',
       reporters: [
         { type: 'html' },

@@ -1,6 +1,6 @@
-package de.besessener.cloudthrash.controller
+package de.besessener.thrashbuddy.controller
 
-import de.besessener.cloudthrash.service.TestExecutionService
+import de.besessener.thrashbuddy.service.TestExecutionService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
-class CloudthrashTestController {
+class ThrashBuddyTestController {
 
     @Autowired
     TestExecutionService testExecutionService

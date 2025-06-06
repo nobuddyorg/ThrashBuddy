@@ -1,4 +1,4 @@
-package de.besessener.cloudthrash
+package de.besessener.thrashbuddy
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -6,10 +6,10 @@ import org.springframework.scheduling.annotation.EnableAsync
 
 @SpringBootApplication
 @EnableAsync
-class CloudthrashApplication {
+class ThrashBuddyApplication {
 
     static void main(String[] args) {
-        SpringApplication.run(CloudthrashApplication, args)
+        SpringApplication.run(ThrashBuddyApplication, args)
     }
 
 }

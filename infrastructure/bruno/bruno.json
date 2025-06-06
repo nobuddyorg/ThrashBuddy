@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "CloudThrash",
+  "name": "ThrashBuddy",
   "type": "collection",
   "ignore": [
     "node_modules",
