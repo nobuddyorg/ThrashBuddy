@@ -32,6 +32,9 @@ KUBECONFORM_TARGET="kubeconform"
 if [ "$OS" == "linux" ]; then
   KUBE_SCORE_BINARY="kube-score_${KUBE_SCORE_VERSION}_linux_amd64.tar.gz"
   KUBECONFORM_BINARY="kubeconform-linux-amd64.tar.gz"
+elif [ "$OS" == "darwin" ]; then
+  KUBE_SCORE_BINARY="kube-score_${KUBE_SCORE_VERSION}_darwin_amd64.tar.gz"
+  KUBECONFORM_BINARY="kubeconform-darwin-amd64.tar.gz"
 elif [ "$OS" == "windows" ]; then
   KUBE_SCORE_BINARY="kube-score_${KUBE_SCORE_VERSION}_windows_amd64.exe"
   KUBECONFORM_BINARY="kubeconform-windows-amd64.zip"
