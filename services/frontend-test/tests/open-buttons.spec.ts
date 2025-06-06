@@ -52,9 +52,8 @@ test.describe("Tool dashboards login", () => {
             loginButton: newPage.locator("button:has-text('SIGN IN')"),
         });
 
-        await newPage.getByTestId("tree-nav-toggle").click();
-        await newPage.getByTestId("nav-item-load-data").click();
-        await newPage.locator("text=Buckets").click();
+        await expect(newPage.locator("text=Get Started").first()).toBeVisible();
+        await newPage.goto(`${newPage.url()}/load-data/buckets`);
 
         await expect(newPage.locator("text=metrics")).toBeVisible();
         await expect(newPage.locator("text=_monitoring")).toBeVisible();
