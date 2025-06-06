@@ -16,6 +16,6 @@ else
   helm uninstall ingress-nginx
 fi
 
-helm uninstall minio influxdb grafana cloud-thrash
+helm uninstall minio influxdb grafana thrash-buddy
 
 popd > /dev/null

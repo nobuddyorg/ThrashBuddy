@@ -1,4 +1,4 @@
-package de.besessener.cloudthrash.config
+package de.besessener.thrashbuddy.config
 
 import io.minio.MinioClient
 import org.springframework.beans.factory.annotation.Value
@@ -24,6 +24,6 @@ class MinioConfig {
 
     @Bean
     String bucketName() {
-        'cloud-thrash'
+        'thrash-buddy'
     }
 }

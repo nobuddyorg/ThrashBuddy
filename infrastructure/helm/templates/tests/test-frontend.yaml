@@ -18,11 +18,11 @@ spec:
       args:
         - >
           HTML_CONTENT=$(curl --silent --location "http://frontend.default.svc.cluster.local/") &&
-          if echo "$HTML_CONTENT" | grep -q "<title>CloudThrash</title>"; then
-            echo "Frontend test passed: '<title>CloudThrash</title>' found in HTML.";
+          if echo "$HTML_CONTENT" | grep -q "<title>ThrashBuddy</title>"; then
+            echo "Frontend test passed: '<title>ThrashBuddy</title>' found in HTML.";
             exit 0;
           else
-            echo "Frontend test failed: '<title>CloudThrash</title>' not found in HTML.";
+            echo "Frontend test failed: '<title>ThrashBuddy</title>' not found in HTML.";
             exit 1;
           fi;
 

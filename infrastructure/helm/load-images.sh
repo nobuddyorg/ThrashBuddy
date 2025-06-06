@@ -4,7 +4,7 @@ set -e
 pushd $(dirname $0) > /dev/null
 
 kubectl get nodes --no-headers -o custom-columns=":status.conditions[-1].type"
-IMAGES=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "<none>" | grep "^cloud-thrash/")
+IMAGES=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "<none>" | grep "^thrash-buddy/")
 for IMAGE in $IMAGES; do
     echo "Loading image: $IMAGE"
     minikube image load "$IMAGE"

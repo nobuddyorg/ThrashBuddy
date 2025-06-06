@@ -1,14 +1,14 @@
-package de.besessener.cloudthrash
+package de.besessener.thrashbuddy
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class CloudthrashApplicationSpec {
+class ThrashBuddyApplicationSpec {
 
     @Test
     void contextLoads() {
-        CloudthrashApplication.main(new String[0])
+        ThrashBuddyApplication.main(new String[0])
     }
 
 }

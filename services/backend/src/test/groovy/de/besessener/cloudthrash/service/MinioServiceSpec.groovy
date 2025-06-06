@@ -1,6 +1,6 @@
-package de.besessener.cloudthrash.service
+package de.besessener.thrashbuddy.service
 
-import de.besessener.cloudthrash.CloudthrashApplication
+import de.besessener.thrashbuddy.ThrashBuddyApplication
 import io.minio.*
 import io.minio.messages.Item
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +15,7 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
-@SpringBootTest(classes = CloudthrashApplication)
+@SpringBootTest(classes = ThrashBuddyApplication)
 @Import(MockMinioConfig)
 class MinioServiceSpec extends Specification {
 
@@ -83,7 +83,7 @@ class MinioServiceSpec extends Specification {
         then:
             1 * minioClient.listObjects({
                 it instanceof ListObjectsArgs &&
-                        it.bucket() == 'cloud-thrash3'
+                        it.bucket() == 'thrash-buddy3'
             }) >> iterable
 
         and:
@@ -105,6 +105,6 @@ class MockMinioConfig {
 
     @Bean
     String bucketName() {
-        return 'cloud-thrash3'
+        return 'thrash-buddy3'
     }
 }

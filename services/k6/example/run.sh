@@ -5,7 +5,7 @@ xk6 build --with github.com/grafana/xk6-output-influxdb
 
 . ../../../infrastructure/helm/.env
 
-export K6_INFLUXDB_ORGANIZATION="cloud-thrash"
+export K6_INFLUXDB_ORGANIZATION="thrash-buddy"
 export K6_INFLUXDB_BUCKET="metrics"
 export K6_INFLUXDB_TOKEN=$INFLUXDB_API_TOKEN
 export K6_INFLUXDB_ADDR="http://influxdb.localhost" 

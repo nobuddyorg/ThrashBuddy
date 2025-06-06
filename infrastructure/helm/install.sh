@@ -16,8 +16,8 @@ done
 ./test.sh
 
 echo "Setting up AWS credentials..."
-kubectl delete secret cloudthrash-secrets || true
-kubectl create secret generic cloudthrash-secrets --from-env-file=.env
+kubectl delete secret thrashbuddy-secrets || true
+kubectl create secret generic thrashbuddy-secrets --from-env-file=.env
 
 kubectl delete secret basic-auth || true
 printf "$USERNAME_TOOLS:$(openssl passwd -apr1 $PASSWORD_TOOLS)\n" > .auth
@@ -36,7 +36,7 @@ else
   PUBLIC_IP=localhost
 fi
 
-helm upgrade --install cloud-thrash . \
+helm upgrade --install thrash-buddy . \
   -f values.yaml \
   --set deployments.backend.env.MINIO_ACCESS_KEY="$USERNAME_TOOLS" \
   --set deployments.backend.env.MINIO_SECRET_KEY="$PASSWORD_TOOLS" \
@@ -51,7 +51,7 @@ kubectl get pods -n default --no-headers | grep -vE 'test-' | awk '{print $1}' |
 for i in {1..10}; do
     echo "Attempt $i/10 ..."
     sleep 10
-    if helm test cloud-thrash; then
+    if helm test thrash-buddy; then
         break
     fi
 done

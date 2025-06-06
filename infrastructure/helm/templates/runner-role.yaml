@@ -2,20 +2,20 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace: default
-  name: cloudthrash-runner-role
+  name: thrashbuddy-runner-role
 rules:
-  - apiGroups: [""]  # core api group
-    resources: ["pods"]  # pods resource
+  - apiGroups: [""] # core api group
+    resources: ["pods"] # pods resource
     verbs: ["create", "delete", "get", "list", "watch", "deletecollection"]
-  - apiGroups: [""]  # core api group
+  - apiGroups: [""] # core api group
     resources: ["pods/log"]
     verbs: ["get"]
-  - apiGroups: [""]  # core api group
+  - apiGroups: [""] # core api group
     resources: ["services"]
-    verbs: ["create", "delete", "get", "list", "watch", "deletecollection"]  # Added deletecollection verb
+    verbs: ["create", "delete", "get", "list", "watch", "deletecollection"] # Added deletecollection verb
   - apiGroups: [""]
     resources: ["endpoints"]
     verbs: ["get", "list"]
-  - apiGroups: ["batch"]   # batch api group
-    resources: ["jobs", "jobs/status"]  # Include jobs and jobs/status resources
+  - apiGroups: ["batch"] # batch api group
+    resources: ["jobs", "jobs/status"] # Include jobs and jobs/status resources
     verbs: ["create", "delete", "get", "list", "watch", "deletecollection"]

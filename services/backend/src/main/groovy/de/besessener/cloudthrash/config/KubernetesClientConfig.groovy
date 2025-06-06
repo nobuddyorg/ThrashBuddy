@@ -1,4 +1,4 @@
-package de.besessener.cloudthrash.config
+package de.besessener.thrashbuddy.config
 
 import io.fabric8.kubernetes.client.KubernetesClient
 import io.fabric8.kubernetes.client.KubernetesClientBuilder

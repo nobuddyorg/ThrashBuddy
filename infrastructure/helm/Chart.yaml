@@ -1,5 +1,5 @@
 apiVersion: v2
-name: CloudThrash
+name: ThrashBuddy
 description: A k6 based distributed performance testing solution.
 type: application
 version: 2.0.0

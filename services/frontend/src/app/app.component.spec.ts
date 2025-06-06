@@ -35,14 +35,14 @@ describe("AppComponent", () => {
 
     it("should have the correct title value", () => {
         const { componentInstance } = TestBed.createComponent(AppComponent);
-        expect(componentInstance.title).toBe("CloudThrash");
+        expect(componentInstance.title).toBe("ThrashBuddy");
     });
 
     it("should render title in the DOM", () => {
         const fixture = TestBed.createComponent(AppComponent);
         fixture.detectChanges();
         const compiled = fixture.nativeElement as HTMLElement;
-        expect(compiled.querySelector("h1")?.textContent).toContain("CloudThrash");
+        expect(compiled.querySelector("h1")?.textContent).toContain("ThrashBuddy");
     });
 
     describe("computed signals", () => {

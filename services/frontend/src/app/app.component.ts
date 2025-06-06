@@ -44,7 +44,7 @@ interface StatusResponse {
     styleUrl: "./app.component.css",
 })
 export class AppComponent implements OnInit, OnDestroy {
-    title = "CloudThrash";
+    title = "ThrashBuddy";
     private testService = inject(TestService);
     private fileService = inject(FileService);
     private snackBar = inject(MatSnackBar);

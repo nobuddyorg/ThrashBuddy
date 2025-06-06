@@ -1,4 +1,4 @@
-package de.besessener.cloudthrash.config
+package de.besessener.thrashbuddy.config
 
 import io.minio.MinioClient
 import org.junit.jupiter.api.Nested
@@ -31,7 +31,7 @@ class MinioConfigSpec {
             assertNotNull(minioClient)
 
             def bucketName = context.getBean(String)
-            assertEquals("cloud-thrash", bucketName)
+            assertEquals("thrash-buddy", bucketName)
         }
     }
 
@@ -48,7 +48,7 @@ class MinioConfigSpec {
             assertNotNull(minioClient)
 
             def bucketName = context.getBean(String)
-            assertEquals("cloud-thrash", bucketName)
+            assertEquals("thrash-buddy", bucketName)
         }
     }
 }
