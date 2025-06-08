@@ -1,7 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { NgxDropzoneModule } from "ngx-dropzone";
-import { CommonModule } from "@angular/common";
+
 import { MatIconModule } from "@angular/material/icon";
 import { AppComponent } from "../../app.component";
 
@@ -9,7 +9,7 @@ import { AppComponent } from "../../app.component";
     selector: "app-dropzone",
     templateUrl: "./dropzone.component.html",
     styleUrls: ["./dropzone.component.css"],
-    imports: [NgxDropzoneModule, CommonModule, MatIconModule],
+    imports: [NgxDropzoneModule, MatIconModule],
 })
 export class DropzoneComponent {
     private baseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port === "4200" ? ":8080" : `:${window.location.port}`}/api`;
