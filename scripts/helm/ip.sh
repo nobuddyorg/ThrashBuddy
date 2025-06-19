@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -e
 
 pushd "$(dirname "$0")" >/dev/null
 

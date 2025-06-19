@@ -110,6 +110,7 @@ To test frontend and backend changes without rebuilding Docker images, you can r
    cd apps/ui
    ng serve --open
    ```
+
    A browser should open automatically, and the frontend will be ready.
 
 Backend and frontend should be connected automatically. This setup is a bit limited though, as Minio, InfluxDB and Grafana are not started.

@@ -32,12 +32,18 @@ The image below shows the used tools of this project:
 
 ## Getting Started
 
-To get started with ThrashBuddy, see the [Getting Started Guide](docs/getting-started.md) and [Architecture Overview](docs/architecture.md).
+To get started with ThrashBuddy, see the [Getting Started Guide](docs/getting-started.md).
 Entrypoint is anyway `./buddy.sh`, so feel free calling it to get a usage message.
 
 ```plaintext
 Usage: ./buddy.sh <command-group> <command> [options]
 ```
+
+More details at:
+
+- [Getting Started Guide](docs/getting-started.md)
+- [AWS Setup with EKS](docs/aws-eks.md)
+- [GitHub Runner Setup](docs/aws-eks.md)
 
 ## Performance Testing
 

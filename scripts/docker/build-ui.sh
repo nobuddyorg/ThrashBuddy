@@ -1,7 +1,7 @@
 #!/bin/bash
 # Description: Build the ui Docker image.
 
-set -eu
+set -e
 
 pushd "$(dirname "$0")"/../../ >/dev/null
 pushd apps/ui/ >/dev/null

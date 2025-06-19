@@ -1,7 +1,7 @@
 #!/bin/bash
 # Description: [-remote] Install or Update all Helm charts, including thrash-buddy itself (local or remote cluster).
 
-set -eu
+set -e
 
 pushd "$(dirname "$0")" >/dev/null
 

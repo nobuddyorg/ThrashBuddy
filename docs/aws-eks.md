@@ -87,7 +87,7 @@ After cluster creation, **ThrashBuddy** is accessible via its ingress IP, printe
 If your Kubernetes context switched in the meantime, you can reconnect to the EKS cluster again by running:
 
 ```shell
-./thrash-buddy aws connect
+./thrash-buddy aws connect-cluster
 ```
 
 ## AWS Configuration Notes

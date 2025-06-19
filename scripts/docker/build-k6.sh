@@ -1,7 +1,7 @@
 #!/bin/bash
 # Description: Build the Docker image for the k6 test.
 
-set -eu
+set -e
 
 pushd "$(dirname "$0")" >/dev/null
 ../helm/check-env.sh

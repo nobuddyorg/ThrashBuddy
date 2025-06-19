@@ -1,7 +1,7 @@
 #!/bin/bash
 # Description: Build the api Docker image.
 
-set -eu
+set -e
 
 pushd "$(dirname "$0")"/../../ >/dev/null
 pushd apps/api/ >/dev/null

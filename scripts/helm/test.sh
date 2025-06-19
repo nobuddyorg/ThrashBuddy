@@ -1,7 +1,7 @@
 #!/bin/bash
 # Description: Validate the Helm chart, including linting, templating, and unit tests.
 
-set -eu
+set -e
 
 pushd "$(dirname "$0")" >/dev/null
 
@@ -12,8 +12,14 @@ echo "Validating Helm chart..."
 KUBE_SCORE_BINARY="$(pwd)/.deps/kube-score"
 KUBE_CONFORM_BINARY="$(pwd)/.deps/kubeconform"
 
-[ -x "$KUBE_SCORE_BINARY" ] || { echo "Missing kube-score binary"; exit 1; }
-[ -x "$KUBE_CONFORM_BINARY" ] || { echo "Missing kubeconform binary"; exit 1; }
+[ -x "$KUBE_SCORE_BINARY" ] || {
+    echo "Missing kube-score binary"
+    exit 1
+}
+[ -x "$KUBE_CONFORM_BINARY" ] || {
+    echo "Missing kubeconform binary"
+    exit 1
+}
 
 pushd ../../charts >/dev/null
 

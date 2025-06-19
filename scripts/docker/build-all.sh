@@ -1,7 +1,7 @@
 #!/bin/bash
 # Description: Build all Docker images required for the project (implicitly done with create-cluster).
 
-set -eu
+set -e
 
 script_dir=$(dirname "$(realpath "$0")")
 pushd "$(dirname "$0")"/../../ >/dev/null
