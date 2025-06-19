@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "gradle"
-    directory: "services/backend"
+    directory: "apps/api"
     schedule:
       interval: "weekly"
     groups:
@@ -13,7 +13,7 @@ updates:
           - "patch"
 
   - package-ecosystem: "npm"
-    directory: "services/frontend"
+    directory: "apps/ui"
     schedule:
       interval: "weekly"
     groups:
@@ -25,7 +25,7 @@ updates:
           - "patch"
 
   - package-ecosystem: "npm"
-    directory: "services/frontend-test"
+    directory: "tests/ui"
     schedule:
       interval: "weekly"
     groups:
@@ -37,37 +37,16 @@ updates:
           - "patch"
 
   - package-ecosystem: "docker"
-    directory: "services/backend"
+    directory: "apps/api"
     schedule:
       interval: "weekly"
-    groups:
-      minor-and-patch:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
 
   - package-ecosystem: "docker"
-    directory: "services/frontend"
+    directory: "apps/ui"
     schedule:
       interval: "weekly"
-    groups:
-      minor-and-patch:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
 
   - package-ecosystem: "docker"
-    directory: "services/k6"
+    directory: "apps/k6"
     schedule:
       interval: "weekly"
-    groups:
-      minor-and-patch:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"

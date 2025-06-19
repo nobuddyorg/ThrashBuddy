@@ -1,0 +1,74 @@
+suite: Test Deployment Template
+templates:
+  - templates/deployment.yaml
+tests:
+  - it: should render a deployment for ui
+    set:
+      deployments:
+        ui:
+          name: ui
+          image: thrash-buddy/ui:latest
+          replicas: 2
+          livenessPort: 8080
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+              ephemeralStorage: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+              ephemeralStorage: "1Gi"
+        api:
+          name: api
+          image: thrash-buddy/api:latest
+          replicas: 1
+          livenessPort: 8081
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+              ephemeralStorage: "500Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+              ephemeralStorage: "750Mi"
+    documentSelector:
+      path: metadata.name
+      value: ui-deployment
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: metadata.name
+          value: ui-deployment
+      - equal:
+          path: spec.replicas
+          value: 2
+      - equal:
+          path: spec.template.spec.containers[0].name
+          value: ui
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: thrash-buddy/ui:latest
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.tcpSocket.port
+          value: 8080
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: "250m"
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.memory
+          value: "256Mi"
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.ephemeral-storage
+          value: "512Mi"
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.cpu
+          value: "500m"
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.memory
+          value: "512Mi"
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.ephemeral-storage
+          value: "1Gi"

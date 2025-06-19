@@ -1,39 +1,53 @@
 #!/bin/bash
 
-pushd $(dirname $0) > /dev/null
+cd "$(dirname "$0")" || exit 1
 
-if [ "$#" -lt 2 ]; then
-  echo -e "
-Usage: $0 <command-group> <command> [options]
+SCRIPTS_ROOT="./scripts"
 
-Available command groups:
+pprint_help() {
+  echo -e "\nUsage: $0 <command-group> <command> [options]\n"
+  echo "Available command groups and commands:"
 
-  aws:
-    connect             - Establish a connection to AWS EKS cluster (if created).
-    cleanup             - Remove persistent resources from AWS (mainly S3 buckets and contents).
-    create-cluster      - Create a new AWS cluster.
-    delete-cluster      - Delete an existing AWS cluster.
-    push-images         - Push Docker images to an AWS container registry (implicitly done with create-cluster).
+  for group_dir in "$SCRIPTS_ROOT"/*/; do
+    group_name=$(basename "$group_dir")
 
-  docker:
-    build-all           - Build all Docker images required for the project (implicitly done with create-cluster).
-    build-<image>       - Build a specific Docker image (e.g., backend, frontend, k6).
+    commands=()
+    descriptions=()
+    max_len=0
 
-  helm:
-    install [-remote]   - Install all Helm charts, including thrash-buddy itself (local or remote cluster).
-    uninstall [-remote] - Uninstall all Helm charts (local or remote cluster).
-    update [-remote]    - Update the Helm chart locally or remotely if '-remote' is specified (local or remote cluster).
-"
+    for script_path in "$group_dir"/*.sh; do
+      [ -e "$script_path" ] || continue
+      cmd=$(basename "$script_path" .sh)
+      desc=$(grep -m1 '^# Description:' "$script_path" | sed 's/^# Description: //')
+      [ -z "$desc" ] && continue
+      commands+=("$cmd")
+      descriptions+=("$desc")
+      ((${#cmd} > max_len)) && max_len=${#cmd}
+    done
+
+    if [ ${#commands[@]} -eq 0 ]; then
+      continue
+    fi
+
+    echo -e "\n$group_name:"
+
+    for idx in "${!commands[@]}"; do
+      printf "  %-*s  - %s\n" "$max_len" "${commands[$idx]}" "${descriptions[$idx]}"
+    done
+  done
+  echo
+}
+
+if [ $# -lt 2 ]; then
+  print_help
   exit 1
 fi
 
-BASE_DIR=$1
-COMMAND=$2
-OPTION=$3
+SCRIPT_PATH="$SCRIPTS_ROOT/$1/$2.sh"
 
-pushd infrastructure/$BASE_DIR > /dev/null
+if [ ! -f "$SCRIPT_PATH" ]; then
+  echo "Error: Script '$SCRIPT_PATH' not found."
+  exit 1
+fi
 
-./$COMMAND.sh $OPTION
-
-popd > /dev/null
-popd > /dev/null
+"$SCRIPT_PATH" "${@:3}"

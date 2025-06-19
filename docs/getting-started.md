@@ -34,7 +34,7 @@ ThrashBuddy consists of multiple containerized services running in a Kubernetes 
      sudo apt update && sudo apt install -y helm code eksctl awscli kubectl
      ```
 
-     Both the frontend and backend come with their own package managers and their wrappers `npmw` and `gradlew`. They will install themselves and their dependencies.
+     Both the ui and api come with their own package managers and their wrappers `npmw` and `gradlew`. They will install themselves and their dependencies.
 
 ### Building the Docker Images
 
@@ -100,14 +100,14 @@ To test frontend and backend changes without rebuilding Docker images, you can r
 1. **Start the backend:**
 
    ```shell
-   cd services/backend
+   cd apps/api
    ./gradlew bootRun
    ```
 
 2. **Start the frontend locally:**
-   Run the following command in the frontend directory:
+
    ```shell
-   cd services/frontend
+   cd apps/ui
    ng serve --open
    ```
    A browser should open automatically, and the frontend will be ready.

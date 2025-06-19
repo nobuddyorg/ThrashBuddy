@@ -16,8 +16,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  backend:
-    name: Backend Analysis
+  api:
+    name: api Analysis
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,22 +26,22 @@ jobs:
           submodules: true
           fetch-depth: 0
       - name: Install Dependencies and Run Unit Tests
-        working-directory: ./services/backend
+        working-directory: ./apps/api
         run: ./gradlew clean jacocoTestReport
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/linux@v2
         if: always()
         with:
-          check_name: "Backend Unit Tests"
+          check_name: "api Unit Tests"
           files: |
-            ./services/backend/build/test-results/**/*.xml
+            ./apps/api/build/test-results/**/*.xml
       - name: Install ReportGenerator
         run: |
           dotnet tool install --global dotnet-reportgenerator-globaltool
       - name: Convert JaCoCo to Cobertura
         run: |
           reportgenerator \
-            -reports:./services/backend/build/reports/jacoco/test/jacocoTestReport.xml \
+            -reports:./apps/api/build/reports/jacoco/test/jacocoTestReport.xml \
             -targetdir:coverage-report \
             -reporttypes:Cobertura
       - name: Generate Coverage Report Summary
@@ -65,8 +65,8 @@ jobs:
           body-file: code-coverage-results.md
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  frontend:
-    name: Frontend Analysis
+  ui:
+    name: ui Analysis
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -75,28 +75,28 @@ jobs:
           submodules: true
           fetch-depth: 0
       - name: Install Dependencies
-        working-directory: ./services/frontend
+        working-directory: ./apps/ui
         run: ./npmw install
       - name: Unit Tests and Coverage
-        working-directory: ./services/frontend
+        working-directory: ./apps/ui
         run: ./npmw run test:ci
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/linux@v2
         if: always()
         with:
-          check_name: "Frontend Unit Tests"
+          check_name: "ui Unit Tests"
           files: |
-            ./services/frontend/TESTS-Chrome_Headless_*.xml
+            ./apps/ui/TESTS-Chrome_Headless_*.xml
       - name: Show Coverage Summary in PR
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: ./services/frontend/coverage/thrash-buddy/coverage.xml
+          filename: ./apps/ui/coverage/thrash-buddy/coverage.xml
           badge: true
           fail_below_min: true
           hide_complexity: true
           format: markdown
           output: both
-          thresholds: "60 80" # optional: warn under 80%, fail under 60%
+          thresholds: "60 80"
       - name: Append Coverage Report to GitHub Summary
         if: always()
         run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
@@ -109,7 +109,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint
-        working-directory: ./services/frontend
+        working-directory: ./apps/ui
         run: ./npmw run lint
 
   infra-and-images:
@@ -117,7 +117,7 @@ jobs:
       group: "test--infra-group-${{ github.event.pull_request.number }}"
       cancel-in-progress: false
     if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' # takes too long for pushes
-    needs: [backend, frontend]
+    needs: [api, ui]
     name: Infrastructure and Images
     runs-on: self-hosted
     steps:
@@ -132,15 +132,15 @@ jobs:
         run: echo "${{ secrets.DOT_ENV }}" > .env
       - uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: ./services/backend/Dockerfile
+          dockerfile: ./apps/api/Dockerfile
           ignore: DL3018
       - uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: ./services/frontend/Dockerfile
+          dockerfile: ./apps/ui/Dockerfile
           ignore: DL3018
       - uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: ./services/k6/Dockerfile
+          dockerfile: ./apps/k6/Dockerfile
           ignore: DL3018
 
       - name: Set up Kubernetes with Minikube
@@ -168,8 +168,8 @@ jobs:
       - name: Helm
         run: |
           ./buddy.sh helm install
-      - name: frontend tests
-        working-directory: ./services/frontend-test
+      - name: ui tests
+        working-directory: ./tests/ui
         run: |
           # Start port-forwarding to the ingress-nginx-controller
           kubectl port-forward svc/ingress-nginx-controller 8080:80 >/dev/null 2>&1 &
@@ -190,13 +190,13 @@ jobs:
         if: always()
         with:
           check_name: "Playwright UI Tests"
-          files: ./services/frontend-test/test-results/results.xml
+          files: ./tests/ui/test-results/results.xml
       - name: Archive Playwright Test Results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: report.zip
-          path: services/frontend-test/test-results
+          path: tests/ui/test-results
           retention-days: 7
       - name: Minikube delete cluster
         if: always()
