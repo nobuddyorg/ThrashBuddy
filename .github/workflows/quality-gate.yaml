@@ -128,7 +128,7 @@ jobs:
         with:
           submodules: true
       - name: Write .env file
-        working-directory: ./infrastructure/helm
+        working-directory: ./configs
         run: echo "${{ secrets.DOT_ENV }}" > .env
       - uses: hadolint/hadolint-action@v3.1.0
         with:
