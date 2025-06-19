@@ -4,7 +4,7 @@ cd "$(dirname "$0")" || exit 1
 
 SCRIPTS_ROOT="./scripts"
 
-pprint_help() {
+print_help() {
   echo -e "\nUsage: $0 <command-group> <command> [options]\n"
   echo "Available command groups and commands:"
 
