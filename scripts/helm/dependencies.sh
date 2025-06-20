@@ -4,15 +4,12 @@ set -e
 
 pushd "$(dirname "$0")" >/dev/null
 
-# Specify the versions
 KUBE_SCORE_VERSION="1.19.0"
 KUBECONFORM_VERSION="0.6.7"
 
-# Base URLs for downloads
 KUBE_SCORE_BASE_URL="https://github.com/zegl/kube-score/releases/download/v${KUBE_SCORE_VERSION}"
 KUBECONFORM_BASE_URL="https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}"
 
-# Detect OS and ensure architecture is x86_64
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)
 if [ "$ARCH" != "x86_64" ]; then
@@ -20,12 +17,10 @@ if [ "$ARCH" != "x86_64" ]; then
   exit 1
 fi
 
-# Handle Windows OS detection for Git Bash
 if [[ "$OS" == "mingw"* || "$OS" == "cygwin"* ]]; then
   OS="windows"
 fi
 
-# Define binary filenames and target paths
 KUBE_SCORE_TARGET="kube-score"
 KUBECONFORM_TARGET="kubeconform"
 if [ "$OS" == "linux" ]; then
@@ -42,11 +37,9 @@ else
   exit 1
 fi
 
-# Download directory
 DOWNLOAD_DIR="./.deps"
 mkdir -p "$DOWNLOAD_DIR"
 
-# Function to download and handle binaries
 download_binary() {
   local base_url=$1
   local binary_name=$2
@@ -55,13 +48,11 @@ download_binary() {
   echo "Downloading $target_name..."
   curl -L "${base_url}/${binary_name}" -o "${DOWNLOAD_DIR}/${binary_name}"
 
-  # Verify the file is not empty or invalid
   if [ ! -s "${DOWNLOAD_DIR}/${binary_name}" ] || grep -q "Not Found" "${DOWNLOAD_DIR}/${binary_name}"; then
     echo "Error: Failed to download $target_name. Please check the URL."
     exit 1
   fi
 
-  # Handle extraction or renaming
   if [[ "$binary_name" == *.tar.gz ]]; then
     tar -xzf "${DOWNLOAD_DIR}/${binary_name}" -C "$DOWNLOAD_DIR"
     chmod +x "${DOWNLOAD_DIR}/${target_name}"
@@ -76,10 +67,7 @@ download_binary() {
   echo "$target_name is available at: ${DOWNLOAD_DIR}/${target_name}"
 }
 
-# Download kube-score
 download_binary "$KUBE_SCORE_BASE_URL" "$KUBE_SCORE_BINARY" "$KUBE_SCORE_TARGET"
-
-# Download kubeconform
 download_binary "$KUBECONFORM_BASE_URL" "$KUBECONFORM_BINARY" "$KUBECONFORM_TARGET"
 
 echo "All binaries are downloaded and ready to use in ${DOWNLOAD_DIR}."

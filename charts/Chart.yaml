@@ -3,3 +3,15 @@ name: ThrashBuddy
 description: A k6 based distributed performance testing solution.
 type: application
 version: 2.0.0
+
+dependencies:
+  - name: minio
+    version: 5.0.10
+    repository: https://charts.min.io/
+  - name: influxdb2
+    version: 2.1.1
+    repository: https://helm.influxdata.com/
+    alias: influxdb
+  - name: grafana
+    version: 6.59.2
+    repository: https://grafana.github.io/helm-charts

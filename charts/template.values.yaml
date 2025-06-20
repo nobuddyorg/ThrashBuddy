@@ -35,9 +35,9 @@ deployments:
         ephemeralStorage: 1Gi
     env:
       MINIO_URL: "http://thrash-buddy-minio.default.svc.cluster.local:9000"
-      MINIO_ACCESS_KEY: user
-      MINIO_SECRET_KEY: password
-      MINIO_BUCKET: thrash-buddy
+      MINIO_ACCESS_KEY: ${USERNAME_TOOLS}
+      MINIO_SECRET_KEY: ${PASSWORD_TOOLS}
+      MINIO_BUCKET: ${APP_NAME}
 
 services:
   ui:
@@ -53,9 +53,9 @@ services:
 
 ingress:
   enabled: true
-  basicauth: false
+  basicauth: ${BASIC_AUTH}
   className: nginx
-  host: localhost
+  host: ${PUBLIC_IP}
   rules:
     - path: /
       pathType: Prefix
@@ -67,14 +67,14 @@ ingress:
       servicePort: 8080
 
 global:
-  imageRepoPrefix: 
+  imageRepoPrefix: ${IMAGE_REPO_PREFIX}
 
 # ===============================
 # MinIO
 # ===============================
 minio:
-  rootUser: user
-  rootPassword: password
+  rootUser: ${USERNAME_TOOLS}
+  rootPassword: ${PASSWORD_TOOLS}
   mode: standalone
   persistence:
     enabled: false
@@ -98,7 +98,7 @@ minio:
   consoleIngress:
     enabled: true
     hosts:
-      - minio.localhost
+      - minio.${PUBLIC_IP}
     ingressClassName: nginx
     path: /
     pathType: Prefix
@@ -110,9 +110,9 @@ influxdb:
   adminUser:
     organization: thrash-buddy
     bucket: metrics
-    user: user
-    password: password
-    token: token
+    user: ${USERNAME_TOOLS}
+    password: ${PASSWORD_TOOLS}
+    token: ${INFLUXDB_API_TOKEN}
   persistence:
     enabled: false
   resources:
@@ -124,7 +124,7 @@ influxdb:
       memory: 1Gi
   ingress:
     enabled: true
-    hostname: influx.localhost
+    hostname: influx.${PUBLIC_IP}
     path: /
     pathType: Prefix
     ingressClassName: nginx
@@ -133,8 +133,8 @@ influxdb:
 # Grafana
 # ===============================
 grafana:
-  adminUser: user
-  adminPassword: password
+  adminUser: ${USERNAME_TOOLS}
+  adminPassword: ${PASSWORD_TOOLS}
   replicaCount: 1
   resources:
     requests:
@@ -156,12 +156,12 @@ grafana:
             organization: thrash-buddy
             defaultBucket: metrics
           secureJsonData:
-            token: token
+            token: ${INFLUXDB_API_TOKEN}
   ingress:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - grafana.localhost
+      - grafana.${PUBLIC_IP}
     path: /
     pathType: Prefix
   service:
@@ -980,4 +980,4 @@ grafana:
             defaultBucket: metrics
             tlsSkipVerify: true
           secureJsonData:
-            token: token
+            token: ${INFLUXDB_API_TOKEN}
