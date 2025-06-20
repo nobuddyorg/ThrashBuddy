@@ -3,7 +3,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: thrash-buddy-ingress
+  name: {{ .Release.Name }}-ingress
   {{- if .Values.ingress.basicauth }}
   annotations:
     nginx.ingress.kubernetes.io/auth-type: basic

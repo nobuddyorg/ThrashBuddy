@@ -3,19 +3,20 @@
 
 set -e
 
+IS_REMOTE=false
+for arg in "$@"; do
+  case "$arg" in
+  -remote) IS_REMOTE=true ;;
+  esac
+done
+
 pushd "$(dirname "$0")" >/dev/null
 
-. ./parse-args.sh
-
-echo "Build images..."
 ../docker/build-all.sh
-
 if [ "$IS_REMOTE" = true ]; then
-  echo "Remote cluster detected. Setting up remote environment..."
   ../aws/push-images.sh
   export BASIC_AUTH=true
 else
-  echo "Local cluster detected. Setting up local environment..."
   export BASIC_AUTH=false
 fi
 
@@ -40,12 +41,14 @@ echo "Uninstalling previous installation..."
 $HELM_SCRIPT_DIR/uninstall.sh "$@"
 
 echo "Installing dependencies..."
+find ./charts -mindepth 1 -maxdepth 1 ! -name '.gitignore' -exec rm -rf {} +
 . $HELM_SCRIPT_DIR/install-nginx.sh
 envsubst <template.values.yaml >values.yaml
 helm dependency update
 
+$HELM_SCRIPT_DIR/test.sh
+
 echo "Installing thrash-buddy..."
-#$HELM_SCRIPT_DIR/test.sh
 helm upgrade --install thrash-buddy . -f values.yaml
 
 echo "integration test running..."

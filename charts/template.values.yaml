@@ -4,7 +4,7 @@
 deployments:
   ui:
     name: ui
-    image: thrash-buddy/ui:latest
+    image: ${APP_NAME}/ui:latest
     replicas: 1
     pdbMinAvailable: 1
     livenessPort: 80
@@ -20,7 +20,7 @@ deployments:
     env: {}
   api:
     name: api
-    image: thrash-buddy/api:latest
+    image: ${APP_NAME}/api:latest
     replicas: 1
     pdbMinAvailable: 1
     livenessPort: 8080
@@ -34,7 +34,7 @@ deployments:
         memory: 512Mi
         ephemeralStorage: 1Gi
     env:
-      MINIO_URL: "http://thrash-buddy-minio.default.svc.cluster.local:9000"
+      MINIO_URL: "http://${APP_NAME}-minio.default.svc.cluster.local:9000"
       MINIO_ACCESS_KEY: ${USERNAME_TOOLS}
       MINIO_SECRET_KEY: ${PASSWORD_TOOLS}
       MINIO_BUCKET: ${APP_NAME}
@@ -92,7 +92,7 @@ minio:
   service:
     type: ClusterIP
   buckets:
-    - name: thrash-buddy
+    - name: ${APP_NAME}
       policy: none
       purge: false
   consoleIngress:
@@ -108,7 +108,7 @@ minio:
 # ===============================
 influxdb:
   adminUser:
-    organization: thrash-buddy
+    organization: ${APP_NAME}
     bucket: metrics
     user: ${USERNAME_TOOLS}
     password: ${PASSWORD_TOOLS}

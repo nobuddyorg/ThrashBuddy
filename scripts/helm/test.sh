@@ -24,8 +24,10 @@ KUBE_CONFORM_BINARY="$(pwd)/.deps/kubeconform"
 pushd ../../charts >/dev/null
 
 helm lint .
-helm template . | "$KUBE_CONFORM_BINARY" -strict -verbose
-helm template . | "$KUBE_SCORE_BINARY" score -
+TEMPLATE_FILES=$(find templates -type f -name '*.yaml' -exec echo --show-only {} \;)
+TEMPLATE_OUTPUT=$(helm template . $TEMPLATE_FILES)
+echo "$TEMPLATE_OUTPUT" | "$KUBE_CONFORM_BINARY" -strict -verbose
+echo "$TEMPLATE_OUTPUT" | "$KUBE_SCORE_BINARY" score -
 helm install thrash-buddy --dry-run --debug .
 echo "Helm chart is valid."
 

@@ -35,9 +35,7 @@ else
     --set controller.resources.limits.memory=192Mi \
     --set controller.replicaCount=1 \
     --set controller.podDisruptionBudget.enabled=true \
-    --set controller.podDisruptionBudget.minAvailable=1 \
-    --set controller.service.type=LoadBalancer \
-    --set controller.service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-type"="external"
+    --set controller.podDisruptionBudget.minAvailable=1
 
   echo "Waiting for ingress-nginx controller pod..."
   kubectl wait --namespace default \

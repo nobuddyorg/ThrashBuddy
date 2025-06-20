@@ -4,8 +4,8 @@ set -e
 
 pushd "$(dirname "$0")" >/dev/null
 
-KUBE_SCORE_VERSION="1.19.0"
-KUBECONFORM_VERSION="0.6.7"
+KUBE_SCORE_VERSION="1.20.0"
+KUBECONFORM_VERSION="0.7.0"
 
 KUBE_SCORE_BASE_URL="https://github.com/zegl/kube-score/releases/download/v${KUBE_SCORE_VERSION}"
 KUBECONFORM_BASE_URL="https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}"
@@ -38,6 +38,9 @@ else
 fi
 
 DOWNLOAD_DIR="./.deps"
+if [ -d "$DOWNLOAD_DIR" ]; then
+  rm -rf "$DOWNLOAD_DIR"
+fi
 mkdir -p "$DOWNLOAD_DIR"
 
 download_binary() {

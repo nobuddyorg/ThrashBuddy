@@ -20,8 +20,4 @@ EOF
     echo "$ENV_FILE file created successfully."
 fi
 
-export USERNAME_TOOLS=$USERNAME_TOOLS
-export PASSWORD_TOOLS=$PASSWORD_TOOLS
-export INFLUXDB_API_TOKEN=$INFLUXDB_API_TOKEN
-
 popd >/dev/null
