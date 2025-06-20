@@ -5,6 +5,7 @@ set -e
 
 pushd "$(dirname "$0")" >/dev/null
 
+. ../setup/get-config.sh
 ./dependencies.sh
 
 echo "Validating Helm chart..."
@@ -21,7 +22,7 @@ KUBE_CONFORM_BINARY="$(pwd)/.deps/kubeconform"
     exit 1
 }
 
-pushd ../../charts >/dev/null
+pushd ../../configs/helm >/dev/null
 
 helm lint .
 TEMPLATE_FILES=$(find templates -type f -name '*.yaml' -exec echo --show-only {} \;)

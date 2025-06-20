@@ -14,6 +14,10 @@ if [ "$IS_REMOTE" = true ]; then
     . ../aws/connect-cluster.sh
 fi
 
-helm uninstall thrash-buddy
+helm uninstall $APP_NAME --namespace "$APP_NAME"
+kubectl delete namespace "$APP_NAME"
+
+helm uninstall ingress-nginx --namespace "$APP_NAME-ingress"
+kubectl delete namespace "$APP_NAME-ingress"
 
 popd >/dev/null

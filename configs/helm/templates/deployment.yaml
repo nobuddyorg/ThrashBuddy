@@ -18,7 +18,7 @@ spec:
       labels:
         app: {{ $deployment.name }}
     spec:
-      serviceAccountName: thrashbuddy-runner-sa
+      serviceAccountName: {{ $.Values.release }}-runner-sa
       containers:
         - name: {{ $deployment.name }}
           image: "{{ $.Values.global.imageRepoPrefix }}{{ $deployment.image }}"
@@ -43,7 +43,7 @@ spec:
           - name: K6_INFLUXDB_TOKEN
             valueFrom:
               secretKeyRef:
-                name: thrashbuddy-secrets
+                name: {{ $.Values.release }}-secrets
                 key: INFLUXDB_API_TOKEN
           {{- if $deployment.env }}
           {{- range $key, $value := $deployment.env }}

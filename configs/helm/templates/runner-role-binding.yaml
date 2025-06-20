@@ -1,13 +1,13 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: thrashbuddy-runner-rolebinding
+  name: {{ .Values.release }}-runner-rolebinding
   namespace: default
 subjects:
   - kind: ServiceAccount
-    name: thrashbuddy-runner-sa
+    name: {{ .Values.release }}-runner-sa
     namespace: default
 roleRef:
   kind: Role
-  name: thrashbuddy-runner-role
+  name: {{ .Values.release }}-runner-role
   apiGroup: rbac.authorization.k8s.io

@@ -1,6 +1,7 @@
 # ===============================
 # ThrashBuddy
 # ===============================
+release: ${APP_NAME}
 deployments:
   ui:
     name: ui
