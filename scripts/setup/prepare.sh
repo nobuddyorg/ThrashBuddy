@@ -30,7 +30,7 @@ source ~/.profile
 brew --version
 
 # Install tools via Homebrew
-brew install helm kubectl node minikube
+brew install helm kubectl node minikube eksctl awscli
 
 # Enable and start Docker via systemd
 sudo systemctl enable docker

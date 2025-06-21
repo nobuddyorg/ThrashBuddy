@@ -1,8 +1,8 @@
 #!/bin/bash
 
-pushd "$(dirname "$0")" >/dev/null
+pushd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null
 
-../setup/get-config.sh
+. ../setup/get-config.sh
 
 export EKS_ENVIRONMENT_NAME=${EKS_ENVIRONMENT_NAME:-stage}
 export EKS_CLUSTER_NAME="${APP_NAME}-${EKS_ENVIRONMENT_NAME}"

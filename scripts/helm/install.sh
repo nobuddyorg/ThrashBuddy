@@ -18,6 +18,9 @@ AUTH_FILE="$HELM_SCRIPT_DIR/../../configs/.auth"
 CONFIG_DIR="$HELM_SCRIPT_DIR/../../configs/helm"
 
 source_env_and_build() {
+  ./check-dot-env.sh
+  . ../setup/get-config.sh
+
   ../docker/build-all.sh
   if [ "$IS_REMOTE" = true ]; then
     ../aws/push-images.sh
@@ -25,9 +28,6 @@ source_env_and_build() {
   else
     export BASIC_AUTH=false
   fi
-
-  ./check-dot-env.sh
-  . ../setup/get-config.sh
 }
 
 setup_k8s_secrets() {

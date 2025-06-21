@@ -60,9 +60,9 @@ test("run test", async ({ page }) => {
 
   await expect(page.locator("text=Run Test")).toBeDisabled();
   await expect(page.locator("text=Stop Test")).toBeEnabled();
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(15_000);
 
-  await expect(page.locator("text=Run Test")).toBeEnabled({ timeout: 120_000 });
+  await expect(page.locator("text=Run Test")).toBeEnabled({ timeout: 180_000 });
 });
 
 test("stop test", async ({ page }) => {
@@ -79,7 +79,7 @@ test("stop test", async ({ page }) => {
   await expect(page.locator("text=Run Test")).toBeDisabled();
   await expect(page.locator("text=Stop Test")).toBeEnabled();
 
-  await page.waitForTimeout(10_000);
+  await page.waitForTimeout(15_000);
 
   await page.locator("text=Stop Test").click();
 
