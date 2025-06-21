@@ -197,7 +197,9 @@ jobs:
         if: always()
         with:
           name: report.zip
-          path: tests/ui/test-results
+          path: |
+            tests/ui/test-results
+            tests/ui/playwright-report
           retention-days: 7
       - name: Minikube delete cluster
         if: always()
