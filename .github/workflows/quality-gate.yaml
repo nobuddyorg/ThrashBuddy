@@ -173,7 +173,7 @@ jobs:
         run: |
           # Start port-forwarding to the ingress-nginx-controller
           . ../../scripts/setup/get-config.sh
-          kubectl port-forward --namespace $NAMESPACE svc/ingress-nginx-controller 8080:80 >/dev/null 2>&1 &
+          kubectl port-forward --namespace $NAMESPACE-ingress svc/ingress-nginx-controller 8080:80 >/dev/null 2>&1 &
           PORT_FORWARD_PID=$!
 
           # Wait for the port-forward to be established
