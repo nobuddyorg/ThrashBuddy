@@ -39,7 +39,7 @@ deployments:
       MINIO_URL: "${MINIO_ADDR}"
       MINIO_ACCESS_KEY: ${USERNAME_TOOLS}
       MINIO_SECRET_KEY: ${PASSWORD_TOOLS}
-      MINIO_BUCKET: ${APP_NAME}
+      MINIO_BUCKET: buddy-bucket
       APP_NAME: ${APP_NAME}
       NAMESPACE: ${NAMESPACE}
 
@@ -154,7 +154,7 @@ grafana:
         - name: InfluxDB
           type: influxdb
           access: proxy
-          url: http://influxdb2:8086
+          url: ${INFLUXDB_ADDR}
           jsonData:
             version: Flux
             organization: ${APP_NAME}
@@ -963,20 +963,3 @@ grafana:
             "version": 2,
             "weekStart": ""
           }
-
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-        - name: InfluxDB
-          type: influxdb
-          access: proxy
-          url: ${INFLUXDB_ADDR}
-          isDefault: true
-          jsonData:
-            version: Flux
-            organization: ${APP_NAME}
-            defaultBucket: metrics
-            tlsSkipVerify: true
-          secureJsonData:
-            token: ${INFLUXDB_API_TOKEN}

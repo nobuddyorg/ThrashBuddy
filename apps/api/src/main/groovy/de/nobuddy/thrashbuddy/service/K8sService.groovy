@@ -43,7 +43,7 @@ class K8sService {
 
             CompletableFuture.allOf(*futures).join()
             def results = futures*.get()
-            deleteAllK6Jobs()
+            //deleteAllK6Jobs()
 
             if (results.any { it == StatusService.ResponseStatus.ERROR }) {
                 setError("One or more K6 jobs failed.")
@@ -108,6 +108,7 @@ class K8sService {
                 .endSpec()
                 .endTemplate()
                 .withBackoffLimit(0)
+                .withTtlSecondsAfterFinished(60) 
                 .endSpec()
                 .build()
 

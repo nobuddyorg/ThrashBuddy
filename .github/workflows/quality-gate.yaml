@@ -172,7 +172,8 @@ jobs:
         working-directory: ./tests/ui
         run: |
           # Start port-forwarding to the ingress-nginx-controller
-          kubectl port-forward svc/ingress-nginx-controller 8080:80 >/dev/null 2>&1 &
+          . ../../scripts/setup/get-config.sh
+          kubectl port-forward --namespace $NAMESPACE svc/ingress-nginx-controller 8080:80 >/dev/null 2>&1 &
 
           # Wait for the port-forward to be established
           sleep 5

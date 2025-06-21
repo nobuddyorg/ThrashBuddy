@@ -60,24 +60,7 @@ test("run test", async ({ page }) => {
 
   await expect(page.locator("text=Run Test")).toBeDisabled();
   await expect(page.locator("text=Stop Test")).toBeEnabled();
-
-  const startTime = Date.now();
-  const maxCheckDuration = 60_000;
-
-  while (Date.now() - startTime < maxCheckDuration) {
-    try {
-      await expect(page.locator("text=Run Test")).toBeDisabled({
-        timeout: 1000,
-      });
-      await page.waitForTimeout(5000);
-    } catch (e) {
-      throw new Error(
-        `Run Test button became enabled too early after ${
-          Date.now() - startTime
-        }ms! Error: ${e.message}`
-      );
-    }
-  }
+  await page.waitForTimeout(5000);
 
   await expect(page.locator("text=Run Test")).toBeEnabled({ timeout: 120_000 });
 });

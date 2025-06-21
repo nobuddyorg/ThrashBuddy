@@ -26,7 +26,7 @@ source_env_and_build() {
     export BASIC_AUTH=false
   fi
 
-  ./check-env.sh
+  ./check-dot-env.sh
   . ../setup/get-config.sh
 }
 
