@@ -208,4 +208,4 @@ jobs:
         if: always()
         run: |
           pkill kubectl -9
-          #minikube delete --all
+          minikube delete --all
