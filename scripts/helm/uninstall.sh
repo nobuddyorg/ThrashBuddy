@@ -11,13 +11,13 @@ done
 pushd "$(dirname "$0")" >/dev/null
 
 if [ "$IS_REMOTE" = true ]; then
-    . ../aws/connect-cluster.sh
+    ../aws/connect-cluster.sh
 fi
 
 . ../setup/get-config.sh
 
 helm uninstall $APP_NAME --namespace $NAMESPACE || true
-helm uninstall ingress-nginx --namespace $NAMESPACE || true
+helm uninstall ingress-nginx --namespace $NAMESPACE-ingress || true
 kubectl delete namespace $NAMESPACE --ignore-not-found || true
 
 popd >/dev/null

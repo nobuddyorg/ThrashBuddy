@@ -6,7 +6,7 @@ metadata:
   region: $AWS_DEFAULT_REGION
 
 nodeGroups:
-  - name: ingress-nginx-ec2
+  - name: $NAMESPACE-ingress
     instanceType: t3.small
     desiredCapacity: 1
     minSize: 1
@@ -15,7 +15,7 @@ nodeGroups:
     labels:
       dedicated: ingress
     tags:
-      Name: ingress-nginx-ec2
+      Name: $NAMESPACE-ingress
     iam:
       withAddonPolicies:
         autoScaler: true

@@ -4,16 +4,17 @@
 pushd "$(dirname "$0")" >/dev/null
 . ./env.sh
 
-function push_images() {
-  ./push-images.sh
-}
-
 function create_cluster() {
   eksctl create cluster \
     --name "$EKS_CLUSTER_NAME" \
     --version "$EKS_KUBERNETES_VERSION" \
     --region "$AWS_DEFAULT_REGION" \
     --fargate
+
+  eksctl create fargateprofile \
+    --cluster $EKS_CLUSTER_NAME \
+    --name $APP_NAME-profile \
+    --namespace $NAMESPACE
 }
 
 function update_coredns_addon() {
@@ -32,50 +33,34 @@ function get_availability_zone() {
     --query "Subnets[*].AvailabilityZone" --output json | jq -r 'unique | .[0]'
 }
 
-function prepare_nodegroup_config() {
-  local az="$1"
-  cp ../../configs/eks/template.ec2-nodegroup.yaml ec2-nodegroup.yaml
-  sed -i "s|\$AZ|$az|g" ec2-nodegroup.yaml
-  sed -i "s|\$AWS_DEFAULT_REGION|$AWS_DEFAULT_REGION|g" ec2-nodegroup.yaml
-}
-
 function create_nodegroup() {
-  eksctl create nodegroup -f ec2-nodegroup.yaml
-}
+  security_group_ids=$(aws ec2 describe-security-groups \
+    --region $AWS_DEFAULT_REGION \
+    --query "SecurityGroups[?Tags[?Key=='eksctl.cluster.k8s.io/v1alpha1/cluster-name' && Value=='$EKS_CLUSTER_NAME'] && Tags[?Key=='alpha.eksctl.io/nodegroup-name' && Value=='$APP_NAME-ingress']].GroupId" \
+    --output text)
 
-function get_security_group_ids() {
-  aws ec2 describe-security-groups \
-    --region "$AWS_DEFAULT_REGION" \
-    --query "SecurityGroups[?Tags[?Key=='eksctl.cluster.k8s.io/v1alpha1/cluster-name' && Value=='$EKS_CLUSTER_NAME'] && Tags[?Key=='alpha.eksctl.io/nodegroup-name' && Value=='ingress-nginx-ec2']].GroupId" \
-    --output text
-}
-
-function authorize_security_group_ingress() {
-  local sg_id
-  for sg_id in $(get_security_group_ids); do
+  for sg_id in $security_group_ids; do
     aws ec2 authorize-security-group-ingress \
-      --group-id "$sg_id" \
+      --group-id $sg_id \
       --protocol tcp \
-      --port "$EC2_PORT" \
+      --port $EC2_PORT \
       --cidr 0.0.0.0/0 \
-      --region "$AWS_DEFAULT_REGION" || echo "Rule for port $EC2_PORT might already exist for $sg_id"
+      --region $AWS_DEFAULT_REGION || echo "Rule for port $EC2_PORT might already exist for $sg_id"
   done
 }
 
-function install_helm_and_connect() {
+function install_helm() {
   ../helm/install.sh -remote
+}
+
+function connect() {
   ./connect-cluster.sh
 }
 
-push_images
 create_cluster
 update_coredns_addon
-
-availability_zone=$(get_availability_zone)
-prepare_nodegroup_config "$availability_zone"
 create_nodegroup
-
-authorize_security_group_ingress
-install_helm_and_connect
+install_helm
+connect
 
 popd >/dev/null

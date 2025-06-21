@@ -23,8 +23,11 @@ source_env_and_build() {
 
   ../docker/build-all.sh
   if [ "$IS_REMOTE" = true ]; then
+    . ../aws/env.sh
     ../aws/push-images.sh
     export BASIC_AUTH=true
+    export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+    export IMAGE_REPO_PREFIX="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
   else
     export BASIC_AUTH=false
   fi
@@ -60,7 +63,10 @@ install_and_run_tests() {
   "$HELM_SCRIPT_DIR/test.sh"
 
   echo "Installing main app..."
-  helm upgrade --install $APP_NAME "$CONFIG_DIR" -f "$CONFIG_DIR/values.yaml" --namespace $NAMESPACE
+  helm upgrade --install $APP_NAME "$CONFIG_DIR" \
+    -f "$CONFIG_DIR/values.yaml" \
+    --namespace $NAMESPACE \
+    --set global.imageRepoPrefix="$IMAGE_REPO_PREFIX"
 
   echo "Waiting for pods to become ready..."
   kubectl get pods --namespace $NAMESPACE --no-headers | grep -vE 'test-' | awk '{print $1}' |

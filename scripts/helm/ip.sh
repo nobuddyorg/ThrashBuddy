@@ -2,7 +2,7 @@
 
 set -e
 
-pushd "$(dirname "$0")" >/dev/null
+pushd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null
 
 echo "Fetching public IP of Ingress EC2 node..."
 
