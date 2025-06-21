@@ -145,6 +145,7 @@ jobs:
 
       - name: Set up Kubernetes with Minikube
         run: |
+          pkill kubectl -9 || true
           minikube delete --all
           minikube start --driver=docker
           eval $(minikube -p minikube docker-env --shell=bash)  # Exports the required Docker environment variables
@@ -207,5 +208,5 @@ jobs:
       - name: Minikube delete cluster
         if: always()
         run: |
-          pkill kubectl -9
+          pkill kubectl -9 || true
           minikube delete --all
