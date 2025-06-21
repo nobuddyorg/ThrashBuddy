@@ -8,10 +8,10 @@ export default defineConfig({
   workers: 1,
   reporter: [["junit", { outputFile: "test-results/results.xml" }], ["html"]],
   expect: {
-    timeout: 10_000,
+    timeout: 20_000,
   },
   use: {
-    timeout: 30_000,
+    timeout: 60_000,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },

@@ -24,6 +24,6 @@ class MinioConfig {
 
     @Bean
     String bucketName() {
-        'thrash-buddy'
+        'buddy-bucket'
     }
 }

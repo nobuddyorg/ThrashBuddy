@@ -29,7 +29,7 @@ TEMPLATE_FILES=$(find templates -type f -name '*.yaml' -exec echo --show-only {}
 TEMPLATE_OUTPUT=$(helm template . $TEMPLATE_FILES)
 echo "$TEMPLATE_OUTPUT" | "$KUBE_CONFORM_BINARY" -strict -verbose
 echo "$TEMPLATE_OUTPUT" | "$KUBE_SCORE_BINARY" score -
-helm install thrash-buddy --dry-run --debug .
+helm install $APP_NAME --dry-run --debug .
 echo "Helm chart is valid."
 
 echo "Unit testing Helm chart..."

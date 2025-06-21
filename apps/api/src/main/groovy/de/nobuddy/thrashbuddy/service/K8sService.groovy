@@ -17,7 +17,7 @@ import java.util.concurrent.Executors
 class K8sService {
 
     private static final log = LoggerFactory.getLogger(K8sService)
-    private static final String NAMESPACE = "default"
+    private static final String NAMESPACE = System.getenv("NAMESPACE")
 
     @Autowired
     KubernetesClient client
@@ -61,7 +61,7 @@ class K8sService {
     void deleteAllK6Jobs() {
         if (client) {
             client.batch().v1().jobs().inNamespace(NAMESPACE)
-                    .withLabel("app", "thrashbuddy-job")
+                    .withLabel("app", "${System.getenv("APP_NAME")}-job")
                     .list()
                     .items
                     .each { job ->
@@ -73,7 +73,7 @@ class K8sService {
     }
 
     private StatusService.ResponseStatus createK6Job(String cpu, String memory, List<EnvVar> envVars, int index) {
-        def jobName = "thrashbuddy-job-${index}"
+        def jobName = "${System.getenv("APP_NAME")}-job-${index}"
         log.info("Creating Kubernetes Job: $jobName")
 
         def fullEnv = new ArrayList<>(envVars) + [
@@ -86,15 +86,15 @@ class K8sService {
         ]
 
         def job = new JobBuilder()
-                .withNewMetadata().withName(jobName).withNamespace(NAMESPACE).addToLabels("app", "thrashbuddy-job").endMetadata()
+                .withNewMetadata().withName(jobName).withNamespace(NAMESPACE).addToLabels("app", "${System.getenv("APP_NAME")}-job").endMetadata()
                 .withNewSpec()
                 .withNewTemplate()
-                .withNewMetadata().addToLabels("app", "thrashbuddy-job").endMetadata()
+                .withNewMetadata().addToLabels("app", "${System.getenv("APP_NAME")}-job").endMetadata()
                 .withNewSpec()
-                .withServiceAccountName("thrashbuddy-runner-sa")
+                .withServiceAccountName("${System.getenv("APP_NAME")}-runner-sa")
                 .addNewContainer()
-                .withName("thrashbuddy")
-                .withImage(System.getenv("IMAGE_REPO_PREFIX") + "thrash-buddy/k6-test:latest")
+                .withName("${System.getenv("APP_NAME")}")
+                .withImage(System.getenv("IMAGE_REPO_PREFIX") + "${System.getenv("APP_NAME")}/k6-test:latest")
                 .withImagePullPolicy("IfNotPresent")
                 .withEnv(fullEnv)
                 .withResources(new ResourceRequirementsBuilder()
@@ -144,7 +144,7 @@ class K8sService {
         }
     }
 
-    private void setError(String msg, Exception e = null) {
+    private void setError(String msg, Exception e = new Exception()) {
         statusService.setStatus(StatusService.ResponseStatus.ERROR)
         statusService.setErrorMessage("$msg: ${e.message}")
         log.error(statusService.getErrorMessage(), e)

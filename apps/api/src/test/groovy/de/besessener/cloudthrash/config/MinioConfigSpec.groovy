@@ -31,7 +31,7 @@ class MinioConfigSpec {
             assertNotNull(minioClient)
 
             def bucketName = context.getBean(String)
-            assertEquals("thrash-buddy", bucketName)
+            assertEquals("buddy-bucket", bucketName)
         }
     }
 
@@ -48,7 +48,7 @@ class MinioConfigSpec {
             assertNotNull(minioClient)
 
             def bucketName = context.getBean(String)
-            assertEquals("thrash-buddy", bucketName)
+            assertEquals("buddy-bucket", bucketName)
         }
     }
 }

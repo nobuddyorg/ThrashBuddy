@@ -32,17 +32,19 @@ source_env_and_build() {
 
 setup_k8s_secrets() {
   echo "Setting up Kubernetes secrets..."
-  kubectl delete secret $APP_NAME-secrets --ignore-not-found
-  kubectl create secret generic $APP_NAME-secrets --from-env-file="$ENV_FILE"
+  kubectl delete secret $APP_NAME-secrets --namespace $NAMESPACE --ignore-not-found
+  kubectl create secret generic $APP_NAME-secrets --namespace $NAMESPACE --from-env-file="$ENV_FILE"
 
-  kubectl delete secret basic-auth --ignore-not-found
+  kubectl delete secret basic-auth --namespace $NAMESPACE --ignore-not-found
   printf "$USERNAME_TOOLS:$(openssl passwd -apr1 "$PASSWORD_TOOLS")\n" >"$AUTH_FILE"
-  kubectl create secret generic basic-auth --from-file=auth="$AUTH_FILE"
+  kubectl create secret generic basic-auth --namespace $NAMESPACE --from-file=auth="$AUTH_FILE"
 }
 
 clean_previous_installation() {
   echo "Uninstalling previous installation..."
   "$HELM_SCRIPT_DIR/uninstall.sh" "$@"
+  echo "Creating namespace..."
+  kubectl create namespace $NAMESPACE
 }
 
 install_dependencies() {
@@ -50,7 +52,7 @@ install_dependencies() {
   find "$CONFIG_DIR/charts" -mindepth 1 -maxdepth 1 ! -name '.gitignore' -exec rm -rf {} +
   . "$HELM_SCRIPT_DIR/install-nginx.sh"
   envsubst <"$CONFIG_DIR/template.values.yaml" >"$CONFIG_DIR/values.yaml"
-  helm dependency update
+  helm dependency update --namespace $NAMESPACE
 }
 
 install_and_run_tests() {
@@ -58,23 +60,21 @@ install_and_run_tests() {
   "$HELM_SCRIPT_DIR/test.sh"
 
   echo "Installing main app..."
-  helm upgrade --install $APP_NAME "$CONFIG_DIR" -f "$CONFIG_DIR/values.yaml" --namespace $APP_NAME --create-namespace
-  helm install my-release my-chart/ 
-
+  helm upgrade --install $APP_NAME "$CONFIG_DIR" -f "$CONFIG_DIR/values.yaml" --namespace $NAMESPACE
 
   echo "Waiting for pods to become ready..."
-  kubectl get pods -n default --no-headers | grep -vE 'test-' | awk '{print $1}' |
-    xargs -I {} kubectl wait --for=condition=ready pod {} -n default --timeout=300s
+  kubectl get pods --namespace $NAMESPACE --no-headers | grep -vE 'test-' | awk '{print $1}' |
+    xargs -I {} kubectl wait --for=condition=ready pod {} --namespace $NAMESPACE --timeout=300s
 
   for i in {1..10}; do
     echo "Attempt $i/10 ..."
     sleep 10
-    if helm test $APP_NAME; then
+    if helm test $APP_NAME --namespace $NAMESPACE; then
       break
     fi
   done
 
-  kubectl delete pod -l helm.sh/hook=test
+  kubectl delete pod -l helm.sh/hook=test --namespace $NAMESPACE
   echo "Integration test passed."
 }
 
@@ -95,8 +95,8 @@ print_access_urls() {
 
 source_env_and_build
 pushd "$CONFIG_DIR" >/dev/null
-setup_k8s_secrets
 clean_previous_installation "$@"
+setup_k8s_secrets
 install_dependencies
 install_and_run_tests
 print_access_urls

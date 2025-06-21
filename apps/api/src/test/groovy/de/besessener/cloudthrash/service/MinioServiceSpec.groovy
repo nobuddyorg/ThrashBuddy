@@ -83,7 +83,7 @@ class MinioServiceSpec extends Specification {
         then:
             1 * minioClient.listObjects({
                 it instanceof ListObjectsArgs &&
-                        it.bucket() == 'thrash-buddy3'
+                        it.bucket() == 'buddy-bucket3'
             }) >> iterable
 
         and:
@@ -105,6 +105,6 @@ class MockMinioConfig {
 
     @Bean
     String bucketName() {
-        return 'thrash-buddy3'
+        return 'buddy-bucket3'
     }
 }

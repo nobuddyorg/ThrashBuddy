@@ -14,10 +14,10 @@ if [ "$IS_REMOTE" = true ]; then
     . ../aws/connect-cluster.sh
 fi
 
-helm uninstall $APP_NAME --namespace "$APP_NAME"
-kubectl delete namespace "$APP_NAME"
+. ../setup/get-config.sh
 
-helm uninstall ingress-nginx --namespace "$APP_NAME-ingress"
-kubectl delete namespace "$APP_NAME-ingress"
+helm uninstall $APP_NAME --namespace $NAMESPACE || true
+helm uninstall ingress-nginx --namespace $NAMESPACE || true
+kubectl delete namespace $NAMESPACE --ignore-not-found || true
 
 popd >/dev/null

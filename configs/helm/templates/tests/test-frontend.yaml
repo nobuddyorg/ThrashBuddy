@@ -17,7 +17,7 @@ spec:
         - "-c"
       args:
         - >
-          HTML_CONTENT=$(curl --silent --location "http://ui.default.svc.cluster.local/") &&
+          HTML_CONTENT=$(curl --silent --location "http://ui.thrash-buddy.svc.cluster.local/") &&
           if echo "$HTML_CONTENT" | grep -q "<title>ThrashBuddy</title>"; then
             echo "UI test passed: '<title>ThrashBuddy</title>' found in HTML.";
             exit 0;

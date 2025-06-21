@@ -47,7 +47,7 @@ The Docker images are built using predefined scripts in the project directory. T
 3. Navigate to the project root directory.
 4. Run the following script to build all images at once:
    ```shell
-   ./thrash-buddy docker build-all
+   ./buddy docker build-all
    ```
 5. Verify the created images with:
    ```shell
@@ -70,14 +70,14 @@ A Kubernetes cluster is required to run ThrashBuddy. For local development, Dock
 2. **install into Kubernetes cluster:**
    Run the following script to start the cluster:
    ```shell
-   ./thrash-buddy helm install
+   ./buddy helm install
    ```
 
 _NOTE_: When running this command in a Linux environment, e.g. with Minikube rather than Docker Desktop, you should set a port forwarding. Minikube cannot utilize the host network, unlike Docker on Windows. So for this you must first set a port with `export SUFFIX=:8080` and afterwards run `kubectl port-forward svc/ingress-nginx-controller 8080:80`. So the complete script would be:
 
 ```shell
 export SUFFIX=:8080
-./thrash-buddy helm install
+./buddy helm install
 kubectl port-forward svc/ingress-nginx-controller 8080:80
 ```
 

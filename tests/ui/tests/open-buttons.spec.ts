@@ -41,7 +41,7 @@ test.describe("Tool dashboards login", () => {
       loginButton: newPage.locator("button:has-text('Login')"),
     });
 
-    await expect(newPage.locator("text=thrash-buddy")).toBeVisible();
+    await expect(newPage.locator("text=buddy-bucket")).toBeVisible();
   });
 
   test("open InfluxDB and login", async ({ page }) => {

@@ -4,7 +4,7 @@ set -e
 
 function wait_for_ingress_controller() {
   echo "Waiting for ingress-nginx controller pod to be ready..."
-  kubectl wait --namespace $APP_NAME-ingress \
+  kubectl wait --namespace $NAMESPACE \
     --for=condition=ready pod \
     --selector=app.kubernetes.io/component=controller \
     --timeout=90s
@@ -16,8 +16,7 @@ function install_ingress_nginx() {
   helm repo update
 
   local base_args=(
-    --namespace $APP_NAME-ingress \
-    --create-namespace
+    --namespace $NAMESPACE
     --set controller.replicaCount=1
     --set controller.podDisruptionBudget.enabled=true
     --set controller.podDisruptionBudget.minAvailable=1
