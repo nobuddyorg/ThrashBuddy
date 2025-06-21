@@ -174,6 +174,7 @@ jobs:
           # Start port-forwarding to the ingress-nginx-controller
           . ../../scripts/setup/get-config.sh
           kubectl port-forward --namespace $NAMESPACE svc/ingress-nginx-controller 8080:80 >/dev/null 2>&1 &
+          PORT_FORWARD_PID=$!
 
           # Wait for the port-forward to be established
           sleep 5
@@ -186,6 +187,8 @@ jobs:
           ./npmw ci
           ./npmw run install
           ./npmw run test
+
+          trap "kill $PORT_FORWARD_PID" EXIT
       - name: Publish Playwright Test Results
         uses: EnricoMi/publish-unit-test-result-action/linux@v2
         if: always()
@@ -205,4 +208,4 @@ jobs:
         if: always()
         run: |
           pkill kubectl -9
-          minikube delete --all
+          #minikube delete --all
