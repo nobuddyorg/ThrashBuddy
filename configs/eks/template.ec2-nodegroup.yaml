@@ -1,0 +1,24 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: $EKS_CLUSTER_NAME
+  region: $AWS_DEFAULT_REGION
+
+nodeGroups:
+  - name: $NAMESPACE-ingress
+    instanceType: t3.small
+    desiredCapacity: 1
+    minSize: 1
+    maxSize: 1
+    volumeSize: 20
+    labels:
+      dedicated: ingress
+    tags:
+      Name: $NAMESPACE-ingress
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+    availabilityZones:
+      - $AZ
+      

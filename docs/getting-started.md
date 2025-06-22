@@ -34,7 +34,7 @@ ThrashBuddy consists of multiple containerized services running in a Kubernetes 
      sudo apt update && sudo apt install -y helm code eksctl awscli kubectl
      ```
 
-     Both the frontend and backend come with their own package managers and their wrappers `npmw` and `gradlew`. They will install themselves and their dependencies.
+     Both the ui and api come with their own package managers and their wrappers `npmw` and `gradlew`. They will install themselves and their dependencies.
 
 ### Building the Docker Images
 
@@ -47,7 +47,7 @@ The Docker images are built using predefined scripts in the project directory. T
 3. Navigate to the project root directory.
 4. Run the following script to build all images at once:
    ```shell
-   ./thrash-buddy docker build-all
+   ./buddy docker build-all
    ```
 5. Verify the created images with:
    ```shell
@@ -70,14 +70,14 @@ A Kubernetes cluster is required to run ThrashBuddy. For local development, Dock
 2. **install into Kubernetes cluster:**
    Run the following script to start the cluster:
    ```shell
-   ./thrash-buddy helm install
+   ./buddy helm install
    ```
 
 _NOTE_: When running this command in a Linux environment, e.g. with Minikube rather than Docker Desktop, you should set a port forwarding. Minikube cannot utilize the host network, unlike Docker on Windows. So for this you must first set a port with `export SUFFIX=:8080` and afterwards run `kubectl port-forward svc/ingress-nginx-controller 8080:80`. So the complete script would be:
 
 ```shell
 export SUFFIX=:8080
-./thrash-buddy helm install
+./buddy helm install
 kubectl port-forward svc/ingress-nginx-controller 8080:80
 ```
 
@@ -100,16 +100,17 @@ To test frontend and backend changes without rebuilding Docker images, you can r
 1. **Start the backend:**
 
    ```shell
-   cd services/backend
+   cd apps/api
    ./gradlew bootRun
    ```
 
 2. **Start the frontend locally:**
-   Run the following command in the frontend directory:
+
    ```shell
-   cd services/frontend
+   cd apps/ui
    ng serve --open
    ```
+
    A browser should open automatically, and the frontend will be ready.
 
 Backend and frontend should be connected automatically. This setup is a bit limited though, as Minio, InfluxDB and Grafana are not started.
