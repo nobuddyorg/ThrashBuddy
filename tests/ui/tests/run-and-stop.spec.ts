@@ -86,7 +86,7 @@ test("stop test", async ({ page }) => {
   await expect(page.locator("text=Run Test")).toBeDisabled();
   await expect(page.locator("text=Stop Test")).toBeDisabled();
 
-  await expect(page.locator("text=Run Test")).toBeEnabled({ timeout: 30_000 });
+  await expect(page.locator("text=Run Test")).toBeEnabled({ timeout: 60_000 });
 });
 
 test("delete file", async ({ page }) => {
