@@ -107,4 +107,4 @@ Obviously the same secrets are also required for the GitHub Actions. The full li
 - AWS_ACCESS_KEY_ID
 - AWS_DEFAULT_REGION
 - AWS_SECRET_ACCESS_KEY
-- DOT_ENV (from /infrastructure/helm/.env)
+- DOT_ENV (from /configs/.env)

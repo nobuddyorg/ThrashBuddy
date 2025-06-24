@@ -3,7 +3,7 @@
 go install go.k6.io/xk6/cmd/xk6@latest
 xk6 build --with github.com/grafana/xk6-output-influxdb
 
-. ../../../infrastructure/helm/.env
+. ../../../configs/.env
 
 export K6_INFLUXDB_ORGANIZATION="thrash-buddy"
 export K6_INFLUXDB_BUCKET="metrics"
