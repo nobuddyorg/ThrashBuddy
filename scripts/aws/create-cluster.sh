@@ -60,7 +60,7 @@ function connect() {
 create_cluster
 update_coredns_addon
 create_nodegroup
-install_helm
 connect
+install_helm
 
 popd >/dev/null
