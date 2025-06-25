@@ -18,7 +18,5 @@ fi
 
 helm uninstall $APP_NAME --namespace $NAMESPACE || true
 helm uninstall ingress-nginx --namespace $NAMESPACE-ingress || true
-kubectl delete namespace $NAMESPACE --ignore-not-found || true
-kubectl delete namespace $NAMESPACE-ingress --ignore-not-found || true
 
 popd >/dev/null
