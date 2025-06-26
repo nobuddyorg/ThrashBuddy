@@ -27,13 +27,14 @@ function update_coredns_addon() {
   fi
 }
 
-function get_availability_zone() {
-  aws ec2 describe-subnets --region "$AWS_DEFAULT_REGION" \
-    --filters "Name=tag:alpha.eksctl.io/cluster-name,Values=$EKS_CLUSTER_NAME" \
-    --query "Subnets[*].AvailabilityZone" --output json | jq -r 'unique | .[0]'
-}
-
 function create_nodegroup() {
+  export AZ=$(aws ec2 describe-subnets --region $AWS_DEFAULT_REGION \
+    --filters "Name=tag:alpha.eksctl.io/cluster-name,Values=$EKS_CLUSTER_NAME" \
+    --query "Subnets[*].AvailabilityZone" --output json | jq -r 'unique | .[0]')
+
+  envsubst <"../../configs/eks/template.ec2-nodegroup.yaml" >"./ec2-nodegroup.yaml"
+  eksctl create nodegroup -f ec2-nodegroup.yaml
+
   security_group_ids=$(aws ec2 describe-security-groups \
     --region $AWS_DEFAULT_REGION \
     --query "SecurityGroups[?Tags[?Key=='eksctl.cluster.k8s.io/v1alpha1/cluster-name' && Value=='$EKS_CLUSTER_NAME'] && Tags[?Key=='alpha.eksctl.io/nodegroup-name' && Value=='$APP_NAME-ingress']].GroupId" \
@@ -50,17 +51,13 @@ function create_nodegroup() {
 }
 
 function install_helm() {
-  ../helm/install.sh -remote
-}
-
-function connect() {
   ./connect-cluster.sh
+  ../helm/install.sh -remote
 }
 
 create_cluster
 update_coredns_addon
 create_nodegroup
-connect
 install_helm
 
 popd >/dev/null
