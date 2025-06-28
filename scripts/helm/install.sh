@@ -46,13 +46,13 @@ setup_k8s_secrets() {
 clean_previous_installation() {
   echo "Uninstalling previous installation..."
   "$HELM_SCRIPT_DIR/uninstall.sh" "$@"
+  find "$CONFIG_DIR/charts" -mindepth 1 -maxdepth 1 ! -name '.gitignore' -exec rm -rf {} +
   echo "Creating namespace..."
-  kubectl create namespace $NAMESPACE
+  kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
 }
 
 install_dependencies() {
   echo "Installing dependencies..."
-  find "$CONFIG_DIR/charts" -mindepth 1 -maxdepth 1 ! -name '.gitignore' -exec rm -rf {} +
   . "$HELM_SCRIPT_DIR/install-nginx.sh"
   envsubst <"$CONFIG_DIR/template.values.yaml" >"$CONFIG_DIR/values.yaml"
   helm dependency update --namespace $NAMESPACE

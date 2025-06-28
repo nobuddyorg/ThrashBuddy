@@ -6,10 +6,10 @@ pushd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null
 
 function wait_for_ingress_controller() {
   echo "Waiting for ingress-nginx controller pod to be ready..."
-  kubectl wait --namespace $NAMESPACE-ingress \
-    --for=condition=ready pod \
-    --selector=app.kubernetes.io/component=controller \
-    --timeout=90s
+  kubectl rollout status deployment/ingress-nginx-controller \
+    -n $NAMESPACE-ingress \
+    --timeout=3m
+
 }
 
 function install_ingress_nginx() {
