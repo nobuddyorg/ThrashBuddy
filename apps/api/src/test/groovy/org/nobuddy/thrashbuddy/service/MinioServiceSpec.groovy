@@ -1,8 +1,8 @@
-package de.besessener.thrashbuddy.service
+package org.nobuddy.thrashbuddy.service
 
-import de.besessener.thrashbuddy.ThrashBuddyApplication
 import io.minio.*
 import io.minio.messages.Item
+import org.nobuddy.thrashbuddy.ThrashBuddyApplication
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -82,14 +82,11 @@ class MinioServiceSpec extends Specification {
 
         then:
             1 * minioClient.listObjects({
-                it instanceof ListObjectsArgs &&
-                        it.bucket() == 'buddy-bucket3'
+                it instanceof ListObjectsArgs && it.bucket() == 'buddy-bucket3'
             }) >> iterable
 
         and:
-            result == [
-                    [filename: "file1.txt", lastModified: zonedTime]
-            ]
+            result == [[filename: "file1.txt", lastModified: zonedTime]]
     }
 }
 

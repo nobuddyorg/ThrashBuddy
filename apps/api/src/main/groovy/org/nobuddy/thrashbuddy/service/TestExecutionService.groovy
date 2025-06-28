@@ -1,4 +1,4 @@
-package de.besessener.thrashbuddy.service
+package org.nobuddy.thrashbuddy.service
 
 import io.fabric8.kubernetes.api.model.EnvVar
 import io.fabric8.kubernetes.api.model.EnvVarBuilder
@@ -42,10 +42,10 @@ class TestExecutionService {
         def cpu = payload.cpu as String
         def memory = payload.memory as String
         def loadAgents = payload.loadAgents as Integer
-        def envVars = toEnvVars(payload.envVars)
+        def envVars = toEnvVars(payload.envVars as List<Map<String, String>>)
 
         statusService.setStatus(StatusService.ResponseStatus.RUNNING)
-        k8sService.executeJobs(cpu, memory, loadAgents, envVars)
+        k8sService.start(cpu, memory, loadAgents, envVars)
 
         return buildResponse(HttpStatus.OK, "K6 test started with $loadAgents agents")
     }
@@ -56,40 +56,47 @@ class TestExecutionService {
         }
 
         statusService.setStatus(StatusService.ResponseStatus.STOPPING)
-        k8sService.deleteAllK6Jobs()
+        k8sService.stop()
 
         return buildResponse(HttpStatus.OK, "Stopping all Kubernetes jobs...")
     }
 
     ResponseEntity<Map> getStatus() {
-        return (statusService.getStatus() == StatusService.ResponseStatus.ERROR) ?
-                buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error: ${statusService.getErrorMessage()}") :
-                buildResponse(HttpStatus.OK, statusService.getStatus().name())
+        if (k8sService.getStatus() == StatusService.ResponseStatus.ERROR) {
+            statusService.setStatus(k8sService.getStatus())
+            statusService.setErrorMessage(k8sService.getErrorMessage())
+        }
+
+        def files = fileService.listFiles()
+        if (statusService.getStatus() == StatusService.ResponseStatus.IDLE && !files.any { it.filename == 'test.js' }) {
+            statusService.setStatus(StatusService.ResponseStatus.INIT)
+            return buildResponse(HttpStatus.OK, statusService.getStatus().name())
+        }
+
+        if (statusService.getStatus() == StatusService.ResponseStatus.INIT && files.any { it.filename == 'test.js' }) {
+            statusService.setStatus(StatusService.ResponseStatus.IDLE)
+            return buildResponse(HttpStatus.OK, statusService.getStatus().name())
+        }
+
+        if (statusService.getStatus() == StatusService.ResponseStatus.ERROR) {
+            statusService.setStatus(StatusService.ResponseStatus.IDLE)
+            return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error: ${statusService.getErrorMessage()}")
+        }
+
+        return buildResponse(HttpStatus.OK, statusService.getStatus().name())
     }
 
-    private List<EnvVar> toEnvVars(List<Map<String, String>> rawVars) {
+    private static List<EnvVar> toEnvVars(List<Map<String, String>> rawVars) {
         rawVars?.collect {
             new EnvVarBuilder().withName(it.name).withValue(it.value).build()
         } ?: []
     }
 
     private ResponseEntity<Map> buildResponse(HttpStatus statusCode, String msg) {
-        def files = fileService.listFiles()
-        if (statusService.getStatus() == StatusService.ResponseStatus.ERROR) {
-            statusService.setStatus(StatusService.ResponseStatus.IDLE)
-        }
-
-        if (statusService.getStatus() == StatusService.ResponseStatus.IDLE && !files.any { it.filename == 'test.js' }) {
-            statusService.setStatus(StatusService.ResponseStatus.INIT)
-        } else if (statusService.getStatus() == StatusService.ResponseStatus.INIT && files.any { it.filename == 'test.js' }) {
-            statusService.setStatus(StatusService.ResponseStatus.IDLE)
-        }
-
-        return ResponseEntity.status(statusCode).body([
-                message   : msg,
-                httpStatus: statusCode.reasonPhrase,
-                status    : statusService.getStatus().name(),
-                data      : files
-        ])
+        return ResponseEntity.status(statusCode).body([message   : msg,
+                                                       httpStatus: statusCode.reasonPhrase,
+                                                       status    : statusService.getStatus().name(),
+                                                       data      : fileService.listFiles()])
     }
+
 }

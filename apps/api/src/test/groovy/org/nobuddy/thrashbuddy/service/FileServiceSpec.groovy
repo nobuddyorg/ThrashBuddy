@@ -1,4 +1,5 @@
-package de.besessener.thrashbuddy.service
+package org.nobuddy.thrashbuddy.service
+
 
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpStatus

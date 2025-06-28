@@ -1,4 +1,4 @@
-package de.besessener.thrashbuddy.service
+package org.nobuddy.thrashbuddy.service
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -62,10 +62,8 @@ class FileService {
         }
     }
 
-    private ResponseEntity<Map> buildResponse(HttpStatus status, String msg) {
-        return ResponseEntity.status(status).body([
-                message   : msg,
-                httpStatus: status.reasonPhrase
-        ])
+    private static ResponseEntity<Map> buildResponse(HttpStatus status, String msg) {
+        return ResponseEntity.status(status).body([message   : msg,
+                                                   httpStatus: status.reasonPhrase])
     }
 }

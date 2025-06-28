@@ -1,6 +1,6 @@
-package de.besessener.thrashbuddy.controller
+package org.nobuddy.thrashbuddy.controller
 
-import de.besessener.thrashbuddy.service.TestExecutionService
+import org.nobuddy.thrashbuddy.service.TestExecutionService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

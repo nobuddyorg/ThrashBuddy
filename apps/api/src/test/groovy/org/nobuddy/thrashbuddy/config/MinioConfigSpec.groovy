@@ -1,4 +1,4 @@
-package de.besessener.thrashbuddy.config
+package org.nobuddy.thrashbuddy.config
 
 import io.minio.MinioClient
 import org.junit.jupiter.api.Nested
@@ -15,11 +15,9 @@ class MinioConfigSpec {
 
     @Nested
     @SpringBootTest(classes = [MinioConfig])
-    @TestPropertySource(properties = [
-            "MINIO_URL=http://test-minio:9000",
+    @TestPropertySource(properties = ["MINIO_URL=http://test-minio:9000",
             "MINIO_ACCESS_KEY=testkey",
-            "MINIO_SECRET_KEY=testsecret"
-    ])
+            "MINIO_SECRET_KEY=testsecret"])
     class WithCustomEnv {
 
         @Autowired

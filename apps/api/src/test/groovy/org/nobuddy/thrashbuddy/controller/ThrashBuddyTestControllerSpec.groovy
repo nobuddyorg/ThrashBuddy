@@ -1,7 +1,7 @@
-package de.besessener.thrashbuddy.controller
+package org.nobuddy.thrashbuddy.controller
 
-import de.besessener.thrashbuddy.service.TestExecutionService
 import groovy.json.JsonOutput
+import org.nobuddy.thrashbuddy.service.TestExecutionService
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc

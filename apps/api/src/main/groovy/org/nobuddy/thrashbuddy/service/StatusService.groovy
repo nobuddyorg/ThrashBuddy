@@ -1,4 +1,4 @@
-package de.besessener.thrashbuddy.service
+package org.nobuddy.thrashbuddy.service
 
 import org.springframework.stereotype.Service
 

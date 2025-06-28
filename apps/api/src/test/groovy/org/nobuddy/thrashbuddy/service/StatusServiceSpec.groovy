@@ -1,4 +1,5 @@
-package de.besessener.thrashbuddy.service
+package org.nobuddy.thrashbuddy.service
+
 
 import spock.lang.Specification
 

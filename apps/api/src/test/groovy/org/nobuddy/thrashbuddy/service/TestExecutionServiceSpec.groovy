@@ -1,4 +1,4 @@
-package de.besessener.thrashbuddy.service
+package org.nobuddy.thrashbuddy.service
 
 
 import io.fabric8.kubernetes.client.KubernetesClient
@@ -26,12 +26,10 @@ class TestExecutionServiceSpec extends Specification {
 
     def "startTest - success"() {
         given:
-            def payload = [
-                    cpu       : "500m",
-                    memory    : "256Mi",
-                    loadAgents: 2,
-                    envVars   : [[name: "FOO", value: "BAR"]]
-            ]
+            def payload = [cpu       : "500m",
+                           memory    : "256Mi",
+                           loadAgents: 2,
+                           envVars   : [[name: "FOO", value: "BAR"]]]
             fileService.listFiles() >> [[filename: "test.js"]]
             k8sClient.executeJobs(_, _, _, _) >> { void }
 
@@ -61,9 +59,7 @@ class TestExecutionServiceSpec extends Specification {
             fileService.listFiles() >> [[filename: "other.txt"]]
 
         when:
-            def response = service.startTest([
-                    cpu: "1", memory: "1Gi", loadAgents: 1, envVars: []
-            ])
+            def response = service.startTest([cpu: "1", memory: "1Gi", loadAgents: 1, envVars: []])
 
         then:
             response.statusCode == HttpStatus.BAD_REQUEST
@@ -117,29 +113,6 @@ class TestExecutionServiceSpec extends Specification {
             response2.body.message.contains("Boom")
     }
 
-    def "buildResponse - updates state based on file presence"() {
-        given:
-            statusService.setStatus(StatusService.ResponseStatus.ERROR)
-
-        and:
-            fileService.listFiles() >>> [
-                    [[filename: "abc.txt"]],
-                    [[filename: "test.js"]]
-            ]
-
-        when:
-            def response = service.buildResponse(HttpStatus.OK, "msg")
-
-        then:
-            response.body.status == "INIT"
-
-        when:
-            def response2 = service.buildResponse(HttpStatus.OK, "msg")
-
-        then:
-            response2.body.status == "IDLE"
-    }
-
     def "executeJobs - triggers setError on exception"() {
         given:
             def fileService = Mock(FileService)
@@ -149,12 +122,10 @@ class TestExecutionServiceSpec extends Specification {
             statusService.setStatus(StatusService.ResponseStatus.IDLE)
             fileService.listFiles() >> [[filename: "test.js"]]
 
-            def payload = [
-                    cpu       : "1",
-                    memory    : "1Gi",
-                    loadAgents: 1,
-                    envVars   : []
-            ]
+            def payload = [cpu       : "1",
+                           memory    : "1Gi",
+                           loadAgents: 1,
+                           envVars   : []]
 
             serviceSpy.createK6Job(_, _, _, _) >> { throw new RuntimeException("Job error") }
 
@@ -167,6 +138,26 @@ class TestExecutionServiceSpec extends Specification {
             eventually {
                 statusService.getStatus() == StatusService.ResponseStatus.IDLE
             }
+    }
+
+    def "getStatus - transitions between INIT and IDLE"() {
+        given:
+            fileService.listFiles() >>> [[], [[filename: "test.js"]]]
+            statusService.setStatus(StatusService.ResponseStatus.IDLE)
+
+        when:
+            def response1 = service.getStatus()
+
+        then:
+            response1.statusCode == HttpStatus.OK
+            response1.body.status == "INIT"
+
+        when:
+            def response2 = service.getStatus()
+
+        then:
+            response2.statusCode == HttpStatus.OK
+            response2.body.status == "IDLE"
     }
 
     private static void eventually(Closure assertion, int timeoutMs = 3000, int intervalMs = 100) {

@@ -1,4 +1,4 @@
-package de.besessener.thrashbuddy
+package org.nobuddy.thrashbuddy
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -10,6 +10,4 @@ class ThrashBuddyApplicationSpec {
     void contextLoads() {
         ThrashBuddyApplication.main(new String[0])
     }
-
 }
-
