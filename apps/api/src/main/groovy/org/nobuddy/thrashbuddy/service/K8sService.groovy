@@ -118,6 +118,7 @@ class K8sService {
     private void monitorPodsAndStopIfLow(int parallelism) {
         log.info("Starting pod monitor for $JOB_NAME with parallelism $parallelism")
         int threshold = (int) (parallelism * 0.25)
+        TimeUnit.SECONDS.sleep(60)
         while (true) {
             try {
                 def pods = client.pods()
@@ -126,8 +127,8 @@ class K8sService {
                         .list().items
                 Number running = pods.count { it.status?.phase == 'Running' }
                 log.info("Currently $running/$parallelism pods running for $JOB_NAME")
-                if (running <= threshold || running == 0) {
-                    log.info("Running pods ($running) ≤ threshold ($threshold) or 0 → stopping")
+                if (running <= threshold) {
+                    log.info("Running pods ($running) ≤ threshold ($threshold) → stopping")
                     try {
                         log.info("Deleting jobs for $JOB_NAME")
                         deleteK6Jobs()
