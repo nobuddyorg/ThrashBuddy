@@ -62,10 +62,8 @@ class TestExecutionService {
     }
 
     ResponseEntity<Map> getStatus() {
-        if (k8sService.getStatus() == StatusService.ResponseStatus.ERROR) {
-            statusService.setStatus(k8sService.getStatus())
-            statusService.setErrorMessage(k8sService.getErrorMessage())
-        }
+        statusService.setStatus(k8sService.getStatus())
+        statusService.setErrorMessage(k8sService.getErrorMessage())
 
         def files = fileService.listFiles()
         if (statusService.getStatus() == StatusService.ResponseStatus.IDLE && !files.any { it.filename == 'test.js' }) {

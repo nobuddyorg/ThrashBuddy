@@ -7,7 +7,7 @@ import io.fabric8.kubernetes.api.model.batch.v1.JobBuilder
 import io.fabric8.kubernetes.client.KubernetesClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.task.TaskExecutor
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
 import java.util.concurrent.TimeUnit
@@ -28,40 +28,34 @@ class K8sService {
     @Autowired
     StatusService statusService
 
-    @Autowired
-    TaskExecutor taskExecutor
-
-    K8sService(KubernetesClient client, StatusService statusService, TaskExecutor taskExecutor) {
+    K8sService(KubernetesClient client, StatusService statusService) {
         this.client = client
         this.statusService = statusService
-        this.taskExecutor = taskExecutor
     }
 
+    @Async("blockingExecutor")
     void start(String cpu, String memory, int count, List<EnvVar> envVars) {
         status = StatusService.ResponseStatus.RUNNING
-        taskExecutor.execute(() -> {
-            try {
-                createK6Jobs(cpu, memory, envVars, count)
-                monitorPodsAndStopIfLow(count)
-                status = StatusService.ResponseStatus.IDLE
-            } catch (Exception e) {
-                status = StatusService.ResponseStatus.ERROR
-                errorMessage = "Failed to start jobs: ${e.message}"
-            }
-        })
+        try {
+            createK6Jobs(cpu, memory, envVars, count)
+            monitorPodsAndStopIfLow(count)
+            status = StatusService.ResponseStatus.IDLE
+        } catch (Exception e) {
+            status = StatusService.ResponseStatus.ERROR
+            errorMessage = "Failed to start jobs: ${e.message}"
+        }
     }
 
+    @Async("blockingExecutor")
     void stop() {
         status = StatusService.ResponseStatus.STOPPING
-        taskExecutor.execute(() -> {
-            try {
-                deleteK6Jobs()
-                status = StatusService.ResponseStatus.IDLE
-            } catch (Exception e) {
-                status = StatusService.ResponseStatus.ERROR
-                errorMessage = "Failed to stop jobs: ${e.message}"
-            }
-        })
+        try {
+            deleteK6Jobs()
+            status = StatusService.ResponseStatus.IDLE
+        } catch (Exception e) {
+            status = StatusService.ResponseStatus.ERROR
+            errorMessage = "Failed to stop jobs: ${e.message}"
+        }
     }
 
     void createK6Jobs(String cpu, String memory, List<EnvVar> envVars, int parallelism) {
@@ -117,10 +111,13 @@ class K8sService {
                             .resource(job)
                             .update())
         }
+
+        log.info("Kubernetes Job $JOB_NAME created with parallelism $parallelism")
     }
 
     private void monitorPodsAndStopIfLow(int parallelism) {
-        int threshold = Math.max(1, (int) Math.ceil(parallelism * 0.25))
+        log.info("Starting pod monitor for $JOB_NAME with parallelism $parallelism")
+        int threshold = (int) (parallelism * 0.25)
         while (true) {
             try {
                 def pods = client.pods()
@@ -129,9 +126,14 @@ class K8sService {
                         .list().items
                 Number running = pods.count { it.status?.phase == 'Running' }
                 log.info("Currently $running/$parallelism pods running for $JOB_NAME")
-                if (running <= threshold) {
-                    log.info("Running pods ($running) ≤ threshold ($threshold) → stopping")
-                    deleteK6Jobs()
+                if (running <= threshold || running == 0) {
+                    log.info("Running pods ($running) ≤ threshold ($threshold) or 0 → stopping")
+                    try {
+                        log.info("Deleting jobs for $JOB_NAME")
+                        deleteK6Jobs()
+                    } catch (Exception e) {
+                        log.error("Failed deleting jobs, no more available?", e)
+                    }
                     break
                 }
                 TimeUnit.SECONDS.sleep(5)
@@ -144,9 +146,12 @@ class K8sService {
                 break
             }
         }
+
+        log.info("Pod monitor for $JOB_NAME finished")
     }
 
     private void deleteK6Jobs() {
+        log.info("Deleting Kubernetes Job: $JOB_NAME")
         if (client) {
             client.batch().v1().jobs().inNamespace(NAMESPACE)
                     .withLabel("app", JOB_NAME)
@@ -155,5 +160,7 @@ class K8sService {
                     .each { job -> client.batch().v1().jobs().inNamespace(NAMESPACE).withName(job.metadata.name).delete()
                     }
         }
+
+        log.info("Kubernetes Job $JOB_NAME deleted")
     }
 }
