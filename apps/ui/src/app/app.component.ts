@@ -53,6 +53,20 @@ export class AppComponent implements OnInit, OnDestroy {
     testStatus = signal<StatusResponse | null>(null);
     files = signal<FileMeta[]>([]);
 
+    getChar = computed(() => {
+        const status = this.testStatus();
+        switch (status?.status) {
+            case "IDLE":
+                return "~";
+            case "RUNNING":
+                return ">";
+            case "STOPPING":
+                return "X";
+            default:
+                return "-";
+        }
+    });
+
     isIdle = computed(() => {
         const status = this.testStatus();
         return status !== null && status.status === "IDLE";
@@ -66,6 +80,13 @@ export class AppComponent implements OnInit, OnDestroy {
     isStopping = computed(() => {
         const status = this.testStatus();
         return status !== null && status.status === "STOPPING";
+    });
+
+    isDisabled = computed(() => {
+        const status = this.testStatus();
+        return (
+            status === null || (status.status !== "RUNNING" && status.status !== "STOPPING" && status.status !== "IDLE")
+        );
     });
 
     cpuOptions: string[] = ["512m", "1024m", "2048m", "4096m", "8192m", "16384m"];
@@ -124,6 +145,25 @@ export class AppComponent implements OnInit, OnDestroy {
             duration: 30000,
             panelClass: ["error-snackbar"],
         });
+    }
+
+    runOrStopTest() {
+        let status = this.testStatus();
+        status ??= { status: "IDLE" };
+        switch (status.status) {
+            case "IDLE":
+                this.runTest();
+                break;
+            case "RUNNING":
+                this.stopTest();
+                break;
+            case "STOPPING":
+            case "INIT":
+                break;
+            default:
+                this.showError("Test Status", `Unexpected status: ${status.status}`);
+        }
+        console.log(`Test status: ${status.status}`);
     }
 
     runTest() {
@@ -217,5 +257,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
     toggleSettings() {
         this.showSettings = !this.showSettings;
+        console.log(`Settings toggled`);
     }
 }

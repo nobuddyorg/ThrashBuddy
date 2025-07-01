@@ -1,60 +1,180 @@
-.content {
-  height: 100%;
-  width: 100%;
-  transition: transform 0.5s ease-in-out;
-  animation: moveUp 1s ease-in-out 3s forwards;
-}
-
-@keyframes moveUp {
-  to {
-    transform: translateY(-80%);
-  }
-}
-
-.parent-container {
+.slide-wrapper {
   display: flex;
-  justify-content: center;
-  background-color: transparent;
+  width: 200vw;
+  height: 100vh;
+  transition: transform 1.0s ease;
+}
+
+.slide-wrapper.show-settings {
+  transform: translateX(-100vw);
+}
+
+.slide {
+  flex: 0 0 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.power-button {
+  width: 350px;
+  height: 350px;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.power-button-disabled {
+  width: 350px;
+  height: 350px;
+  z-index: 2;
+  cursor: not-allowed;
+  opacity: 0.2;
 }
 
 .control-panel {
-  width: 500px;
-  height: auto;
-  z-index: 15;
+  width: 300px;
+  height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  flex-direction: column;
   background-color: #00000000;
-  margin: 25px;
-  padding: 25px;
+  margin: 0 auto;
 }
 
-h1 {
+.header {
   font-family: 'Impact', sans-serif;
   font-size: 94px;
-  color: black;
-  text-shadow: 3px 3px 5px rgba(255, 255, 255, 0.8);
+  color: whitesmoke;
+  text-shadow: 3px 3px 5px rgba(55, 55, 55, 0.8);
   margin: 0;
   padding: 0;
 }
 
-.logo {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
+.flex-component {
+  flex-grow: 1;
+}
+
+.button-circle {
+  position: relative;
+  width: 200px;
+  height: 100px;
+  margin: 0 auto;
+  top: -160px;
+}
+
+.circle-button {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: whitesmoke;
+  color: #111;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(calc(var(--angle))) translateY(200px) rotate(calc(-1 * var(--angle)));
+}
+
+.circle-button:hover {
+  background: #cccccc;
+}
+
+.round-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #111;
+  color: whitesmoke;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.round-button:hover {
+  background: #222;
+}
+
+.circle-button:nth-child(1) {
+  --angle: -60deg;
+}
+
+.circle-button:nth-child(2) {
+  --angle: -20deg;
+}
+
+.circle-button:nth-child(3) {
+  --angle: 20deg;
+}
+
+.circle-button:nth-child(4) {
+  --angle: 60deg;
+}
+
+.glow-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.glow-image-running {
+  width: 350px;
+  height: 350px;
+  animation: pulseGlowRunning 2s infinite;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.7));
+}
+
+@keyframes pulseGlowRunning {
+  0% {
+    filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 25px rgba(0, 255, 255, 1));
+  }
+
+  100% {
+    filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5));
+  }
+}
+
+.glow-image-stopping {
+  width: 350px;
+  height: 350px;
+  animation: pulseGlowStopping 2s infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 0, 98, 0.7));
+}
+
+@keyframes pulseGlowStopping {
+  0% {
+    filter: drop-shadow(0 0 5px rgba(255, 0, 98, 0.5));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 25px rgba(255, 0, 98, 1));
+  }
+
+  100% {
+    filter: drop-shadow(0 0 5px rgba(255, 0, 98, 0.5));
+  }
 }
 
 .flex-component {
-  flex-grow: 1; 
+  flex-grow: 1;
 }
 
 .file-section {
   width: 100%;
   margin-bottom: 20px;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #aaa;
   border-radius: 5px;
-  background: #f9f9f9;
+  background: whitesmoke;
 }
 
 .uploaded-files-header {
@@ -73,9 +193,9 @@ h1 {
   border-collapse: collapse;
 }
 
-.file-section th, .file-section td {
+.file-section th,
+.file-section td {
   padding: 8px;
-  border-bottom: 1px solid #ddd;
 }
 
 .file-section th {
@@ -90,25 +210,9 @@ app-dropzone {
   width: 100%;
 }
 
-.slide-wrapper {
-  display: flex;
-  width: 200vw;
-  height: 100vh;
-  transition: transform 1.0s ease;
-}
-
-.slide {
-  flex: 0 0 100vw;
-  height: 100vh;
-  overflow: auto;
-}
-
-.slide-wrapper.show-settings {
-  transform: translateX(-100vw);
-}
-
 .settings-panel {
-  background: #F5F5F5;
+  color: 111;
+  background: #aaa;
   padding: 2rem;
   display: flex;
   align-items: center;
@@ -117,14 +221,24 @@ app-dropzone {
   box-sizing: border-box;
 }
 
-.settings-container {
-  width: 600px;
-  max-width: 90vw;
+.settings-table-container {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.settings-container-col {
+  width: 500px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 1.5rem;
   padding: 1rem;
+  padding-left: 0;
   box-sizing: border-box;
 }
 
@@ -135,63 +249,3 @@ app-dropzone {
   align-items: center;
   width: 100%;
 }
-
-.power-button {
-  width: 350px;
-  height: 350px;
-  z-index: 2;
-  cursor: pointer;
-}
-
-.button-circle {
-  position: relative;
-  width: 200px;
-  height: 100px;
-  margin: 0 auto;
-  top: -160px;
-}
-
-.circle-button {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #333;
-  color: white;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(calc(var(--angle))) translateY(160px) rotate(calc(-1 * var(--angle)));
-}
-
-.circle-button:hover {
-  background: #555555;
-}
-
-.round-button {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #333;
-  color: white;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease;
-}
-
-.round-button:hover {
-  background: #555;
-}
-
-.circle-button:nth-child(1) { --angle: -60deg; }
-.circle-button:nth-child(2) { --angle: -20deg; }
-.circle-button:nth-child(3) { --angle: 20deg; }
-.circle-button:nth-child(4) { --angle: 60deg; }
-

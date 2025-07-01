@@ -4,7 +4,8 @@
             <mat-icon>upload</mat-icon> Upload
         </button>
 
-        <button class="cancel-btn" [disabled]="files.length === 0"><mat-icon>close</mat-icon> Cancel</button>
+        <button class="cancel-btn" [disabled]="files.length === 0" (click)="files = []"><mat-icon>close</mat-icon>
+            Cancel</button>
     </div>
 
     <ngx-dropzone (change)="onSelect($event)" class="styled-dropzone">
@@ -15,16 +16,16 @@
     </ngx-dropzone>
 
     @if (files.length > 0) {
-        <ul class="file-list">
-            @for (fileObj of files; track fileObj.file.name) {
-                <li class="file-entry">
-                    <div class="file-info">
-                        <div class="file-name">{{ fileObj.file.name }}</div>
-                        <div class="file-size">{{ (fileObj.file.size / 1024).toFixed(3) }} KB</div>
-                    </div>
-                    <button class="remove-btn" (click)="onRemove(fileObj)">&times;</button>
-                </li>
-            }
-        </ul>
+    <ul class="file-list">
+        @for (fileObj of files; track fileObj.file.name) {
+        <li class="file-entry">
+            <div class="file-info">
+                <div class="file-name">{{ fileObj.file.name }}</div>
+                <div class="file-size">{{ (fileObj.file.size / 1024).toFixed(3) }} KB</div>
+            </div>
+            <button class="remove-btn" (click)="onRemove(fileObj)">&times;</button>
+        </li>
+        }
+    </ul>
     }
 </div>

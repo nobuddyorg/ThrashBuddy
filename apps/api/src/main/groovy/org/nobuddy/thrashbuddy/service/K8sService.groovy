@@ -118,7 +118,8 @@ class K8sService {
     private void monitorPodsAndStopIfLow(int parallelism) {
         log.info("Starting pod monitor for $JOB_NAME with parallelism $parallelism")
         int threshold = (int) (parallelism * 0.25)
-        TimeUnit.SECONDS.sleep(60)
+        boolean isRunning = false
+        def noRunningSince = System.currentTimeMillis()
         while (true) {
             try {
                 def pods = client.pods()
@@ -127,7 +128,7 @@ class K8sService {
                         .list().items
                 Number running = pods.count { it.status?.phase == 'Running' }
                 log.info("Currently $running/$parallelism pods running for $JOB_NAME")
-                if (running <= threshold) {
+                if (isRunning && running <= threshold) {
                     log.info("Running pods ($running) ≤ threshold ($threshold) → stopping")
                     try {
                         log.info("Deleting jobs for $JOB_NAME")
@@ -136,7 +137,14 @@ class K8sService {
                         log.error("Failed deleting jobs, no more available?", e)
                     }
                     break
+                } else if (!isRunning && running > threshold) {
+                    log.info("Running pods ($running) > threshold ($threshold) → starting")
+                    isRunning = true
+                } else if (!isRunning && (System.currentTimeMillis() - noRunningSince > 2 * 60 * 1000)) {
+                    log.warn("No running pods for 2 minutes, stopping monitor and canceling request")
+                    break
                 }
+
                 TimeUnit.SECONDS.sleep(5)
             } catch (InterruptedException ie) {
                 log.warn("Monitor loop interrupted", ie)
