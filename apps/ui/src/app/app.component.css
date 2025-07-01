@@ -24,39 +24,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: whitesmoke;
+  background-color: #00000000;
   margin: 25px;
   padding: 25px;
 }
-
-.settings {
-  width: 91%;
-  border: 1px solid black;
-  margin: 10px;
-  margin-left: 8px;
-  margin-bottom: 0;
-  padding: 20px;
-  padding-bottom: 0;
-}
-
-.row-container {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-start;
-  align-items: center;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.row-container button {
-  flex: 1 1 0;             /* makes buttons evenly spaced */
-  width: 100%;             /* ensure buttons take full flex width */
-  border-radius: 0 !important;
-  white-space: nowrap;     /* ensures button text/icon stay in a single line */
-  overflow: hidden;        /* prevents overflow issues */
-  text-overflow: ellipsis; /* shows ellipsis (...) if content overflows */
-}
-
 
 h1 {
   font-family: 'Impact', sans-serif;
@@ -90,7 +61,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%; /* Ensures it spans the full width */
+  width: 100%;
 }
 
 .file-section h3 {
@@ -118,3 +89,109 @@ h1 {
 app-dropzone {
   width: 100%;
 }
+
+.slide-wrapper {
+  display: flex;
+  width: 200vw;
+  height: 100vh;
+  transition: transform 1.0s ease;
+}
+
+.slide {
+  flex: 0 0 100vw;
+  height: 100vh;
+  overflow: auto;
+}
+
+.slide-wrapper.show-settings {
+  transform: translateX(-100vw);
+}
+
+.settings-panel {
+  background: #F5F5F5;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.settings-container {
+  width: 600px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.row-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.power-button {
+  width: 350px;
+  height: 350px;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.button-circle {
+  position: relative;
+  width: 200px;
+  height: 100px;
+  margin: 0 auto;
+  top: -160px;
+}
+
+.circle-button {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #333;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(calc(var(--angle))) translateY(160px) rotate(calc(-1 * var(--angle)));
+}
+
+.circle-button:hover {
+  background: #555555;
+}
+
+.round-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #333;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.round-button:hover {
+  background: #555;
+}
+
+.circle-button:nth-child(1) { --angle: -60deg; }
+.circle-button:nth-child(2) { --angle: -20deg; }
+.circle-button:nth-child(3) { --angle: 20deg; }
+.circle-button:nth-child(4) { --angle: 60deg; }
+

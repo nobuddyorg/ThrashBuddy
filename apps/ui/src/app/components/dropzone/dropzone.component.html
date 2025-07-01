@@ -1,20 +1,30 @@
-<ngx-dropzone (change)="onSelect($event)">
-  <ngx-dropzone-label>Drag & drop files here or click to select</ngx-dropzone-label>
-</ngx-dropzone>
+<div class="styled-dropzone-wrapper">
+    <div class="actions-header">
+        <button class="upload-btn" [disabled]="files.length === 0" (click)="uploadAll()">
+            <mat-icon>upload</mat-icon> Upload
+        </button>
 
-<!-- File List Preview (Table Style) -->
-@if (files.length > 0) {
-  <div class="preview-container">
-    <table>
-      @for (fileObj of files; track fileObj) {
-        <tr>
-          <td class="filename">{{ fileObj.file.name }} ({{ (fileObj.file.size / 1024).toFixed(2) }} KB)</td>
-          <td class="actions">
-            <button (click)="onRemove(fileObj)"><mat-icon>delete</mat-icon></button>
-          </td>
-        </tr>
-      }
-    </table>
-    <button class="upload-btn" (click)="uploadAll()">Upload All</button>
-  </div>
-}
+        <button class="cancel-btn" [disabled]="files.length === 0"><mat-icon>close</mat-icon> Cancel</button>
+    </div>
+
+    <ngx-dropzone (change)="onSelect($event)" class="styled-dropzone">
+        <ngx-dropzone-label>
+            <i class="pi pi-upload"></i>
+            <strong> Drag & drop files</strong> or click here
+        </ngx-dropzone-label>
+    </ngx-dropzone>
+
+    @if (files.length > 0) {
+        <ul class="file-list">
+            @for (fileObj of files; track fileObj.file.name) {
+                <li class="file-entry">
+                    <div class="file-info">
+                        <div class="file-name">{{ fileObj.file.name }}</div>
+                        <div class="file-size">{{ (fileObj.file.size / 1024).toFixed(3) }} KB</div>
+                    </div>
+                    <button class="remove-btn" (click)="onRemove(fileObj)">&times;</button>
+                </li>
+            }
+        </ul>
+    }
+</div>

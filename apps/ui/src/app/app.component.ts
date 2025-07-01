@@ -1,6 +1,5 @@
 import { Component, computed, inject, signal, OnInit, OnDestroy } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { ConfigurableButtonComponent } from "./components/configurable-button/configurable-button.component";
 import { MatSliderModule } from "@angular/material/slider";
 import { MatSelectModule } from "@angular/material/select";
 import { CommonModule } from "@angular/common";
@@ -14,6 +13,7 @@ import { takeUntil } from "rxjs/operators";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DropzoneComponent } from "./components/dropzone/dropzone.component";
 import { MatIconModule } from "@angular/material/icon";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 interface FileMeta {
     filename: string;
@@ -30,7 +30,6 @@ interface StatusResponse {
     standalone: true,
     imports: [
         RouterOutlet,
-        ConfigurableButtonComponent,
         MatSliderModule,
         MatSelectModule,
         CommonModule,
@@ -39,6 +38,7 @@ interface StatusResponse {
         FormsModule,
         DropzoneComponent,
         MatIconModule,
+        MatTooltipModule,
     ],
     templateUrl: "./app.component.html",
     styleUrl: "./app.component.css",
@@ -74,6 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
     selectedMemory = "1024Mi";
     loadAgents = 5;
     envVars = "";
+    showSettings = false;
 
     constructor() {
         this.onCpuChange();
@@ -212,5 +213,9 @@ export class AppComponent implements OnInit, OnDestroy {
                 const [name, value] = env.split("=").map((part) => part.trim());
                 return { name, value };
             });
+    }
+
+    toggleSettings() {
+        this.showSettings = !this.showSettings;
     }
 }
