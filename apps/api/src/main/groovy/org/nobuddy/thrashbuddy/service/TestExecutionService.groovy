@@ -78,7 +78,7 @@ class TestExecutionService {
 
         if (statusService.getStatus() == StatusService.ResponseStatus.ERROR) {
             statusService.setStatus(StatusService.ResponseStatus.IDLE)
-            return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error: ${statusService.getErrorMessage()}")
+            return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error: ${statusService.getErrorMessage()}", )
         }
 
         return buildResponse(HttpStatus.OK, statusService.getStatus().name())

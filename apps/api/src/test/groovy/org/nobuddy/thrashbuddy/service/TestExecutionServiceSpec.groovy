@@ -94,8 +94,9 @@ class TestExecutionServiceSpec extends Specification {
 
     def "getStatus - normal and error"() {
         given:
-            fileService.listFiles() >> [[filename: "test.js"]]
-            statusService.setStatus(StatusService.ResponseStatus.IDLE)
+            fileService.listFiles() >> [[filename: "test.js"], [filename: "test.js"]]
+            k8sService.getStatus() >>> [StatusService.ResponseStatus.IDLE, StatusService.ResponseStatus.ERROR]
+            k8sService.getErrorMessage() >>> ["", "Boom"]
 
         when:
             def response1 = service.getStatus()
@@ -105,7 +106,6 @@ class TestExecutionServiceSpec extends Specification {
 
         when:
             statusService.setStatus(StatusService.ResponseStatus.ERROR)
-            statusService.setErrorMessage("Boom")
             def response2 = service.getStatus()
 
         then:
@@ -143,7 +143,8 @@ class TestExecutionServiceSpec extends Specification {
     def "getStatus - transitions between INIT and IDLE"() {
         given:
             fileService.listFiles() >>> [[], [[filename: "test.js"]]]
-            statusService.setStatus(StatusService.ResponseStatus.IDLE)
+            k8sService.getStatus() >>> [StatusService.ResponseStatus.INIT, StatusService.ResponseStatus.IDLE]
+            k8sService.getErrorMessage() >>> ["", ""]
 
         when:
             def response1 = service.getStatus()
