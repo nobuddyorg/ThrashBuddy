@@ -33,8 +33,8 @@ helm install $APP_NAME --dry-run --debug .
 echo "Helm chart is valid."
 
 echo "Unit testing Helm chart..."
-helm plugin install https://github.com/quintush/helm-unittest || true
-helm plugin update unittest
+helm plugin install https://github.com/helm-unittest/helm-unittest.git || true
+helm plugin update unittest || true
 helm unittest . --strict
 echo "Helm chart unit tests passed."
 

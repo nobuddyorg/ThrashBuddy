@@ -2,11 +2,8 @@ dependencies:
 - name: minio
   repository: https://charts.min.io/
   version: 5.4.0
-- name: influxdb2
-  repository: https://helm.influxdata.com/
-  version: 2.1.2
 - name: grafana
   repository: https://grafana.github.io/helm-charts
   version: 9.2.7
-digest: sha256:7cd938986215b1e57ef397a807e4a2181f6b854a36bf5dd10cdd104f01e7635a
-generated: "2025-06-20T15:28:46.892454649+02:00"
+digest: sha256:a6e09994e38f8b42e717ba89b004a242bc35d954571c525ef47651ef91ab899e
+generated: "2025-07-01T19:21:30.2870558+02:00"

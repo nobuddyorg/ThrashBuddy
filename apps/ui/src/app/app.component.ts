@@ -224,10 +224,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.openExternal("grafana");
     }
 
-    openData() {
-        this.openExternal("influx");
-    }
-
     private openExternal(sub: string) {
         const url = `${window.location.protocol}//${sub}.${window.location.hostname}:${window.location.port}/`;
         window.open(url, "_blank");

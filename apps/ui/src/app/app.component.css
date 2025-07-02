@@ -22,12 +22,20 @@
   cursor: pointer;
 }
 
+.power-button:hover {
+  filter: brightness(85%);
+}
+
 .power-button-disabled {
   width: 350px;
   height: 350px;
   z-index: 2;
   cursor: not-allowed;
   opacity: 0.2;
+}
+
+.power-button-disabled:hover {
+  filter: brightness(100%);
 }
 
 .control-panel {
@@ -102,19 +110,15 @@
 }
 
 .circle-button:nth-child(1) {
-  --angle: -60deg;
+  --angle: -40deg;
 }
 
 .circle-button:nth-child(2) {
-  --angle: -20deg;
+  --angle: 0deg;
 }
 
 .circle-button:nth-child(3) {
-  --angle: 20deg;
-}
-
-.circle-button:nth-child(4) {
-  --angle: 60deg;
+  --angle: 40deg;
 }
 
 .glow-wrapper {
@@ -196,6 +200,7 @@
 .file-section th,
 .file-section td {
   padding: 8px;
+  border-bottom: 1px solid #ccc;
 }
 
 .file-section th {

@@ -21,7 +21,7 @@ spec:
       serviceAccountName: {{ $.Values.release }}-runner-sa
       containers:
         - name: {{ $deployment.name }}
-          image: "{{ $.Values.global.imageRepoPrefix }}{{ $deployment.image }}"
+          image: "{{ $deployment.image }}"
           imagePullPolicy: IfNotPresent
           readinessProbe:
             tcpSocket:
@@ -40,15 +40,22 @@ spec:
           env:
           - name: IMAGE_REPO_PREFIX
             value: "{{ $.Values.global.imageRepoPrefix }}"
-          - name: K6_INFLUXDB_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: {{ $.Values.release }}-secrets
-                key: INFLUXDB_API_TOKEN
           {{- if $deployment.env }}
           {{- range $key, $value := $deployment.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
+          {{- end }}
+          {{- end }}
+          {{- if $deployment.ports }}
+          ports:
+          {{- range $port := $deployment.ports }}
+            - containerPort: {{ $port.containerPort }}
+          {{- end}}
+          {{- end}}
+          {{- if $deployment.args }}
+          args:
+          {{- range $arg := $deployment.args }}
+            - {{ $arg | quote }}
           {{- end }}
           {{- end }}
 {{- end }}

@@ -23,13 +23,13 @@
 }
 
 .styled-dropzone:hover {
-  border-color: #007ad9;
+  border-color: #111;
 }
 
 .pi-upload {
   font-size: 1.25rem;
   margin-bottom: 0.25rem;
-  color: #007ad9;
+  color: #111;
 }
 
 .actions-header {
@@ -54,23 +54,22 @@
   background-color: #ddd;
   color: #aaa;
   cursor: not-allowed;
-  opacity: 0.6;
 }
 
 .upload-btn {
-  background-color: #d6eaff;
-  color: #007ad9;
+  background-color: #111;
+  color: #eee;
 }
 
 .upload-btn:disabled {
-  background-color: #eee;
-  color: #888;
+  background-color: #ddd;
+  color: #aaa;
   cursor: not-allowed;
 }
 
 .cancel-btn {
-  background-color: #ffeaea;
-  color: #b00020;
+  background-color: #777;
+  color: #eee;
 }
 
 .upload-btn mat-icon,
@@ -84,7 +83,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #ccc;
 }
 
 .file-entry {
@@ -92,7 +91,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.4rem 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #ccc;
   font-size: 0.85rem;
 }
 

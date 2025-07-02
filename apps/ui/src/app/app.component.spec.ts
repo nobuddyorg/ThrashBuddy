@@ -200,13 +200,6 @@ describe("AppComponent", () => {
             componentInstance.openMonitoring();
             expect(window.open).toHaveBeenCalledWith(jasmine.stringMatching(/grafana/), "_blank");
         });
-
-        it("should open correct URL for openData", () => {
-            const { componentInstance } = TestBed.createComponent(AppComponent);
-            spyOn(window, "open");
-            componentInstance.openData();
-            expect(window.open).toHaveBeenCalledWith(jasmine.stringMatching(/influx/), "_blank");
-        });
     });
 
     describe("lifecycle", () => {

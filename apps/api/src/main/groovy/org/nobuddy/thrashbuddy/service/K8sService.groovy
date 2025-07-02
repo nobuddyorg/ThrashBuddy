@@ -64,8 +64,7 @@ class K8sService {
                                                   new EnvVar("MINIO_ACCESS_KEY", System.getenv("MINIO_ACCESS_KEY"), null),
                                                   new EnvVar("MINIO_SECRET_KEY", System.getenv("MINIO_SECRET_KEY"), null),
                                                   new EnvVar("MINIO_BUCKET", System.getenv("MINIO_BUCKET"), null),
-                                                  new EnvVar("K6_INSTANCE_ID", JOB_NAME, null),
-                                                  new EnvVar("K6_INFLUXDB_TOKEN", System.getenv("K6_INFLUXDB_TOKEN"), null)]
+                                                  new EnvVar("K6_INSTANCE_ID", JOB_NAME, null)]
 
         def job = new JobBuilder()
                 .withNewMetadata()
