@@ -22,7 +22,7 @@ async function loginToPage({
 async function openPopup(page: Page, triggerText: string): Promise<Page> {
   const [popup] = await Promise.all([
     page.waitForEvent("popup"),
-    page.click(`text=${triggerText}`),
+    page.getByAltText(triggerText).click(),
   ]);
   await popup.waitForLoadState();
   expect(popup.url()).not.toBe("");
@@ -44,24 +44,6 @@ test.describe("Tool dashboards login", () => {
     await expect(newPage.locator("text=buddy-bucket")).toBeVisible();
   });
 
-  test("open InfluxDB and login", async ({ page }) => {
-    await page.goto(BASE_CONFIG.BASE_URL);
-
-    const newPage = await openPopup(page, "Data");
-
-    await loginToPage({
-      usernameInput: newPage.locator("#login"),
-      passwordInput: newPage.locator("#password"),
-      loginButton: newPage.locator("button:has-text('SIGN IN')"),
-    });
-
-    await expect(newPage.locator("text=Get Started").first()).toBeVisible();
-    await newPage.goto(`${newPage.url()}/load-data/buckets`);
-
-    await expect(newPage.locator("text=metrics")).toBeVisible();
-    await expect(newPage.locator("text=_monitoring")).toBeVisible();
-  });
-
   test("open Grafana and login", async ({ page }) => {
     await page.goto(BASE_CONFIG.BASE_URL);
 
@@ -79,15 +61,8 @@ test.describe("Tool dashboards login", () => {
     await newPage.waitForTimeout(3000);
     await newPage.locator("text=Dashboards").first().click();
 
-    await expect(newPage.locator("text=Cluster metrics")).toBeVisible();
-    await expect(newPage.locator("text=k6 metrics")).toBeVisible();
-
-    await newPage.locator("text=Cluster metrics").click();
-    await expect(newPage.locator("text=No data").first()).toBeVisible();
-
-    await newPage.goBack();
-
-    await newPage.locator("text=k6 metrics").click();
+    await expect(newPage.locator("text=k6 Prometheus")).toBeVisible();
+    await newPage.locator("text=k6 Prometheus").click();
     await expect(newPage.locator("text=No data").first()).toBeVisible();
   });
 });

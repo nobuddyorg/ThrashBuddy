@@ -2,11 +2,11 @@
     <div class="slide content-panel">
         <div class="control-panel">
             <h1 class="header">ThrashBuddy</h1>
-            <span style="color: whitesmoke;">Status: {{ testStatus()?.status ?? "INIT" }} [ {{getChar()}} ]</span>
+            <span style="color: whitesmoke;" alt="status-text">Status: {{ testStatus()?.status ?? "INIT" }} [ {{getChar()}} ]</span>
             <div class="centered-layout">
                 <div style="height: 20px;"></div>
                 <button (click)="runOrStopTest()" style="background-color: #00000000; border-style: none;"
-                    [disabled]="!isIdle() && !isStopping() && !isRunning()">
+                    [disabled]="!isIdle() && !isStopping() && !isRunning()" alt="power-button">
                     <div class="glow-wrapper">
                         <img src="thrash-button-white.png" alt="Power button" class="power-button" [ngClass]="{
                             'glow-image-running': isRunning() && !isDisabled(),
@@ -17,13 +17,16 @@
                 </button>
 
                 <div class="button-circle">
-                    <button class="circle-button" style="--index: 0" (click)="toggleSettings()" matTooltip="Settings">
+                    <button class="circle-button" style="--index: 0" (click)="toggleSettings()" matTooltip="Settings"
+                        alt="Settings">
                         <mat-icon>settings</mat-icon>
                     </button>
-                    <button class="circle-button" style="--index: 1" (click)="openMonitoring()" matTooltip="Monitoring">
+                    <button class="circle-button" style="--index: 1" (click)="openMonitoring()" matTooltip="Monitoring"
+                        alt="Monitoring">
                         <mat-icon>visibility</mat-icon>
                     </button>
-                    <button class="circle-button" style="--index: 3" (click)="openFiles()" matTooltip="Files">
+                    <button class="circle-button" style="--index: 3" (click)="openFiles()" matTooltip="Files"
+                        alt="Files">
                         <mat-icon>folder</mat-icon>
                     </button>
                 </div>
@@ -138,7 +141,7 @@
                     </td>
                 </tr>
             </table>
-            <button class="round-button" (click)="toggleSettings()">
+            <button class="round-button" (click)="toggleSettings()" alt="back-button">
                 <mat-icon>arrow_back</mat-icon>
             </button>
         </div>
