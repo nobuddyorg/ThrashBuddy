@@ -24,7 +24,7 @@
                                 "input": "public"
                             }
                         ],
-                        "styles": ["@angular/material/prebuilt-themes/azure-blue.css", "src/styles.css"],
+                        "styles": ["@angular/material/prebuilt-themes/azure-blue.css", "src/styles.scss"],
                         "scripts": []
                     },
                     "configurations": {
@@ -77,7 +77,7 @@
                                 "input": "public"
                             }
                         ],
-                        "styles": ["@angular/material/prebuilt-themes/azure-blue.css", "src/styles.css"],
+                        "styles": ["@angular/material/prebuilt-themes/azure-blue.css", "src/styles.scss"],
                         "scripts": [],
                         "karmaConfig": "karma.conf.js"
                     }

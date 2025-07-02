@@ -1,0 +1,16 @@
+html,
+body {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  background-color: #111;
+  background-image: url('/background.png');
+  background-repeat: repeat;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  overflow: hidden;
+}

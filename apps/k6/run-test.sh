@@ -21,4 +21,8 @@ if [ ! -f "/app/test.js" ]; then
 fi
 
 echo "Running k6 test: test.js"
-k6 run "/app/test.js" -o xk6-influxdb
+
+
+K6_PROMETHEUS_RW_TREND_STATS="avg,p(90),p(95)" \
+K6_PROMETHEUS_RW_SERVER_URL=$PROMETHEUS_ADDR \
+k6 run -o experimental-prometheus-rw "/app/test.js"

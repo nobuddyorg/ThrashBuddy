@@ -1,6 +1,5 @@
 import { Component, computed, inject, signal, OnInit, OnDestroy } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { ConfigurableButtonComponent } from "./components/configurable-button/configurable-button.component";
 import { MatSliderModule } from "@angular/material/slider";
 import { MatSelectModule } from "@angular/material/select";
 import { CommonModule } from "@angular/common";
@@ -14,6 +13,7 @@ import { takeUntil } from "rxjs/operators";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DropzoneComponent } from "./components/dropzone/dropzone.component";
 import { MatIconModule } from "@angular/material/icon";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 interface FileMeta {
     filename: string;
@@ -30,7 +30,6 @@ interface StatusResponse {
     standalone: true,
     imports: [
         RouterOutlet,
-        ConfigurableButtonComponent,
         MatSliderModule,
         MatSelectModule,
         CommonModule,
@@ -39,6 +38,7 @@ interface StatusResponse {
         FormsModule,
         DropzoneComponent,
         MatIconModule,
+        MatTooltipModule,
     ],
     templateUrl: "./app.component.html",
     styleUrl: "./app.component.css",
@@ -52,6 +52,20 @@ export class AppComponent implements OnInit, OnDestroy {
 
     testStatus = signal<StatusResponse | null>(null);
     files = signal<FileMeta[]>([]);
+
+    getChar = computed(() => {
+        const status = this.testStatus();
+        switch (status?.status) {
+            case "IDLE":
+                return "~";
+            case "RUNNING":
+                return ">";
+            case "STOPPING":
+                return "X";
+            default:
+                return "-";
+        }
+    });
 
     isIdle = computed(() => {
         const status = this.testStatus();
@@ -68,12 +82,20 @@ export class AppComponent implements OnInit, OnDestroy {
         return status !== null && status.status === "STOPPING";
     });
 
+    isDisabled = computed(() => {
+        const status = this.testStatus();
+        return (
+            status === null || (status.status !== "RUNNING" && status.status !== "STOPPING" && status.status !== "IDLE")
+        );
+    });
+
     cpuOptions: string[] = ["512m", "1024m", "2048m", "4096m", "8192m", "16384m"];
     memoryOptions: string[] = [];
     selectedCpu = "512m";
     selectedMemory = "1024Mi";
     loadAgents = 5;
     envVars = "";
+    showSettings = false;
 
     constructor() {
         this.onCpuChange();
@@ -123,6 +145,25 @@ export class AppComponent implements OnInit, OnDestroy {
             duration: 30000,
             panelClass: ["error-snackbar"],
         });
+    }
+
+    runOrStopTest() {
+        let status = this.testStatus();
+        status ??= { status: "IDLE" };
+        switch (status.status) {
+            case "IDLE":
+                this.runTest();
+                break;
+            case "RUNNING":
+                this.stopTest();
+                break;
+            case "STOPPING":
+            case "INIT":
+                break;
+            default:
+                this.showError("Test Status", `Unexpected status: ${status.status}`);
+        }
+        console.log(`Test status: ${status.status}`);
     }
 
     runTest() {
@@ -183,10 +224,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.openExternal("grafana");
     }
 
-    openData() {
-        this.openExternal("influx");
-    }
-
     private openExternal(sub: string) {
         const url = `${window.location.protocol}//${sub}.${window.location.hostname}:${window.location.port}/`;
         window.open(url, "_blank");
@@ -212,5 +249,10 @@ export class AppComponent implements OnInit, OnDestroy {
                 const [name, value] = env.split("=").map((part) => part.trim());
                 return { name, value };
             });
+    }
+
+    toggleSettings() {
+        this.showSettings = !this.showSettings;
+        console.log(`Settings toggled`);
     }
 }

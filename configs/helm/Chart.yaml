@@ -8,10 +8,7 @@ dependencies:
   - name: minio
     version: 5.4.0
     repository: https://charts.min.io/
-  - name: influxdb2
-    version: 2.1.2
-    repository: https://helm.influxdata.com/
-    alias: influxdb
+
   - name: grafana
     version: 9.2.7
     repository: https://grafana.github.io/helm-charts

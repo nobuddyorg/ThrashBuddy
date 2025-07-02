@@ -28,78 +28,79 @@ const uploadTestFile = async (page: Page) => {
 test("upload files", async ({ page }) => {
   await page.goto(BASE_CONFIG.BASE_URL);
 
-  await expect(page.locator("text=Run Test")).toBeDisabled();
-  await expect(page.locator("text=Stop Test")).toBeDisabled();
-  await expect(page.locator("text=Uploaded Files")).not.toBeVisible();
+  await expect(page.getByAltText("power-button")).toBeDisabled();
+  await expect(page.locator("text=Uploaded Files")).toBeVisible();
+  await expect(page.getByAltText("status-text")).toContainText("Status: INIT");
+
+  await page.getByAltText("Settings").click();
+
   await expect(
     page.locator(`text=${TEST_FILE_NAME}`).first()
   ).not.toBeVisible();
 
   await uploadTestFile(page);
-  await expect(page.locator(`text=${TEST_FILE_NAME}`)).toBeVisible();
 
-  await page.locator("text=Upload All").click();
+  await page.getByAltText("upload-file").click();
   await expect(page.locator("text=Uploaded Files")).toBeVisible();
   await expect(page.locator(`text=${TEST_FILE_NAME}`).first()).toBeVisible();
+  await page.getByAltText("back-button").click();
 
-  await expect(page.locator("text=Run Test")).toBeEnabled();
-  await expect(page.locator("text=Stop Test")).toBeDisabled();
+  await expect(page.getByAltText("power-button")).toBeEnabled();
 });
 
 test("run test", async ({ page }) => {
   test.setTimeout(240_000);
   await page.goto(BASE_CONFIG.BASE_URL);
 
-  await expect(page.locator("text=Run Test")).toBeEnabled();
-  await expect(page.locator("text=Stop Test")).toBeDisabled();
+  await expect(page.getByAltText("power-button")).toBeEnabled();
+  await expect(page.getByAltText("status-text")).toContainText("Status: IDLE");
 
   const sliderInput = page.locator('input[type="range"]');
   await sliderInput.fill("1");
 
-  await page.locator("text=Run Test").click();
+  await page.getByAltText("power-button").click();
+  await expect(page.getByAltText("status-text")).toContainText("Status: RUNNING");
 
-  await expect(page.locator("text=Run Test")).toBeDisabled();
-  await expect(page.locator("text=Stop Test")).toBeEnabled();
   await page.waitForTimeout(15_000);
 
-  await expect(page.locator("text=Run Test")).toBeEnabled({ timeout: 180_000 });
+  await expect(page.getByAltText("status-text")).toContainText("Status: IDLE", { timeout: 180_000 });
 });
 
 test("stop test", async ({ page }) => {
   test.setTimeout(120_000);
   await page.goto(BASE_CONFIG.BASE_URL);
 
-  await expect(page.locator("text=Run Test")).toBeEnabled();
-  await expect(page.locator("text=Stop Test")).toBeDisabled();
+  await expect(page.getByAltText("power-button")).toBeEnabled();
+  await expect(page.getByAltText("status-text")).toContainText("Status: IDLE");
 
   const sliderInput = page.locator('input[type="range"]');
   await sliderInput.fill("1");
 
-  await page.locator("text=Run Test").click();
-  await expect(page.locator("text=Run Test")).toBeDisabled();
-  await expect(page.locator("text=Stop Test")).toBeEnabled();
+  await page.getByAltText("power-button").click();
+  await expect(page.getByAltText("status-text")).toContainText("Status: RUNNING");
 
   await page.waitForTimeout(15_000);
 
-  await page.locator("text=Stop Test").click();
+  await page.getByAltText("power-button").click();
+  await expect(page.getByAltText("status-text")).toContainText("Status: STOPPING");
 
-  await expect(page.locator("text=Run Test")).toBeDisabled();
-  await expect(page.locator("text=Stop Test")).toBeDisabled();
-
-  await expect(page.locator("text=Run Test")).toBeEnabled({ timeout: 60_000 });
+  await expect(page.getByAltText("status-text")).toContainText("Status: IDLE", { timeout: 60_000 });
 });
 
 test("delete file", async ({ page }) => {
   await page.goto(BASE_CONFIG.BASE_URL);
 
-  await expect(page.locator("text=Run Test")).toBeEnabled();
-  await expect(page.locator("text=Stop Test")).toBeDisabled();
-  await expect(page.locator("text=Uploaded Files")).toBeVisible();
+  await expect(page.getByAltText("power-button")).toBeEnabled();
+  await page.getByAltText("Settings").click();
+  await expect(page.locator(`text=${TEST_FILE_NAME}`).first()).toBeVisible();
 
   const deleteButton = page.locator('button mat-icon:text("delete")').first();
   await deleteButton.click();
 
-  await expect(page.locator("text=Uploaded Files")).not.toBeVisible();
+  await expect(page.locator("text=Uploaded Files")).toBeVisible();
+  await expect(page.locator(`text=${TEST_FILE_NAME}`).first()).not.toBeVisible();
+  await page.getByAltText("back-button").click();
+  await expect(page.getByAltText("power-button")).toBeDisabled();
 });
 
 test("open Grafana and login", async ({ page }) => {
@@ -107,7 +108,7 @@ test("open Grafana and login", async ({ page }) => {
 
   const [newPage] = await Promise.all([
     page.waitForEvent("popup"),
-    page.click(`text="Monitoring"`),
+    page.getByAltText("Monitoring").click(),
   ]);
   await newPage.waitForLoadState();
   expect(newPage.url()).not.toBe("");
@@ -120,17 +121,13 @@ test("open Grafana and login", async ({ page }) => {
     .fill(process.env.PASSWORD_TOOLS || "");
   await newPage.locator("button:has-text('Log in')").click();
 
+  await expect(newPage.locator("text=Welcome to Grafana")).toBeVisible();
+  await newPage.waitForTimeout(3000);
+  await newPage.locator("text=Home").first().click();
+  await newPage.waitForTimeout(3000);
   await newPage.locator("text=Dashboards").first().click();
-  await newPage.locator("text=Dashboards").first().click();
 
-  await expect(newPage.locator("text=Cluster metrics")).toBeVisible();
-  await expect(newPage.locator("text=k6 metrics")).toBeVisible();
-
-  await newPage.locator("text=Cluster metrics").click();
-  await expect(newPage.locator("text=No data")).not.toBeVisible();
-
-  await newPage.goBack();
-
-  await newPage.locator("text=k6 metrics").click();
+  await expect(newPage.locator("text=k6 Prometheus")).toBeVisible();
+  await newPage.locator("text=k6 Prometheus").click();
   await expect(newPage.locator("text=No data")).not.toBeVisible();
 });

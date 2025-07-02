@@ -1,100 +1,151 @@
-<div class="content">
-  <img class="logo" src="thrashbuddy-logo-sharp.jpg" alt="ThrashBuddy logo" />
-  <div class="parent-container">
-    <div class="control-panel">
-      <h1>ThrashBuddy</h1>
+<div class="slide-wrapper" [ngClass]="{ 'show-settings': showSettings }">
+    <div class="slide content-panel">
+        <div class="control-panel">
+            <h1 class="header">ThrashBuddy</h1>
+            <span style="color: whitesmoke;" alt="status-text">Status: {{ testStatus()?.status ?? "INIT" }} [ {{getChar()}} ]</span>
+            <div class="centered-layout">
+                <div style="height: 20px;"></div>
+                <button (click)="runOrStopTest()" style="background-color: #00000000; border-style: none;"
+                    [disabled]="!isIdle() && !isStopping() && !isRunning()" alt="power-button">
+                    <div class="glow-wrapper">
+                        <img src="thrash-button-white.png" alt="Power button" class="power-button" [ngClass]="{
+                            'glow-image-running': isRunning() && !isDisabled(),
+                            'glow-image-stopping': isStopping() && !isDisabled(),
+                            'power-button-disabled': isDisabled()
+                        }" />
+                    </div>
+                </button>
 
-      <div class="row-container">
-        <app-configurable-button [icon]="isRunning() ? 'autorenew' : 'play_arrow'" text="Run Test"
-        [action]="runTest.bind(this)" [disabled]="!isIdle()"></app-configurable-button>
-        <app-configurable-button [icon]="isStopping() ? 'autorenew' : 'stop'" text="Stop Test"
-        [action]="stopTest.bind(this)" [disabled]="!isRunning()"></app-configurable-button>
-      </div>
-
-      <div class="row-container">
-        <app-configurable-button icon="folder" text="Files" [action]="openFiles.bind(this)"
-        [width]="'159px'"></app-configurable-button>
-        <app-configurable-button icon="assessment" text="Data" [action]="openData.bind(this)"
-        [width]="'158px'"></app-configurable-button>
-        <app-configurable-button icon="visibility" text="Monitoring" [action]="openMonitoring.bind(this)"
-        [width]="'159px'"></app-configurable-button>
-      </div>
-
-      <div class="settings">
-        <div class="row-container">
-          <label for="cpuComboBox">CPU:</label>
-          <mat-select [(value)]="selectedCpu" (selectionChange)="onCpuChange()">
-            @for (cpu of cpuOptions; track cpu) {
-              <mat-option [value]="cpu">{{ cpu }}</mat-option>
-            }
-          </mat-select>
-        </div>
-
-        <div class="row-container">
-          <label for="memoryComboBox">Memory:</label>
-          <mat-select [(value)]="selectedMemory">
-            @for (memory of memoryOptions; track memory) {
-              <mat-option [value]="memory">{{ memory }}</mat-option>
-            }
-          </mat-select>
-        </div>
-
-        <div class="row-container">
-          <label># Agents:</label>
-          <mat-slider min="1" max="25" step="1" showTickMarks discrete class="flex-component">
-            <input matSliderThumb [(ngModel)]="loadAgents">
-          </mat-slider>
-          <app-configurable-button [type]="'mat-icon-hover'" icon="info"
-          tooltip="Defines the number of started agents that create load in parallel."></app-configurable-button>
-        </div>
-
-        <div class="row-container">
-          <mat-form-field class="flex-component">
-            <mat-label>Environment Variables</mat-label>
-            <textarea matInput [(ngModel)]="envVars"></textarea>
-          </mat-form-field>
-        </div>
-
-        <div class="row-container">
-          @if (files().length > 0) {
-            <div class="file-section">
-              <div class="uploaded-files-header">
-                <h3>Uploaded Files</h3>
-                <app-configurable-button [type]="'mat-icon-hover'" icon="info"
-                  tooltip="A 'test.js' file is required as entrypoint to k6 runs.">
-                </app-configurable-button>
-              </div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Filename</th>
-                    <th>Last Modified</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (file of files(); track file) {
-                    <tr>
-                      <td>{{ file.filename }}</td>
-                      <td>{{ file.lastModified | date:'short' }}</td>
-                      <td>
-                        <button mat-icon-button color="warn" (click)="deleteFile(file.filename)">
-                          <mat-icon>delete</mat-icon>
-                        </button>
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
+                <div class="button-circle">
+                    <button class="circle-button" style="--index: 0" (click)="toggleSettings()" matTooltip="Settings"
+                        alt="Settings">
+                        <mat-icon>settings</mat-icon>
+                    </button>
+                    <button class="circle-button" style="--index: 1" (click)="openMonitoring()" matTooltip="Monitoring"
+                        alt="Monitoring">
+                        <mat-icon>visibility</mat-icon>
+                    </button>
+                    <button class="circle-button" style="--index: 3" (click)="openFiles()" matTooltip="Files"
+                        alt="Files">
+                        <mat-icon>folder</mat-icon>
+                    </button>
+                </div>
             </div>
-          }
         </div>
-
-        <div class="row-container">
-          <app-dropzone></app-dropzone>
-        </div>
-      </div>
     </div>
-  </div>
+
+    <div class="slide settings-panel">
+        <div style="background-color: whitesmoke; padding: 20px; padding-left: 30px; border: 1px solid #111;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style=" width: 50%">
+                        <h1>Settings</h1>
+                    </td>
+                    <td style="width: 50px">
+                    </td>
+                    <td style="width: 50%">
+                        <h1>Files</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="settings-container-col">
+                            <div class="row-container">
+                                <label for="cpuComboBox">CPU:</label>
+                                <mat-select [(value)]="selectedCpu" (selectionChange)="onCpuChange()">
+                                    @for (cpu of cpuOptions; track cpu) {
+                                    <mat-option [value]="cpu">{{ cpu }}</mat-option>
+                                    }
+                                </mat-select>
+                            </div>
+
+                            <div class="row-container">
+                                <label for="memoryComboBox">Memory:</label>
+                                <mat-select [(value)]="selectedMemory" class="select">
+                                    @for (memory of memoryOptions; track memory) {
+                                    <mat-option [value]="memory">{{ memory }}</mat-option>
+                                    }
+                                </mat-select>
+                            </div>
+
+                            <div class="row-container">
+                                <label># Agents:</label>
+                                <mat-slider min="1" max="25" step="1" showTickMarks discrete class="flex-component">
+                                    <input matSliderThumb [(ngModel)]="loadAgents" />
+                                </mat-slider>
+                                <mat-icon
+                                    matTooltip="Defines the number of started agents that create load in parallel.">
+                                    info
+                                </mat-icon>
+                            </div>
+
+                            <div class="row-container">
+                                <mat-form-field class="flex-component">
+                                    <mat-label>Environment Variables</mat-label>
+                                    <textarea matInput [(ngModel)]="envVars" style="height: 250px;"></textarea>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </td>
+                    <td></td>
+                    <td class="settings-table-container">
+                        <div class="settings-container-col">
+                            <div class="row-container">
+                                <div class="file-section">
+                                    <div class="uploaded-files-header">
+                                        <h3>Uploaded Files</h3>
+                                        <mat-icon matTooltip="A 'test.js' file is required as entrypoint to k6 runs.">
+                                            info
+                                        </mat-icon>
+                                    </div>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Filename</th>
+                                                <th>Last Modified</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <ng-container *ngIf="files().length > 0; else noFiles">
+                                                @for (file of files(); track file) {
+                                                <tr>
+                                                    <td>{{ file.filename }}</td>
+                                                    <td>{{ file.lastModified | date:'short' }}</td>
+                                                    <td>
+                                                        <button mat-icon-button color="warn"
+                                                            (click)="deleteFile(file.filename)">
+                                                            <mat-icon>delete</mat-icon>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                }
+                                            </ng-container>
+                                            <ng-template #noFiles>
+                                                <tr>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                </tr>
+                                            </ng-template>
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="row-container">
+                                <app-dropzone></app-dropzone>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <button class="round-button" (click)="toggleSettings()" alt="back-button">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <router-outlet />
 </div>
-<router-outlet />

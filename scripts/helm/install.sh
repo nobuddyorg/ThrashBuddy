@@ -46,15 +46,15 @@ setup_k8s_secrets() {
 clean_previous_installation() {
   echo "Uninstalling previous installation..."
   "$HELM_SCRIPT_DIR/uninstall.sh" "$@"
+  find "$CONFIG_DIR/charts" -mindepth 1 -maxdepth 1 ! -name '.gitignore' -exec rm -rf {} +
   echo "Creating namespace..."
-  kubectl create namespace $NAMESPACE
+  kubectl get namespace $NAMESPACE || kubectl create namespace $NAMESPACE
 }
 
 install_dependencies() {
   echo "Installing dependencies..."
-  find "$CONFIG_DIR/charts" -mindepth 1 -maxdepth 1 ! -name '.gitignore' -exec rm -rf {} +
   . "$HELM_SCRIPT_DIR/install-nginx.sh"
-  envsubst <"$CONFIG_DIR/template.values.yaml" >"$CONFIG_DIR/values.yaml"
+  envsubst '${APP_NAME} ${NAMESPACE} ${IMAGE_REPO_PREFIX} ${MINIO_ADDR} ${USERNAME_TOOLS} ${PASSWORD_TOOLS} ${PUBLIC_IP} ${BASIC_AUTH}' <"$CONFIG_DIR/template.values.yaml" >"$CONFIG_DIR/values.yaml"
   helm dependency update --namespace $NAMESPACE
 }
 
@@ -94,7 +94,6 @@ print_access_urls() {
   echo -e "\e[36m🔹 App:      http://${PUBLIC_IP}${suffix}\e[0m"
   echo -e "\e[33m🔹 Grafana:  http://grafana.${PUBLIC_IP}${suffix}\e[0m"
   echo -e "\e[35m🔹 MinIO:    http://minio.${PUBLIC_IP}${suffix}\e[0m"
-  echo -e "\e[34m🔹 InfluxDB: http://influx.${PUBLIC_IP}${suffix}\e[0m"
   echo ""
   echo "In a minikube environment a 'kubectl port-forward svc/ingress-nginx-controller 8080:80' might be required."
 }
