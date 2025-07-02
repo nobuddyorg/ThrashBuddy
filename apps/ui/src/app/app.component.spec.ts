@@ -95,6 +95,7 @@ describe("AppComponent", () => {
         }));
 
         it("should retry on getStatus failure", fakeAsync(() => {
+            spyOn(console, 'error'); 
             const fixture = TestBed.createComponent(AppComponent);
             const app = fixture.componentInstance;
 
