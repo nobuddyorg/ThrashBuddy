@@ -31,7 +31,7 @@ ThrashBuddy consists of multiple containerized services running in a Kubernetes 
      or
 
      ```shell
-     sudo apt update && sudo apt install -y helm code eksctl awscli kubectl
+     sudo apt update && sudo apt install -y helm code eksctl awscli kubectl nodejs
      ```
 
      Both the ui and api come with their own package managers and their wrappers `npmw` and `gradlew`. They will install themselves and their dependencies.
@@ -90,30 +90,6 @@ Then you can access the app on `http://localhost:8080`. This will also be writte
 
 - **Stop the cluster:**
   Close Docker Desktop to stop the cluster.
-
-## Local Development
-
-To test frontend and backend changes without rebuilding Docker images, you can run the services locally.
-
-### Steps for Local Development
-
-1. **Start the backend:**
-
-   ```shell
-   cd apps/api
-   ./gradlew bootRun
-   ```
-
-2. **Start the frontend locally:**
-
-   ```shell
-   cd apps/ui
-   ng serve --open
-   ```
-
-   A browser should open automatically, and the frontend will be ready.
-
-Backend and frontend should be connected automatically. This setup is a bit limited though, as Minio, InfluxDB and Grafana are not started.
 
 ## Tests
 
