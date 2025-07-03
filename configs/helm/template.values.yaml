@@ -16,8 +16,8 @@ deployments:
         memory: 256Mi
         ephemeralStorage: 500Mi
       limits:
-        cpu: 200m
-        memory: 256Mi
+        cpu: 400m
+        memory: 512Mi
         ephemeralStorage: 500Mi
     env: {}
   api:
@@ -32,8 +32,8 @@ deployments:
         memory: 256Mi
         ephemeralStorage: 500Mi
       limits:
-        cpu: 200m
-        memory: 256Mi
+        cpu: 400m
+        memory: 512Mi
         ephemeralStorage: 500Mi
     env:
       MINIO_URL: "${MINIO_ADDR}"
@@ -53,8 +53,8 @@ deployments:
       - "--web.enable-remote-write-receiver"
     resources:
       requests:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 300m
+        memory: 256Mi
         ephemeralStorage: 1Gi
       limits:
         cpu: 500m
@@ -114,8 +114,8 @@ minio:
       cpu: 200m
       memory: 256Mi
     limits:
-      cpu: 200m
-      memory: 256Mi
+      cpu: 400m
+      memory: 512Mi
   podDisruptionBudget:
     enabled: true
     minAvailable: 1
@@ -145,8 +145,8 @@ grafana:
       cpu: 200m
       memory: 256Mi
     limits:
-      cpu: 200m
-      memory: 256Mi
+      cpu: 400m
+      memory: 512Mi
   datasources:
     datasources.yaml:
       apiVersion: 1
