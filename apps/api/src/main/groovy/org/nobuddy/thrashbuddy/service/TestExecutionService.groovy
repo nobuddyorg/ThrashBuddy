@@ -31,12 +31,12 @@ class TestExecutionService {
 
     ResponseEntity<Map> startTest(Map<String, Object> payload) {
         if (statusService.getStatus() != StatusService.ResponseStatus.IDLE) {
-            return buildResponse(HttpStatus.BAD_REQUEST, "Cannot start while not idle")
+            return buildResponse(HttpStatus.BAD_REQUEST, StatusService.ResponseStatus.ERROR, "Cannot start while not idle")
         }
 
         def uploadedFiles = fileService.listFiles()
         if (!uploadedFiles.any { it.filename == 'test.js' }) {
-            return buildResponse(HttpStatus.BAD_REQUEST, "'test.js' file is required")
+            return buildResponse(HttpStatus.BAD_REQUEST, StatusService.ResponseStatus.ERROR, "'test.js' file is required")
         }
 
         def cpu = payload.cpu as String
@@ -47,18 +47,18 @@ class TestExecutionService {
         statusService.setStatus(StatusService.ResponseStatus.RUNNING)
         k8sService.start(cpu, memory, loadAgents, envVars)
 
-        return buildResponse(HttpStatus.OK, "K6 test started with $loadAgents agents")
+        return buildResponse(HttpStatus.OK, StatusService.ResponseStatus.RUNNING, "K6 test started with $loadAgents agents")
     }
 
     ResponseEntity<Map> stopTest() {
         if (statusService.getStatus() != StatusService.ResponseStatus.RUNNING) {
-            return buildResponse(HttpStatus.BAD_REQUEST, "Cannot stop while not running")
+            return buildResponse(HttpStatus.BAD_REQUEST, StatusService.ResponseStatus.ERROR, "Cannot stop while not running")
         }
 
         statusService.setStatus(StatusService.ResponseStatus.STOPPING)
         k8sService.stop()
 
-        return buildResponse(HttpStatus.OK, "Stopping all Kubernetes jobs...")
+        return buildResponse(HttpStatus.OK, StatusService.ResponseStatus.STOPPING, "Stopping all Kubernetes jobs...")
     }
 
     ResponseEntity<Map> getStatus() {
@@ -68,20 +68,20 @@ class TestExecutionService {
         def files = fileService.listFiles()
         if (statusService.getStatus() == StatusService.ResponseStatus.IDLE && !files.any { it.filename == 'test.js' }) {
             statusService.setStatus(StatusService.ResponseStatus.INIT)
-            return buildResponse(HttpStatus.OK, statusService.getStatus().name())
+            return buildResponse(HttpStatus.OK, StatusService.ResponseStatus.INIT, statusService.getStatus().name())
         }
 
         if (statusService.getStatus() == StatusService.ResponseStatus.INIT && files.any { it.filename == 'test.js' }) {
             statusService.setStatus(StatusService.ResponseStatus.IDLE)
-            return buildResponse(HttpStatus.OK, statusService.getStatus().name())
+            return buildResponse(HttpStatus.OK, StatusService.ResponseStatus.IDLE, statusService.getStatus().name())
         }
 
         if (statusService.getStatus() == StatusService.ResponseStatus.ERROR) {
             statusService.setStatus(StatusService.ResponseStatus.IDLE)
-            return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal error: ${statusService.getErrorMessage()}", )
+            return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, StatusService.ResponseStatus.ERROR, "Internal error: ${statusService.getErrorMessage()}", )
         }
 
-        return buildResponse(HttpStatus.OK, statusService.getStatus().name())
+        return buildResponse(HttpStatus.OK, statusService.getStatus(), statusService.getStatus().name())
     }
 
     private static List<EnvVar> toEnvVars(List<Map<String, String>> rawVars) {
@@ -90,10 +90,10 @@ class TestExecutionService {
         } ?: []
     }
 
-    private ResponseEntity<Map> buildResponse(HttpStatus statusCode, String msg) {
+    private ResponseEntity<Map> buildResponse(HttpStatus statusCode,StatusService.ResponseStatus status, String msg) {
         return ResponseEntity.status(statusCode).body([message   : msg,
                                                        httpStatus: statusCode.reasonPhrase,
-                                                       status    : statusService.getStatus().name(),
+                                                       status    : status.name(),
                                                        data      : fileService.listFiles()])
     }
 

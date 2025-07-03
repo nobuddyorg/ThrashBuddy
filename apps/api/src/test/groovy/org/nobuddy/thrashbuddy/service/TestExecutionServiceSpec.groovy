@@ -110,6 +110,7 @@ class TestExecutionServiceSpec extends Specification {
 
         then:
             response2.statusCode == HttpStatus.INTERNAL_SERVER_ERROR
+            response2.body.status == "ERROR"
             response2.body.message.contains("Boom")
     }
 
