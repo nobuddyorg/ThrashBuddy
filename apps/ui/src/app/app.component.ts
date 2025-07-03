@@ -201,6 +201,7 @@ export class AppComponent implements OnInit, OnDestroy {
     getStatus() {
         this.testService.getStatus().subscribe({
             next: (response) => {
+                this.testStatus.set(response);
                 this.files.set(response.data ?? []);
             },
             error: (err) => {
