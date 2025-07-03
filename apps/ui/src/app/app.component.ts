@@ -50,12 +50,12 @@ export class AppComponent implements OnInit, OnDestroy {
     private snackBar = inject(MatSnackBar);
     private destroy$ = new Subject<void>();
 
-    testStatus = signal<StatusResponse | null>(null);
+    testStatus = signal<StatusResponse>({ status: "INIT", data: [] });
     files = signal<FileMeta[]>([]);
 
     getChar = computed(() => {
         const status = this.testStatus();
-        switch (status?.status) {
+        switch (status.status) {
             case "IDLE":
                 return "~";
             case "RUNNING":
@@ -69,24 +69,22 @@ export class AppComponent implements OnInit, OnDestroy {
 
     isIdle = computed(() => {
         const status = this.testStatus();
-        return status !== null && status.status === "IDLE";
+        return status.status === "IDLE";
     });
 
     isRunning = computed(() => {
         const status = this.testStatus();
-        return status !== null && status.status === "RUNNING";
+        return status.status === "RUNNING";
     });
 
     isStopping = computed(() => {
         const status = this.testStatus();
-        return status !== null && status.status === "STOPPING";
+        return status.status === "STOPPING";
     });
 
     isDisabled = computed(() => {
         const status = this.testStatus();
-        return (
-            status === null || (status.status !== "RUNNING" && status.status !== "STOPPING" && status.status !== "IDLE")
-        );
+        return status.status !== "RUNNING" && status.status !== "STOPPING" && status.status !== "IDLE";
     });
 
     cpuOptions: string[] = ["512m", "1024m", "2048m", "4096m", "8192m", "16384m"];
@@ -148,8 +146,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     runOrStopTest() {
-        let status = this.testStatus();
-        status ??= { status: "IDLE" };
+        const status = this.testStatus();
         switch (status.status) {
             case "IDLE":
                 this.runTest();
