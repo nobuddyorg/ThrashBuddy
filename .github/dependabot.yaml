@@ -37,7 +37,7 @@ updates:
           - "patch"
 
   - package-ecosystem: "helm"
-    directory: "k8s"
+    directory: "configs/helm"
     schedule:
       interval: "weekly"
 
