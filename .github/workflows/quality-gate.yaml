@@ -119,7 +119,7 @@ jobs:
     if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' # takes too long for pushes
     needs: [api, ui]
     name: Infrastructure and Images
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Clean up workspace
         run: rm -rf $GITHUB_WORKSPACE/*
