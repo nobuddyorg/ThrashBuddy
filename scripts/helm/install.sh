@@ -69,8 +69,10 @@ install_and_run_tests() {
     --set global.imageRepoPrefix="$IMAGE_REPO_PREFIX"
 
   echo "Waiting for pods to become ready..."
-  kubectl get pods --namespace $NAMESPACE --no-headers | grep -vE 'test-' | awk '{print $1}' |
-    xargs -I {} kubectl wait --for=condition=ready pod {} --namespace $NAMESPACE --timeout=300s
+  kubectl get pods --namespace $NAMESPACE --no-headers \
+  -l 'helm.sh/hook!=test' | awk '{print $1}' |
+  xargs -I {} kubectl wait --for=condition=ready pod {} --namespace $NAMESPACE --timeout=300s
+
 
   for i in {1..10}; do
     echo "Attempt $i/10 ..."
