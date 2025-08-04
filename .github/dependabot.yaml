@@ -23,6 +23,11 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    
+    ignore:
+      - dependency-name: "typescript"
+        versions:
+          - ">=5.9.0"
 
   - package-ecosystem: "npm"
     directory: "tests/ui"
