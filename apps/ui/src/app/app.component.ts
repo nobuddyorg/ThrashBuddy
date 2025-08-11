@@ -139,7 +139,7 @@ export class AppComponent implements OnInit, OnDestroy {
         const err = error as { error?: { message?: string }; message?: string };
         const errorMsg = err.error?.message ?? err.message ?? "Unknown error";
 
-        this.snackBar.open(`${message}: ${String(errorMsg)}`, "Close", {
+        this.snackBar.open(`${message}: ${errorMsg}`, "Close", {
             duration: 30000,
             panelClass: ["error-snackbar"],
         });
