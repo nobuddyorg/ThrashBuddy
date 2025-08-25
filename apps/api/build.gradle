@@ -19,15 +19,15 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.groovy:groovy:4.0.28'
+    implementation 'org.apache.groovy:groovy:5.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'io.fabric8:kubernetes-client:7.3.1'
     implementation 'io.minio:minio:8.5.17'
-    implementation("org.apache.groovy:groovy-json:4.0.28")
+    implementation("org.apache.groovy:groovy-json:5.0.0")
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.spockframework:spock-spring:2.4-M6-groovy-4.0'
-    testImplementation("org.apache.groovy:groovy-json:4.0.28")
+    testImplementation("org.apache.groovy:groovy-json:5.0.0")
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.mockito:mockito-core:5.19.0'
 }
