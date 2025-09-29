@@ -22,7 +22,7 @@ dependencies {
     implementation 'org.apache.groovy:groovy:4.0.28'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'io.fabric8:kubernetes-client:7.4.0'
-    implementation 'io.minio:minio:8.5.17'
+    implementation 'io.minio:minio:8.6.0'
     implementation("org.apache.groovy:groovy-json:4.0.28")
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
