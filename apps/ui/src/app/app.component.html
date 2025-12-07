@@ -2,7 +2,7 @@
     <div class="slide content-panel">
         <div class="control-panel">
             <h1 class="header">ThrashBuddy</h1>
-            <span style="color: whitesmoke;" alt="status-text">Status: {{ testStatus()?.status ?? "INIT" }} [ {{getChar()}} ]</span>
+            <span style="color: whitesmoke;" alt="status-text">Status: {{ testStatus().status }} [ {{getChar()}} ]</span>
             <div class="centered-layout">
                 <div style="height: 20px;"></div>
                 <button (click)="runOrStopTest()" style="background-color: #00000000; border-style: none;"

@@ -30,6 +30,7 @@ dependencies {
     testImplementation("org.apache.groovy:groovy-json:5.0.3")
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.mockito:mockito-core:5.20.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 }
 
 tasks.named('test') {
