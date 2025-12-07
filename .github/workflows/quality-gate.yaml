@@ -76,7 +76,7 @@ jobs:
           fetch-depth: 0
       - name: Install Dependencies
         working-directory: ./apps/ui
-        run: ./npmw install
+        run: ./npmw ci
       - name: Unit Tests and Coverage
         working-directory: ./apps/ui
         run: ./npmw run test:ci
