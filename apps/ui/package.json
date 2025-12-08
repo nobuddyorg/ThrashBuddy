@@ -26,7 +26,7 @@
     "ngx-dropzone": "^3.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.15.1"
+    "zone.js": "~0.16.0"
   },
   "devDependencies": {
     "@angular/build": "^21.0.2",
@@ -36,7 +36,7 @@
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "jasmine-core": "~5.12.1",
+    "jasmine-core": "~5.13.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
