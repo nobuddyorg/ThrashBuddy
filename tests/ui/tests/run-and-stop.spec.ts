@@ -59,11 +59,15 @@ test("run test", async ({ page }) => {
   await sliderInput.fill("1");
 
   await page.getByAltText("power-button").click();
-  await expect(page.getByAltText("status-text")).toContainText("Status: RUNNING");
+  await expect(page.getByAltText("status-text")).toContainText(
+    "Status: RUNNING"
+  );
 
   await page.waitForTimeout(15_000);
 
-  await expect(page.getByAltText("status-text")).toContainText("Status: IDLE", { timeout: 180_000 });
+  await expect(page.getByAltText("status-text")).toContainText("Status: IDLE", {
+    timeout: 180_000,
+  });
 });
 
 test("stop test", async ({ page }) => {
@@ -77,14 +81,20 @@ test("stop test", async ({ page }) => {
   await sliderInput.fill("1");
 
   await page.getByAltText("power-button").click();
-  await expect(page.getByAltText("status-text")).toContainText("Status: RUNNING");
+  await expect(page.getByAltText("status-text")).toContainText(
+    "Status: RUNNING"
+  );
 
   await page.waitForTimeout(15_000);
 
   await page.getByAltText("power-button").click();
-  await expect(page.getByAltText("status-text")).toContainText("Status: STOPPING");
+  await expect(page.getByAltText("status-text")).toContainText(
+    "Status: STOPPING"
+  );
 
-  await expect(page.getByAltText("status-text")).toContainText("Status: IDLE", { timeout: 60_000 });
+  await expect(page.getByAltText("status-text")).toContainText("Status: IDLE", {
+    timeout: 60_000,
+  });
 });
 
 test("delete file", async ({ page }) => {
@@ -98,7 +108,9 @@ test("delete file", async ({ page }) => {
   await deleteButton.click();
 
   await expect(page.locator("text=Uploaded Files")).toBeVisible();
-  await expect(page.locator(`text=${TEST_FILE_NAME}`).first()).not.toBeVisible();
+  await expect(
+    page.locator(`text=${TEST_FILE_NAME}`).first()
+  ).not.toBeVisible();
   await page.getByAltText("back-button").click();
   await expect(page.getByAltText("power-button")).toBeDisabled();
 });

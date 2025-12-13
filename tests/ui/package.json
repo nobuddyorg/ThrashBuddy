@@ -1,21 +1,21 @@
 {
-    "name": "frontend-test",
-    "version": "1.0.0",
-    "main": "index.js",
-    "scripts": {
-        "test": "playwright test",
-        "headedTest": "playwright test --headed",
-        "install": "playwright install --with-deps chromium"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "description": "",
-    "devDependencies": {
-        "@playwright/test": "^1.51.1",
-        "@types/node": "^24.0.1"
-    },
-    "dependencies": {
-        "dotenv": "^17.0.1"
-    }
+  "name": "frontend-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "headedTest": "playwright test --headed",
+    "install": "playwright install --with-deps chromium"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "@types/node": "^24.0.1"
+  },
+  "dependencies": {
+    "dotenv": "^17.0.1"
+  }
 }
