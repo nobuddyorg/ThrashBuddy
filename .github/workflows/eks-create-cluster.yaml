@@ -4,6 +4,9 @@ run-name: EKS Create Cluster
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   create:
     runs-on: ubuntu-latest
