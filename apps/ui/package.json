@@ -45,6 +45,6 @@
         "karma-junit-reporter": "^2.0.1",
         "prettier": "^3.7.3",
         "typescript": "~5.9.0",
-        "typescript-eslint": "^8.50.1"
+        "typescript-eslint": "^8.51.0"
     }
 }
