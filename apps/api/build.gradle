@@ -21,7 +21,7 @@ repositories {
 dependencies {
     implementation 'org.apache.groovy:groovy:5.0.3'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'io.fabric8:kubernetes-client:7.4.0'
+    implementation 'io.fabric8:kubernetes-client:7.5.0'
     implementation 'io.minio:minio:8.6.0'
     implementation("org.apache.groovy:groovy-json:5.0.3")
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
