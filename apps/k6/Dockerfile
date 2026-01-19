@@ -1,4 +1,4 @@
-FROM golang:1.25.5 AS builder
+FROM golang:1.26rc2 AS builder
 RUN go install go.k6.io/xk6/cmd/xk6@latest && \
     xk6 build
 
