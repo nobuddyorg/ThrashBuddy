@@ -1,7 +1,7 @@
 plugins {
     id 'groovy'
     id 'jacoco'
-    id 'org.springframework.boot' version '4.0.1'
+    id 'org.springframework.boot' version '4.0.2'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -19,15 +19,15 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.groovy:groovy:5.0.3'
+    implementation 'org.apache.groovy:groovy:5.0.4'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'io.fabric8:kubernetes-client:7.5.1'
+    implementation 'io.fabric8:kubernetes-client:7.5.2'
     implementation 'io.minio:minio:8.6.0'
-    implementation("org.apache.groovy:groovy-json:5.0.3")
+    implementation("org.apache.groovy:groovy-json:5.0.4")
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.spockframework:spock-spring:2.4-groovy-5.0'
-    testImplementation("org.apache.groovy:groovy-json:5.0.3")
+    testImplementation("org.apache.groovy:groovy-json:5.0.4")
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.mockito:mockito-core:5.21.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
