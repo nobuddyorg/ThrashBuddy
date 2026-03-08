@@ -3,26 +3,20 @@ updates:
   - package-ecosystem: "gradle"
     directory: "apps/api"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
-      minor-and-patch:
+      all-dependencies:
         patterns:
           - "*"
-        update-types:
-          - "minor"
-          - "patch"
 
   - package-ecosystem: "npm"
     directory: "apps/ui"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
-      minor-and-patch:
+      all-dependencies:
         patterns:
           - "*"
-        update-types:
-          - "minor"
-          - "patch"
     
     ignore:
       - dependency-name: "typescript"
@@ -32,31 +26,44 @@ updates:
   - package-ecosystem: "npm"
     directory: "tests/ui"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
-      minor-and-patch:
+      all-dependencies:
         patterns:
           - "*"
-        update-types:
-          - "minor"
-          - "patch"
 
   - package-ecosystem: "helm"
     directory: "configs/helm"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: "docker"
     directory: "apps/api"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: "docker"
     directory: "apps/ui"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: "docker"
     directory: "apps/k6"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
