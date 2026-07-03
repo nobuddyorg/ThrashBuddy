@@ -17,11 +17,6 @@ updates:
       all-dependencies:
         patterns:
           - "*"
-    
-    ignore:
-      - dependency-name: "typescript"
-        versions:
-          - ">=5.9.0"
 
   - package-ecosystem: "npm"
     directory: "tests/ui"
@@ -61,6 +56,15 @@ updates:
 
   - package-ecosystem: "docker"
     directory: "apps/k6"
+    schedule:
+      interval: "monthly"
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "monthly"
     groups:
