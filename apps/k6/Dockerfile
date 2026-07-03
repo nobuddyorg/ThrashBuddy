@@ -1,5 +1,5 @@
 FROM golang:1.26 AS builder
-RUN go install go.k6.io/xk6/cmd/xk6@latest && \
+RUN go install go.k6.io/xk6/cmd/xk6@v1.4.6 && \
     xk6 build
 
 FROM alpine:3
