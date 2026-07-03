@@ -197,7 +197,7 @@ jobs:
           check_name: "Playwright UI Tests"
           files: ./tests/ui/test-results/results.xml
       - name: Archive Playwright Test Results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: report.zip
