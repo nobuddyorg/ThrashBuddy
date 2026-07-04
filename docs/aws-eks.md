@@ -53,14 +53,14 @@ Once the cluster is created, the local Kubernetes context is switched accordingl
 ### Delete the Cluster
 
 ```shell
-./buddy aws delete-cluster
+./buddy.sh aws delete-cluster
 ```
 
 After deletion, the local Kubernetes context is restored.
-If you also want to get rid of the ECR repository and local docker images, you can run:
+If you also want to get rid of the ECR repository, you can run:
 
 ```shell
-./buddy aws cleanup
+./buddy.sh aws delete-ecr
 ```
 
 ### Pushing Docker Images to ECR
@@ -68,7 +68,7 @@ If you also want to get rid of the ECR repository and local docker images, you c
 AWS EKS requires Docker images to be uploaded to Amazon Elastic Container Registry (ECR). A preconfigured script is available for this:
 
 ```shell
-./buddy aws push-images
+./buddy.sh aws push-images
 ```
 
 This script is automatically executed during cluster creation via `create-cluster`. However, it can also be run later to update Docker images. The script runs:
@@ -87,7 +87,7 @@ After cluster creation, **ThrashBuddy** is accessible via its ingress IP, printe
 If your Kubernetes context switched in the meantime, you can reconnect to the EKS cluster again by running:
 
 ```shell
-./buddy aws connect-cluster
+./buddy.sh aws connect-cluster
 ```
 
 ## AWS Configuration Notes

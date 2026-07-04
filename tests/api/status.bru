@@ -9,3 +9,12 @@ get {
   body: none
   auth: none
 }
+
+tests {
+  test("status is 200 or 500", function () {
+    expect(res.getStatus()).to.be.oneOf([200, 500]);
+  });
+  test("response has a status field", function () {
+    expect(res.getBody()).to.have.property("status");
+  });
+}

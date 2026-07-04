@@ -15,5 +15,11 @@ params:query {
 }
 
 body:multipart-form {
-  file: @file(C:\Repos\besessener\ThrashBuddy\services\k6\example\test.js) @contentType(multipart/form-data)
+  file: @file(../../apps/k6/example/test.js) @contentType(multipart/form-data)
+}
+
+tests {
+  test("status is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
 }

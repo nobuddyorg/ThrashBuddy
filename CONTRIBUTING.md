@@ -26,7 +26,7 @@ Thank you for your interest in contributing to **ThrashBuddy**! Your contributio
 
 ## Reporting Issues
 
-If you encounter any bugs or have suggestions for improvements, please [open an issue](https://github.com/besessener/ThrashBuddy/issues) on the repository. Provide as much detail as possible.
+If you encounter any bugs or have suggestions for improvements, please [open an issue](https://github.com/nobuddyorg/ThrashBuddy/issues) on the repository. Provide as much detail as possible.
 
 ---
 
