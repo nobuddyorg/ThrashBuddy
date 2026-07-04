@@ -3,12 +3,6 @@
 set -e
 set -o pipefail
 
-# Allow passwordless sudo for current user (if not already configured)
-if [ ! -f "/etc/sudoers.d/$(whoami)" ]; then
-  echo "$(whoami) ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/$(whoami)" >/dev/null
-  sudo chmod 0440 "/etc/sudoers.d/$(whoami)"
-fi
-
 # Update and upgrade system packages
 sudo apt update
 sudo apt upgrade -y

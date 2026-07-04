@@ -8,7 +8,8 @@ if [ ! -f $ENV_FILE ]; then
     echo -e "<root>/configs/.env file not found. Creating one now.\nYou can decide all values yourself.\nThey will be used automatically for all tools."
 
     read -p "Enter USERNAME_TOOLS: " USERNAME_TOOLS
-    read -p "Enter PASSWORD_TOOLS: " PASSWORD_TOOLS
+    read -s -p "Enter PASSWORD_TOOLS: " PASSWORD_TOOLS
+    echo
 
     cat <<EOF >$ENV_FILE
 USERNAME_TOOLS=$USERNAME_TOOLS
