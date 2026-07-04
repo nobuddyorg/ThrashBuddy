@@ -19,8 +19,10 @@ class K8sService {
     private static final String NAMESPACE = System.getenv("NAMESPACE")
     private static final String JOB_NAME = "${System.getenv("APP_NAME")}-job"
 
-    StatusService.ResponseStatus status = StatusService.ResponseStatus.IDLE
-    String errorMessage = null
+    private static final long MAX_MONITOR_DURATION_MILLIS = 30 * 60 * 1000
+
+    volatile StatusService.ResponseStatus status = StatusService.ResponseStatus.IDLE
+    volatile String errorMessage = null
 
     @Autowired
     KubernetesClient client
@@ -41,6 +43,7 @@ class K8sService {
             monitorPodsAndStopIfLow(count)
             status = StatusService.ResponseStatus.IDLE
         } catch (Exception e) {
+            log.error("Failed to start jobs for $JOB_NAME", e)
             status = StatusService.ResponseStatus.ERROR
             errorMessage = "Failed to start jobs: ${e.message}"
         }
@@ -53,6 +56,7 @@ class K8sService {
             deleteK6Jobs()
             status = StatusService.ResponseStatus.IDLE
         } catch (Exception e) {
+            log.error("Failed to stop jobs for $JOB_NAME", e)
             status = StatusService.ResponseStatus.ERROR
             errorMessage = "Failed to stop jobs: ${e.message}"
         }
@@ -119,7 +123,17 @@ class K8sService {
         int threshold = (int) (parallelism * 0.25)
         boolean isRunning = false
         def noRunningSince = System.currentTimeMillis()
+        def monitorStarted = System.currentTimeMillis()
         while (true) {
+            if (System.currentTimeMillis() - monitorStarted > MAX_MONITOR_DURATION_MILLIS) {
+                log.warn("Pod monitor for $JOB_NAME exceeded max duration, stopping jobs and giving up")
+                try {
+                    deleteK6Jobs()
+                } catch (Exception e) {
+                    log.error("Failed deleting jobs after monitor timeout", e)
+                }
+                break
+            }
             try {
                 def pods = client.pods()
                         .inNamespace(NAMESPACE)

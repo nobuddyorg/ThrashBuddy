@@ -71,7 +71,9 @@ class TestExecutionService {
             return buildResponse(HttpStatus.BAD_REQUEST, StatusService.ResponseStatus.ERROR, e.message)
         }
 
-        statusService.setStatus(StatusService.ResponseStatus.RUNNING)
+        if (!statusService.compareAndSet(StatusService.ResponseStatus.IDLE, StatusService.ResponseStatus.RUNNING)) {
+            return buildResponse(HttpStatus.BAD_REQUEST, StatusService.ResponseStatus.ERROR, "Cannot start while not idle")
+        }
         k8sService.start(cpu, memory, loadAgents, envVars)
 
         return buildResponse(HttpStatus.OK, StatusService.ResponseStatus.RUNNING, "K6 test started with $loadAgents agents")
@@ -95,7 +97,9 @@ class TestExecutionService {
             return buildResponse(HttpStatus.BAD_REQUEST, StatusService.ResponseStatus.ERROR, "Cannot stop while not running")
         }
 
-        statusService.setStatus(StatusService.ResponseStatus.STOPPING)
+        if (!statusService.compareAndSet(StatusService.ResponseStatus.RUNNING, StatusService.ResponseStatus.STOPPING)) {
+            return buildResponse(HttpStatus.BAD_REQUEST, StatusService.ResponseStatus.ERROR, "Cannot stop while not running")
+        }
         k8sService.stop()
 
         return buildResponse(HttpStatus.OK, StatusService.ResponseStatus.STOPPING, "Stopping all Kubernetes jobs...")
