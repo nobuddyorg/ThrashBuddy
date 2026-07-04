@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Configuration
 class MinioConfig {
 
     @Bean
-    MinioClient minioClient(@Value('${MINIO_URL:http://localhost:9000/}') String endpoint,
-                            @Value('${MINIO_ACCESS_KEY:minioadmin}') String accessKey,
-                            @Value('${MINIO_SECRET_KEY:minioadmin}') String secretKey) {
+    MinioClient minioClient(@Value('${MINIO_URL}') String endpoint,
+                            @Value('${MINIO_ACCESS_KEY}') String accessKey,
+                            @Value('${MINIO_SECRET_KEY}') String secretKey) {
         MinioClient.builder()
                 .endpoint(endpoint)
                 .credentials(accessKey, secretKey)

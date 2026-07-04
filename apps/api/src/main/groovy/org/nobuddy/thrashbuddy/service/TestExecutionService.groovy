@@ -4,12 +4,22 @@ import io.fabric8.kubernetes.api.model.EnvVar
 import io.fabric8.kubernetes.api.model.EnvVarBuilder
 import io.fabric8.kubernetes.client.KubernetesClient
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
 class TestExecutionService {
+
+    // names already injected by K8sService for MinIO/job wiring - callers may not override these
+    private static final Set<String> RESERVED_ENV_NAMES = [
+            'MINIO_URL', 'MINIO_ACCESS_KEY', 'MINIO_SECRET_KEY', 'MINIO_BUCKET', 'K6_INSTANCE_ID'
+    ] as Set<String>
+    private static final int MAX_ENV_VARS = 50
+    private static final def ENV_NAME_PATTERN = ~/^[A-Za-z_][A-Za-z0-9_]*$/
+    private static final def K8S_QUANTITY_PATTERN = ~/^[0-9]+(\.[0-9]+)?(m|K|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$/
+
     @Autowired
     FileService fileService
 
@@ -21,6 +31,12 @@ class TestExecutionService {
 
     @Autowired
     StatusService statusService
+
+    @Value('${MIN_LOAD_AGENTS:1}')
+    int minLoadAgents = 1
+
+    @Value('${MAX_LOAD_AGENTS:50}')
+    int maxLoadAgents = 50
 
     TestExecutionService(FileService fileService, KubernetesClient client, K8sService k8sService, StatusService statusService) {
         this.fileService = fileService
@@ -42,12 +58,36 @@ class TestExecutionService {
         def cpu = payload.cpu as String
         def memory = payload.memory as String
         def loadAgents = payload.loadAgents as Integer
-        def envVars = toEnvVars(payload.envVars as List<Map<String, String>>)
+
+        def validationError = validateStartParams(cpu, memory, loadAgents)
+        if (validationError) {
+            return buildResponse(HttpStatus.BAD_REQUEST, StatusService.ResponseStatus.ERROR, validationError)
+        }
+
+        List<EnvVar> envVars
+        try {
+            envVars = toEnvVars(payload.envVars as List<Map<String, String>>)
+        } catch (IllegalArgumentException e) {
+            return buildResponse(HttpStatus.BAD_REQUEST, StatusService.ResponseStatus.ERROR, e.message)
+        }
 
         statusService.setStatus(StatusService.ResponseStatus.RUNNING)
         k8sService.start(cpu, memory, loadAgents, envVars)
 
         return buildResponse(HttpStatus.OK, StatusService.ResponseStatus.RUNNING, "K6 test started with $loadAgents agents")
+    }
+
+    private String validateStartParams(String cpu, String memory, Integer loadAgents) {
+        if (loadAgents == null || loadAgents < minLoadAgents || loadAgents > maxLoadAgents) {
+            return "'loadAgents' must be between $minLoadAgents and $maxLoadAgents" as String
+        }
+        if (!cpu || !(cpu ==~ K8S_QUANTITY_PATTERN)) {
+            return "'cpu' must be a valid Kubernetes CPU quantity (e.g. '500m' or '1')" as String
+        }
+        if (!memory || !(memory ==~ K8S_QUANTITY_PATTERN)) {
+            return "'memory' must be a valid Kubernetes memory quantity (e.g. '512Mi')" as String
+        }
+        return null
     }
 
     ResponseEntity<Map> stopTest() {
@@ -85,9 +125,20 @@ class TestExecutionService {
     }
 
     private static List<EnvVar> toEnvVars(List<Map<String, String>> rawVars) {
-        rawVars?.collect {
-            new EnvVarBuilder().withName(it.name).withValue(it.value).build()
-        } ?: []
+        if (!rawVars) return []
+        if (rawVars.size() > MAX_ENV_VARS) {
+            throw new IllegalArgumentException("At most $MAX_ENV_VARS environment variables are allowed" as String)
+        }
+        rawVars.collect {
+            def name = it.name as String
+            if (!name || !(name ==~ ENV_NAME_PATTERN)) {
+                throw new IllegalArgumentException("Invalid environment variable name: $name" as String)
+            }
+            if (RESERVED_ENV_NAMES.contains(name.toUpperCase())) {
+                throw new IllegalArgumentException("Environment variable name '$name' is reserved" as String)
+            }
+            new EnvVarBuilder().withName(name).withValue(it.value as String).build()
+        }
     }
 
     private ResponseEntity<Map> buildResponse(HttpStatus statusCode,StatusService.ResponseStatus status, String msg) {
