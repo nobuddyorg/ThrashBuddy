@@ -1,12 +1,11 @@
-FROM node:26 AS build
+FROM node:24@sha256:fdddfb3e688158251943d52eba361de991548f6814007acba4917ae6b512d6be AS build
 
 WORKDIR /app
 
-RUN npm install -g @angular/cli@19.2.1
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
-RUN ng build --configuration production
+RUN npx ng build --configuration production
 
 FROM nginx:alpine
 COPY --from=build /app/dist/thrash-buddy/browser /usr/share/nginx/html

@@ -2,26 +2,17 @@ import { TestBed } from "@angular/core/testing";
 import { DropzoneComponent } from "./dropzone.component";
 import { provideHttpClient } from "@angular/common/http";
 import { provideHttpClientTesting, HttpTestingController } from "@angular/common/http/testing";
-import { AppComponent } from "../../app.component";
 
 describe("DropzoneComponent", () => {
     let component: DropzoneComponent;
     let httpMock: HttpTestingController;
-
-    const mockAppComponent = {
-        getStatus: jasmine.createSpy("getStatus"),
-    };
 
     const baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/api`;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [DropzoneComponent],
-            providers: [
-                provideHttpClient(),
-                provideHttpClientTesting(),
-                { provide: AppComponent, useValue: mockAppComponent },
-            ],
+            providers: [provideHttpClient(), provideHttpClientTesting()],
         }).compileComponents();
 
         const fixture = TestBed.createComponent(DropzoneComponent);
@@ -54,9 +45,11 @@ describe("DropzoneComponent", () => {
     });
 
     describe("upload logic", () => {
-        it("should upload a file and remove it on success", () => {
+        it("should upload a file, remove it, and emit 'uploaded' on success", () => {
             const file = new File(["upload"], "upload.txt", { type: "text/plain" });
             component.files = [{ file }];
+            const uploadedSpy = jasmine.createSpy("uploaded");
+            component.uploaded.subscribe(uploadedSpy);
 
             component.uploadFile(file);
 
@@ -67,7 +60,7 @@ describe("DropzoneComponent", () => {
             req.flush({ status: "success", message: "ok" });
 
             expect(component.files.length).toBe(0);
-            expect(mockAppComponent.getStatus).toHaveBeenCalled();
+            expect(uploadedSpy).toHaveBeenCalled();
         });
 
         it("should log error and keep file on upload failure", () => {

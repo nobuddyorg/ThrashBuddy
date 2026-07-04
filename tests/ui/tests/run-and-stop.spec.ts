@@ -28,11 +28,11 @@ const uploadTestFile = async (page: Page) => {
 test("upload files", async ({ page }) => {
   await page.goto(BASE_CONFIG.BASE_URL);
 
-  await expect(page.getByAltText("power-button")).toBeDisabled();
+  await expect(page.getByTestId("power-button")).toBeDisabled();
   await expect(page.locator("text=Uploaded Files")).toBeVisible();
-  await expect(page.getByAltText("status-text")).toContainText("Status: INIT");
+  await expect(page.getByTestId("status-text")).toContainText("Status: INIT");
 
-  await page.getByAltText("Settings").click();
+  await page.getByTestId("Settings").click();
 
   await expect(
     page.locator(`text=${TEST_FILE_NAME}`).first()
@@ -40,32 +40,32 @@ test("upload files", async ({ page }) => {
 
   await uploadTestFile(page);
 
-  await page.getByAltText("upload-file").click();
+  await page.getByTestId("upload-file").click();
   await expect(page.locator("text=Uploaded Files")).toBeVisible();
   await expect(page.locator(`text=${TEST_FILE_NAME}`).first()).toBeVisible();
-  await page.getByAltText("back-button").click();
+  await page.getByTestId("back-button").click();
 
-  await expect(page.getByAltText("power-button")).toBeEnabled();
+  await expect(page.getByTestId("power-button")).toBeEnabled();
 });
 
 test("run test", async ({ page }) => {
   test.setTimeout(240_000);
   await page.goto(BASE_CONFIG.BASE_URL);
 
-  await expect(page.getByAltText("power-button")).toBeEnabled();
-  await expect(page.getByAltText("status-text")).toContainText("Status: IDLE");
+  await expect(page.getByTestId("power-button")).toBeEnabled();
+  await expect(page.getByTestId("status-text")).toContainText("Status: IDLE");
 
   const sliderInput = page.locator('input[type="range"]');
   await sliderInput.fill("1");
 
-  await page.getByAltText("power-button").click();
-  await expect(page.getByAltText("status-text")).toContainText(
+  await page.getByTestId("power-button").click();
+  await expect(page.getByTestId("status-text")).toContainText(
     "Status: RUNNING"
   );
 
   await page.waitForTimeout(15_000);
 
-  await expect(page.getByAltText("status-text")).toContainText("Status: IDLE", {
+  await expect(page.getByTestId("status-text")).toContainText("Status: IDLE", {
     timeout: 180_000,
   });
 });
@@ -74,25 +74,25 @@ test("stop test", async ({ page }) => {
   test.setTimeout(120_000);
   await page.goto(BASE_CONFIG.BASE_URL);
 
-  await expect(page.getByAltText("power-button")).toBeEnabled();
-  await expect(page.getByAltText("status-text")).toContainText("Status: IDLE");
+  await expect(page.getByTestId("power-button")).toBeEnabled();
+  await expect(page.getByTestId("status-text")).toContainText("Status: IDLE");
 
   const sliderInput = page.locator('input[type="range"]');
   await sliderInput.fill("1");
 
-  await page.getByAltText("power-button").click();
-  await expect(page.getByAltText("status-text")).toContainText(
+  await page.getByTestId("power-button").click();
+  await expect(page.getByTestId("status-text")).toContainText(
     "Status: RUNNING"
   );
 
   await page.waitForTimeout(15_000);
 
-  await page.getByAltText("power-button").click();
-  await expect(page.getByAltText("status-text")).toContainText(
+  await page.getByTestId("power-button").click();
+  await expect(page.getByTestId("status-text")).toContainText(
     "Status: STOPPING"
   );
 
-  await expect(page.getByAltText("status-text")).toContainText("Status: IDLE", {
+  await expect(page.getByTestId("status-text")).toContainText("Status: IDLE", {
     timeout: 60_000,
   });
 });
@@ -100,8 +100,8 @@ test("stop test", async ({ page }) => {
 test("delete file", async ({ page }) => {
   await page.goto(BASE_CONFIG.BASE_URL);
 
-  await expect(page.getByAltText("power-button")).toBeEnabled();
-  await page.getByAltText("Settings").click();
+  await expect(page.getByTestId("power-button")).toBeEnabled();
+  await page.getByTestId("Settings").click();
   await expect(page.locator(`text=${TEST_FILE_NAME}`).first()).toBeVisible();
 
   const deleteButton = page.locator('button mat-icon:text("delete")').first();
@@ -111,8 +111,8 @@ test("delete file", async ({ page }) => {
   await expect(
     page.locator(`text=${TEST_FILE_NAME}`).first()
   ).not.toBeVisible();
-  await page.getByAltText("back-button").click();
-  await expect(page.getByAltText("power-button")).toBeDisabled();
+  await page.getByTestId("back-button").click();
+  await expect(page.getByTestId("power-button")).toBeDisabled();
 });
 
 test("open Grafana and login", async ({ page }) => {
@@ -120,7 +120,7 @@ test("open Grafana and login", async ({ page }) => {
 
   const [newPage] = await Promise.all([
     page.waitForEvent("popup"),
-    page.getByAltText("Monitoring").click(),
+    page.getByTestId("Monitoring").click(),
   ]);
   await newPage.waitForLoadState();
   expect(newPage.url()).not.toBe("");
