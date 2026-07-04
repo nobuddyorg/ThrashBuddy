@@ -15,6 +15,10 @@ done
 set -a
 . ../../configs/.env
 . ../../configs/global.conf
+# Immutable per-build tag (used instead of :latest for images built by this repo) so
+# imagePullPolicy: IfNotPresent never mistakes a stale cached layer for a fresh deploy.
+# Overridable by pre-exporting IMAGE_TAG (e.g. from a CI pipeline building a specific commit).
+IMAGE_TAG="${IMAGE_TAG:-$(git -C "$(pwd)" rev-parse --short HEAD 2>/dev/null || date +%Y%m%d%H%M%S)}"
 set +a
 
 popd >/dev/null

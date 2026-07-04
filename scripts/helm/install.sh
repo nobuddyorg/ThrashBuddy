@@ -55,7 +55,7 @@ clean_previous_installation() {
 install_dependencies() {
   echo "Installing dependencies..."
   . "$HELM_SCRIPT_DIR/install-nginx.sh"
-  envsubst '${APP_NAME} ${NAMESPACE} ${IMAGE_REPO_PREFIX} ${MINIO_ADDR} ${USERNAME_TOOLS} ${PASSWORD_TOOLS} ${PUBLIC_IP} ${BASIC_AUTH}' <"$CONFIG_DIR/template.values.yaml" >"$CONFIG_DIR/values.yaml"
+  envsubst '${APP_NAME} ${NAMESPACE} ${IMAGE_REPO_PREFIX} ${IMAGE_TAG} ${MINIO_ADDR} ${USERNAME_TOOLS} ${PASSWORD_TOOLS} ${PUBLIC_IP} ${BASIC_AUTH}' <"$CONFIG_DIR/template.values.yaml" >"$CONFIG_DIR/values.yaml"
   helm dependency update --namespace $NAMESPACE
 }
 

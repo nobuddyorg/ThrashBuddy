@@ -4,7 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kube-score/ignore: container-security-context-readonlyrootfilesystem,container-security-context-user-group-id,container-image-pull-policy,pod-networkpolicy,container-image-tag
+    kube-score/ignore: container-security-context-readonlyrootfilesystem,container-security-context-user-group-id,container-image-pull-policy,pod-networkpolicy
   name: {{ $deployment.name }}-deployment
   labels:
     app: {{ $deployment.name }}
