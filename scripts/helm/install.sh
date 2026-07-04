@@ -75,15 +75,23 @@ install_and_run_tests() {
   xargs -I {} kubectl wait --for=condition=ready pod {} --namespace $NAMESPACE --timeout=300s
 
 
+  test_passed=false
   for i in {1..10}; do
     echo "Attempt $i/10 ..."
     sleep 10
-    if helm test $APP_NAME --namespace $NAMESPACE; then
+    if helm test "$APP_NAME" --namespace "$NAMESPACE"; then
+      test_passed=true
       break
     fi
   done
 
-  kubectl delete pod -l helm.sh/hook=test --namespace $NAMESPACE
+  kubectl delete pod -l helm.sh/hook=test --namespace "$NAMESPACE"
+
+  if [ "$test_passed" != true ]; then
+    echo "Integration test failed after 10 attempts." >&2
+    exit 1
+  fi
+
   echo "Integration test passed."
 }
 

@@ -1,6 +1,9 @@
 #!/bin/bash
 # Description: [-remote] Uninstall all Helm charts (local or remote cluster).
 
+set -e
+set -o pipefail
+
 IS_REMOTE=false
 for arg in "$@"; do
     case "$arg" in
@@ -16,7 +19,7 @@ fi
 
 . ../setup/get-config.sh
 
-helm uninstall $APP_NAME --namespace $NAMESPACE || true
-helm uninstall ingress-nginx --namespace $NAMESPACE-ingress || true
+helm uninstall "$APP_NAME" --namespace "$NAMESPACE" || true
+helm uninstall ingress-nginx --namespace "$NAMESPACE-ingress" || true
 
 popd >/dev/null
