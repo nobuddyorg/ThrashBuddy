@@ -22,7 +22,7 @@ async function loginToPage({
 async function openPopup(page: Page, triggerText: string): Promise<Page> {
   const [popup] = await Promise.all([
     page.waitForEvent("popup"),
-    page.getByAltText(triggerText).click(),
+    page.getByTestId(triggerText).click(),
   ]);
   await popup.waitForLoadState();
   expect(popup.url()).not.toBe("");

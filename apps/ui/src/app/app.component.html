@@ -2,11 +2,11 @@
   <div class="slide content-panel">
     <div class="control-panel">
       <h1 class="header">ThrashBuddy</h1>
-      <span style="color: whitesmoke;" alt="status-text">Status: {{ testStatus().status }} [ {{getChar()}} ]</span>
+      <span style="color: whitesmoke;" data-testid="status-text">Status: {{ testStatus().status }} [ {{getChar()}} ]</span>
       <div class="centered-layout">
         <div style="height: 20px;"></div>
         <button (click)="runOrStopTest()" style="background-color: #00000000; border-style: none;"
-          [disabled]="!isIdle() && !isStopping() && !isRunning()" alt="power-button">
+          [disabled]="!isIdle() && !isStopping() && !isRunning()" aria-label="Power button" data-testid="power-button">
           <div class="glow-wrapper">
                         <img src="thrash-button-white.png" alt="Power button" class="power-button" [ngClass]="{
                             'glow-image-running': isRunning() && !isDisabled(),
@@ -18,15 +18,15 @@
 
         <div class="button-circle">
           <button class="circle-button" style="--index: 0" (click)="toggleSettings()" matTooltip="Settings"
-            alt="Settings">
+            aria-label="Settings" data-testid="Settings">
             <mat-icon>settings</mat-icon>
           </button>
           <button class="circle-button" style="--index: 1" (click)="openMonitoring()" matTooltip="Monitoring"
-            alt="Monitoring">
+            aria-label="Monitoring" data-testid="Monitoring">
             <mat-icon>visibility</mat-icon>
           </button>
           <button class="circle-button" style="--index: 3" (click)="openFiles()" matTooltip="Files"
-            alt="Files">
+            aria-label="Files" data-testid="Files">
             <mat-icon>folder</mat-icon>
           </button>
         </div>
@@ -134,13 +134,13 @@
               </div>
 
               <div class="row-container">
-                <app-dropzone></app-dropzone>
+                <app-dropzone (uploaded)="getStatus()"></app-dropzone>
               </div>
             </div>
           </td>
         </tr>
       </table>
-      <button class="round-button" (click)="toggleSettings()" alt="back-button">
+      <button class="round-button" (click)="toggleSettings()" aria-label="Back" data-testid="back-button">
         <mat-icon>arrow_back</mat-icon>
       </button>
     </div>

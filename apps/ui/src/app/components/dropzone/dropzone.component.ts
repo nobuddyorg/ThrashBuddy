@@ -1,9 +1,8 @@
-import { Component, inject } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { Component, EventEmitter, Output, inject } from "@angular/core";
 import { NgxDropzoneModule } from "ngx-dropzone";
 
 import { MatIconModule } from "@angular/material/icon";
-import { AppComponent } from "../../app.component";
+import { FileService } from "../../services/file.service";
 
 @Component({
     selector: "app-dropzone",
@@ -12,11 +11,9 @@ import { AppComponent } from "../../app.component";
     imports: [NgxDropzoneModule, MatIconModule],
 })
 export class DropzoneComponent {
-    private baseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port === "4200" ? ":8080" : `:${window.location.port}`}/api`;
-    private appComponent = inject(AppComponent);
+    private fileService = inject(FileService);
+    @Output() uploaded = new EventEmitter<void>();
     files: { file: File }[] = [];
-
-    constructor(private http: HttpClient) {}
 
     onSelect(event: { addedFiles: File[] }) {
         for (const file of event.addedFiles) {
@@ -35,14 +32,10 @@ export class DropzoneComponent {
     }
 
     uploadFile(file: File) {
-        const formData = new FormData();
-        formData.append("file", file);
-
-        this.http.post<{ message: string; status: string }>(`${this.baseUrl}/upload`, formData).subscribe({
-            next: (response) => {
-                console.log(`Upload successful: ${file.name}, Response:`, response);
+        this.fileService.uploadFile(file).subscribe({
+            next: () => {
                 this.onRemove({ file });
-                this.appComponent.getStatus();
+                this.uploaded.emit();
             },
             error: (error) => {
                 console.error(`Upload failed: ${file.name}, Error:`, error);

@@ -1,6 +1,7 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { ApiBaseUrlService } from "./api-base-url.service";
 
 interface EnvVar {
     name: string;
@@ -26,7 +27,7 @@ export interface StatusResponse {
 
 @Injectable({ providedIn: "root" })
 export class TestService {
-    private baseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port === "4200" ? ":8080" : `:${window.location.port}`}/api`;
+    private baseUrl = inject(ApiBaseUrlService).baseUrl;
 
     constructor(private http: HttpClient) {}
 

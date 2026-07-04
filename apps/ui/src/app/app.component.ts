@@ -160,7 +160,6 @@ export class AppComponent implements OnInit, OnDestroy {
             default:
                 this.showError("Test Status", `Unexpected status: ${status.status}`);
         }
-        console.log(`Test status: ${status.status}`);
     }
 
     runTest() {
@@ -250,6 +249,5 @@ export class AppComponent implements OnInit, OnDestroy {
 
     toggleSettings() {
         this.showSettings = !this.showSettings;
-        console.log(`Settings toggled`);
     }
 }
