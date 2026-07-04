@@ -8,14 +8,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class CorsConfig implements WebMvcConfigurer {
 
-    @Value('${ALLOWED_ORIGINS:http://localhost:4200}')
-    String allowedOrigins
+    // Port-matching is intentionally not used here: the app is reached through
+    // nginx-ingress (and, in local/CI setups, kubectl port-forward), which can
+    // remap the client-facing port to something the origin server never sees.
+    // Matching by host only (wildcard port) is what actually reflects "same
+    // logical origin" in that topology, while still rejecting other hosts.
+    @Value('${ALLOWED_ORIGIN_PATTERNS:http://localhost:*}')
+    String allowedOriginPatterns
 
     @Override
     void addCorsMappings(CorsRegistry registry) {
-        def origins = allowedOrigins.split(',')*.trim().findAll { it }
-        if (origins) {
-            registry.addMapping("/api/**").allowedOrigins(origins as String[])
+        def patterns = allowedOriginPatterns.split(',')*.trim().findAll { it }
+        if (patterns) {
+            registry.addMapping("/api/**").allowedOriginPatterns(patterns as String[])
         }
     }
 }
