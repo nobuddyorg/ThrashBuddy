@@ -20,7 +20,12 @@ class CorsConfig implements WebMvcConfigurer {
     void addCorsMappings(CorsRegistry registry) {
         def patterns = allowedOriginPatterns.split(',')*.trim().findAll { it }
         if (patterns) {
-            registry.addMapping("/api/**").allowedOriginPatterns(patterns as String[])
+            // Spring only allows GET/HEAD/POST by default when allowedMethods isn't
+            // set explicitly - the API also uses DELETE (/api/delete), which would
+            // otherwise be rejected with a CORS error even for an allowed origin.
+            registry.addMapping("/api/**")
+                    .allowedOriginPatterns(patterns as String[])
+                    .allowedMethods("GET", "POST", "DELETE")
         }
     }
 }
