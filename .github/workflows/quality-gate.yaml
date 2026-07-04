@@ -169,6 +169,21 @@ jobs:
       - name: Helm
         run: |
           ./buddy.sh helm install
+      - name: DEBUG - inspect API behavior behind ingress
+        run: |
+          . scripts/setup/get-config.sh
+          kubectl port-forward --namespace "$NAMESPACE-ingress" svc/ingress-nginx-controller 8080:80 >/tmp/pf.log 2>&1 &
+          PF_PID=$!
+          sleep 5
+          echo "=== curl -v same-origin-style request ==="
+          curl -v http://localhost:8080/api/status -H "Origin: http://localhost:8080" || true
+          echo ""
+          echo "=== curl -v with no Origin header at all ==="
+          curl -v http://localhost:8080/api/status || true
+          echo ""
+          echo "=== api pod logs ==="
+          kubectl logs -l app=api --namespace "$NAMESPACE" --tail=200 || true
+          kill $PF_PID || true
       - name: ui tests
         working-directory: ./tests/ui
         run: |
