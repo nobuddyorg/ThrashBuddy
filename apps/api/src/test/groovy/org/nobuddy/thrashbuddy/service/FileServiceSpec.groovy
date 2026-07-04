@@ -19,7 +19,7 @@ class FileServiceSpec extends Specification {
             def response = fileService.handleUpload(file)
 
         then:
-            1 * minioService.uploadFile("test.txt", _)
+            1 * minioService.uploadFile("test.txt", _, "Hello".bytes.length)
             response.statusCode == HttpStatus.OK
             response.body.message == "File uploaded"
     }
@@ -32,7 +32,7 @@ class FileServiceSpec extends Specification {
             def response = fileService.handleUpload(file)
 
         then:
-            0 * minioService.uploadFile(_, _)
+            0 * minioService.uploadFile(_, _, _)
             response.statusCode == HttpStatus.BAD_REQUEST
             response.body.message.contains("Invalid file name")
     }
@@ -40,7 +40,7 @@ class FileServiceSpec extends Specification {
     def "handleUpload - failure"() {
         given:
             def file = new MockMultipartFile("file", "fail.txt", "text/plain", "Oops".bytes)
-            minioService.uploadFile(_, _) >> { throw new RuntimeException("Something went wrong") }
+            minioService.uploadFile(_, _, _) >> { throw new RuntimeException("Something went wrong") }
 
         when:
             def response = fileService.handleUpload(file)

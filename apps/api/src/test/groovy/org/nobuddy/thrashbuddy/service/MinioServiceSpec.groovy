@@ -30,7 +30,7 @@ class MinioServiceSpec extends Specification {
             def stream = new ByteArrayInputStream(content.bytes)
 
         when:
-            minioService.uploadFile("test.txt", stream)
+            minioService.uploadFile("test.txt", stream, content.bytes.length)
 
         then:
             1 * minioClient.putObject(_ as PutObjectArgs)

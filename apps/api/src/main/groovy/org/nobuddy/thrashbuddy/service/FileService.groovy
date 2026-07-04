@@ -24,7 +24,7 @@ class FileService {
     ResponseEntity<Map> handleUpload(MultipartFile file) {
         try {
             validateFileName(file.originalFilename)
-            minioService.uploadFile(file.originalFilename, file.inputStream)
+            minioService.uploadFile(file.originalFilename, file.inputStream, file.size)
             return buildResponse(HttpStatus.OK, "File uploaded")
         } catch (IllegalArgumentException e) {
             return buildResponse(HttpStatus.BAD_REQUEST, e.message)
@@ -39,11 +39,13 @@ class FileService {
             def stream = minioService.downloadFile(fileName)
             if (!stream) return buildResponse(HttpStatus.NOT_FOUND, "File not found")
 
-            def resource = new ByteArrayResource(stream.readAllBytes())
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=$fileName")
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(resource)
+            try (stream) {
+                def resource = new ByteArrayResource(stream.readAllBytes())
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=$fileName")
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .body(resource)
+            }
         } catch (IllegalArgumentException e) {
             return buildResponse(HttpStatus.BAD_REQUEST, e.message)
         } catch (Exception e) {

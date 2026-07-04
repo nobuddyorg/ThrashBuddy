@@ -16,11 +16,11 @@ class MinioService {
         this.bucketName = bucketName
     }
 
-    void uploadFile(String objectName, InputStream fileStream) {
+    void uploadFile(String objectName, InputStream fileStream, long size) {
         minioClient.putObject(PutObjectArgs.builder()
                 .bucket(bucketName)
                 .object(objectName)
-                .stream(fileStream, fileStream.available(), -1)
+                .stream(fileStream, size, -1)
                 .build())
     }
 
