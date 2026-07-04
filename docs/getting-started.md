@@ -47,7 +47,7 @@ The Docker images are built using predefined scripts in the project directory. T
 3. Navigate to the project root directory.
 4. Run the following script to build all images at once:
    ```shell
-   ./buddy docker build-all
+   ./buddy.sh docker build-all
    ```
 5. Verify the created images with:
    ```shell
@@ -70,14 +70,14 @@ A Kubernetes cluster is required to run ThrashBuddy. For local development, Dock
 2. **install into Kubernetes cluster:**
    Run the following script to start the cluster:
    ```shell
-   ./buddy helm install
+   ./buddy.sh helm install
    ```
 
 _NOTE_: When running this command in a Linux environment, e.g. with Minikube rather than Docker Desktop, you should set a port forwarding. Minikube cannot utilize the host network, unlike Docker on Windows. So for this you must first set a port with `export SUFFIX=:8080` and afterwards run `kubectl port-forward svc/ingress-nginx-controller 8080:80`. So the complete script would be:
 
 ```shell
 export SUFFIX=:8080
-./buddy helm install
+./buddy.sh helm install
 kubectl port-forward svc/ingress-nginx-controller 8080:80
 ```
 
@@ -132,7 +132,7 @@ With `Bruno` the API can be tested manually. It is not integrated in an automate
 
 To validate the entire application workflow — from frontend interactions to backend processing and InfluxDB operations — **End-to-End (E2E) tests** are implemented using **Playwright**. These tests simulate real user interactions with the UI to ensure all components function seamlessly together.
 
-The frontend E2E tests are located in the `services/frontend-test` directory and can be executed with the following commands:
+The frontend E2E tests are located in the `tests/ui` directory and can be executed with the following commands:
 
 ```bash
 ./npmw ci

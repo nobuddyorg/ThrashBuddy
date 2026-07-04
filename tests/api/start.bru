@@ -18,3 +18,12 @@ body:json {
     "envVars": []
   }
 }
+
+tests {
+  test("status is 200 or 400", function () {
+    expect(res.getStatus()).to.be.oneOf([200, 400]);
+  });
+  test("response has a status field", function () {
+    expect(res.getBody()).to.have.property("status");
+  });
+}
