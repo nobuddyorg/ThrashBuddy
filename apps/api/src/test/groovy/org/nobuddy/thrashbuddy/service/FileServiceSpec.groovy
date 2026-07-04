@@ -24,6 +24,19 @@ class FileServiceSpec extends Specification {
             response.body.message == "File uploaded"
     }
 
+    def "handleUpload - rejects unsafe file name"() {
+        given:
+            def file = new MockMultipartFile("file", "../../etc/passwd", "text/plain", "x".bytes)
+
+        when:
+            def response = fileService.handleUpload(file)
+
+        then:
+            0 * minioService.uploadFile(_, _)
+            response.statusCode == HttpStatus.BAD_REQUEST
+            response.body.message.contains("Invalid file name")
+    }
+
     def "handleUpload - failure"() {
         given:
             def file = new MockMultipartFile("file", "fail.txt", "text/plain", "Oops".bytes)
@@ -51,6 +64,16 @@ class FileServiceSpec extends Specification {
             response.body instanceof ByteArrayResource
             ((ByteArrayResource) response.body).byteArray == content
             response.headers.get("Content-Disposition")[0] == "attachment; filename=hello.txt"
+    }
+
+    def "handleDownload - rejects unsafe file name"() {
+        when:
+            def response = fileService.handleDownload("../secrets.env")
+
+        then:
+            0 * minioService.downloadFile(_)
+            response.statusCode == HttpStatus.BAD_REQUEST
+            response.body.message.contains("Invalid file name")
     }
 
     def "handleDownload - file not found"() {
@@ -86,6 +109,16 @@ class FileServiceSpec extends Specification {
             1 * minioService.deleteFile("test.txt")
             response.statusCode == HttpStatus.OK
             response.body.message == "File deleted"
+    }
+
+    def "handleDelete - rejects unsafe file name"() {
+        when:
+            def response = fileService.handleDelete("nested/traversal.txt")
+
+        then:
+            0 * minioService.deleteFile(_)
+            response.statusCode == HttpStatus.BAD_REQUEST
+            response.body.message.contains("Invalid file name")
     }
 
     def "handleDelete - file not found"() {

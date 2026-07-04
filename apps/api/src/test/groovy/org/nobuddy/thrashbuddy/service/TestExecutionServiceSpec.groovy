@@ -66,6 +66,42 @@ class TestExecutionServiceSpec extends Specification {
             response.body.message == "'test.js' file is required"
     }
 
+    def "startTest - rejects loadAgents outside allowed range"() {
+        given:
+            fileService.listFiles() >> [[filename: "test.js"]]
+
+        when:
+            def response = service.startTest([cpu: "1", memory: "1Gi", loadAgents: 500, envVars: []])
+
+        then:
+            response.statusCode == HttpStatus.BAD_REQUEST
+            response.body.message.contains("loadAgents")
+    }
+
+    def "startTest - rejects malformed cpu/memory quantities"() {
+        given:
+            fileService.listFiles() >> [[filename: "test.js"]]
+
+        when:
+            def response = service.startTest([cpu: "'; rm -rf /", memory: "1Gi", loadAgents: 1, envVars: []])
+
+        then:
+            response.statusCode == HttpStatus.BAD_REQUEST
+            response.body.message.contains("cpu")
+    }
+
+    def "startTest - rejects reserved environment variable names"() {
+        given:
+            fileService.listFiles() >> [[filename: "test.js"]]
+
+        when:
+            def response = service.startTest([cpu: "1", memory: "1Gi", loadAgents: 1, envVars: [[name: "MINIO_SECRET_KEY", value: "hacked"]]])
+
+        then:
+            response.statusCode == HttpStatus.BAD_REQUEST
+            response.body.message.contains("reserved")
+    }
+
     def "stopTest - success"() {
         given:
             statusService.setStatus(StatusService.ResponseStatus.RUNNING)
