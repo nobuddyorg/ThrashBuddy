@@ -1,6 +1,9 @@
 #!/bin/bash
 # Description: Push Docker images to AWS ECR (implicitly done with create-cluster).
 
+set -e
+set -o pipefail
+
 pushd "$(dirname "$0")" >/dev/null
 . ./env.sh
 
@@ -15,7 +18,10 @@ function login_ecr() {
 }
 
 function push_images() {
-  docker images --format "{{.Repository}}:{{.Tag}}" | grep "^$APP_NAME/" | while read -r image; do
+  local images
+  images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "^$APP_NAME/" || true)
+  echo "$images" | while read -r image; do
+    [ -z "$image" ] && continue
     image_name="${image%%:*}"
     image_tag="${image##*:}"
     target_image="$ECR_REPOSITORY/$image_name:$image_tag"
