@@ -10,7 +10,7 @@ pushd apps/api/ >/dev/null
 echo "==========================================="
 echo "Start building image for api:"
 echo "==========================================="
-docker build -t $APP_NAME/api .
+docker build -t "$APP_NAME/api:$IMAGE_TAG" .
 
 popd >/dev/null
 popd >/dev/null

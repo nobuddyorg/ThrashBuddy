@@ -6,7 +6,7 @@ namespace: ${NAMESPACE}
 deployments:
   ui:
     name: ui
-    image: ${IMAGE_REPO_PREFIX}${APP_NAME}/ui:latest
+    image: ${IMAGE_REPO_PREFIX}${APP_NAME}/ui:${IMAGE_TAG}
     replicas: 1
     pdbMinAvailable: 1
     livenessPort: 80
@@ -22,7 +22,7 @@ deployments:
     env: {}
   api:
     name: api
-    image: ${IMAGE_REPO_PREFIX}${APP_NAME}/api:latest
+    image: ${IMAGE_REPO_PREFIX}${APP_NAME}/api:${IMAGE_TAG}
     replicas: 1
     pdbMinAvailable: 1
     livenessPort: 8080
@@ -44,7 +44,7 @@ deployments:
       NAMESPACE: ${NAMESPACE}
   prometheus:
     name: prometheus
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.13.0
     replicas: 1
     pdbMinAvailable: 1
     livenessPort: 9090
