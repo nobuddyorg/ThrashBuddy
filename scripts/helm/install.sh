@@ -39,8 +39,9 @@ setup_k8s_secrets() {
   kubectl create secret generic $APP_NAME-secrets --namespace $NAMESPACE --from-env-file="$ENV_FILE"
 
   kubectl delete secret basic-auth --namespace $NAMESPACE --ignore-not-found
-  printf "$USERNAME_TOOLS:$(openssl passwd -apr1 "$PASSWORD_TOOLS")\n" >"$AUTH_FILE"
+  printf '%s:%s\n' "$USERNAME_TOOLS" "$(openssl passwd -apr1 "$PASSWORD_TOOLS")" >"$AUTH_FILE"
   kubectl create secret generic basic-auth --namespace $NAMESPACE --from-file=auth="$AUTH_FILE"
+  rm -f "$AUTH_FILE"
 }
 
 clean_previous_installation() {
