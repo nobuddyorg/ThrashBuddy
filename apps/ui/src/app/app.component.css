@@ -74,11 +74,12 @@
   padding-bottom: 2px;
 }
 
-/* #ff4b2b is a dedicated wordmark accent (not the cyan/pink already used
-   for run/stop state glow), chosen at ~5.7:1 contrast against the #111 page
-   background behind the header. */
+/* #f97316 matches the wordmark accent nobuddyorg/BikeBuddy uses in its dark
+   theme (nobuddyorg/BikeBuddy#425), for visual consistency across the Buddy
+   family of apps. Not the cyan/pink already used here for run/stop state
+   glow; clears ~6.7:1 contrast against the #111 page background. */
 .header-word-accent {
-  color: #ff4b2b;
+  color: #f97316;
 }
 
 .flex-component {
