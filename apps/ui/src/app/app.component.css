@@ -245,6 +245,15 @@ app-dropzone {
   border-color: #ad5725 !important;
 }
 
+::ng-deep .mdc-slider__value-indicator {
+  background-color: #ad5725 !important;
+}
+
+::ng-deep .mat-mdc-slider-active-ripple,
+::ng-deep .mat-mdc-slider-focus-ripple {
+  background-color: #ad5725 !important;
+}
+
 ::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
   background-color: #e0e0e0 !important;
 }
