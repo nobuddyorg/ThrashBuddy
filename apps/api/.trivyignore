@@ -1,0 +1,13 @@
+# These CVEs are all in the Go stdlib embedded in the "pebble" binary that
+# ships inside the eclipse-temurin:25-jre base image (Ubuntu-based), not in
+# ThrashBuddy's own code or dependencies. eclipse-temurin hasn't published a
+# rebuild with a patched Go toolchain yet as of 2026-08-21; re-check on
+# expiry and drop entries that eclipse-temurin has since fixed.
+CVE-2026-33818 exp:2026-11-21
+CVE-2026-39821 exp:2026-11-21
+CVE-2026-46600 exp:2026-11-21
+CVE-2026-56853 exp:2026-11-21
+CVE-2026-56858 exp:2026-11-21
+CVE-2026-56859 exp:2026-11-21
+CVE-2026-56860 exp:2026-11-21
+CVE-2026-56862 exp:2026-11-21

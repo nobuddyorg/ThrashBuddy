@@ -18,6 +18,15 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        // io.fabric8:kubernetes-client pulls in io.netty transitively; the resolved
+        // 4.2.15.Final has several fixed HIGH CVEs (netty-codec-http/-http2/
+        // -compression). Force the whole io.netty:* set to the patched release.
+        mavenBom 'io.netty:netty-bom:4.2.16.Final'
+    }
+}
+
 dependencies {
     implementation 'org.apache.groovy:groovy:5.0.8'
     implementation 'org.springframework.boot:spring-boot-starter-web'
