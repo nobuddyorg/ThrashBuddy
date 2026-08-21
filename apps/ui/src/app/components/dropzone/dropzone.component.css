@@ -1,35 +1,37 @@
 .styled-dropzone-wrapper {
-  border: 1px solid #aaa;
-  border-radius: 6px;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
   padding: 1rem;
-  background-color: whitesmoke;
+  background-color: #1e1e1e;
   font-family: 'Segoe UI', sans-serif;
+  color: whitesmoke;
   max-width: 600px;
   margin: auto;
   margin-bottom: 1rem;
 }
 
 .styled-dropzone {
-  border: 2px dashed #ccc;
+  border: 2px dashed #444;
   border-radius: 6px;
-  background-color: whitesmoke;
+  background-color: #1a1a1a;
   padding: 0rem;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.2s ease;
   margin-bottom: 0.25rem;
   font-size: 0.9rem;
-  height: 50px
+  height: 50px;
+  color: whitesmoke;
 }
 
 .styled-dropzone:hover {
-  border-color: #111;
+  border-color: #e0954f;
 }
 
 .pi-upload {
   font-size: 1.25rem;
   margin-bottom: 0.25rem;
-  color: #111;
+  color: whitesmoke;
 }
 
 .actions-header {
@@ -51,25 +53,25 @@
 }
 
 .cancel-btn:disabled {
-  background-color: #ddd;
-  color: #aaa;
+  background-color: #2a2a2a;
+  color: #666;
   cursor: not-allowed;
 }
 
 .upload-btn {
-  background-color: #111;
-  color: #eee;
+  background-color: #e0954f;
+  color: #111;
 }
 
 .upload-btn:disabled {
-  background-color: #ddd;
-  color: #aaa;
+  background-color: #2a2a2a;
+  color: #666;
   cursor: not-allowed;
 }
 
 .cancel-btn {
-  background-color: #777;
-  color: #eee;
+  background-color: #2a2a2a;
+  color: whitesmoke;
 }
 
 .upload-btn mat-icon,
@@ -83,7 +85,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #333;
 }
 
 .file-entry {
@@ -91,7 +93,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.4rem 0;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #333;
   font-size: 0.85rem;
 }
 
@@ -104,7 +106,7 @@
 
 .file-name {
   font-weight: 500;
-  color: #2c3e50;
+  color: whitesmoke;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
