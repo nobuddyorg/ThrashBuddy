@@ -61,7 +61,7 @@
   letter-spacing: -0.02em;
   line-height: 1;
   text-shadow: 3px 3px 5px rgba(55, 55, 55, 0.8);
-  margin: 0;
+  margin: 0 0 14px;
   padding: 0 0 6px;
 }
 
@@ -74,10 +74,7 @@
   padding-bottom: 2px;
 }
 
-/* #f97316 matches the wordmark accent nobuddyorg/BikeBuddy uses in its dark
-   theme (nobuddyorg/BikeBuddy#425), for visual consistency across the Buddy
-   family of apps. Not the cyan/pink already used here for run/stop state
-   glow; clears ~6.7:1 contrast against the #111 page background. */
+/* Matches BikeBuddy's dark-theme wordmark accent for cross-app consistency; ~6.7:1 against #111. */
 .header-word-accent {
   color: #f97316;
 }
