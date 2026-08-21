@@ -1,8 +1,6 @@
 #!/bin/sh
 set -e
 
-env
-
 if [ -z "$MINIO_ACCESS_KEY" ] || [ -z "$MINIO_SECRET_KEY" ]; then
   echo "Error: MINIO_ACCESS_KEY and MINIO_SECRET_KEY must be set"
   exit 1
