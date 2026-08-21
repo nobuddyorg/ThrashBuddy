@@ -124,6 +124,98 @@ jobs:
           scandir: "./apps/k6"
           severity: warning
 
+  container-scan:
+    name: Container Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Build api image
+        run: docker build -t thrash-buddy-api:ci ./apps/api
+      - name: Build ui image
+        if: always()
+        run: docker build -t thrash-buddy-ui:ci ./apps/ui
+      - name: Build k6 image
+        if: always()
+        run: docker build -t thrash-buddy-k6:ci ./apps/k6
+
+      - name: Scan api image (report, all severities)
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: thrash-buddy-api:ci
+          format: sarif
+          output: trivy-api.sarif
+      - name: Upload api SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4.37.7
+        with:
+          sarif_file: trivy-api.sarif
+          category: trivy-api
+
+      - name: Scan ui image (report, all severities)
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: thrash-buddy-ui:ci
+          format: sarif
+          output: trivy-ui.sarif
+      - name: Upload ui SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4.37.7
+        with:
+          sarif_file: trivy-ui.sarif
+          category: trivy-ui
+
+      - name: Scan k6 image (report, all severities)
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: thrash-buddy-k6:ci
+          format: sarif
+          output: trivy-k6.sarif
+      - name: Upload k6 SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4.37.7
+        with:
+          sarif_file: trivy-k6.sarif
+          category: trivy-k6
+
+      # format: sarif ignores the severity filter (it always reports all
+      # severities for the Security tab), so gating on HIGH/CRITICAL needs a
+      # separate table-format pass.
+      - name: Fail on fixable HIGH/CRITICAL vulnerabilities - api
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: thrash-buddy-api:ci
+          format: table
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+      - name: Fail on fixable HIGH/CRITICAL vulnerabilities - ui
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: thrash-buddy-ui:ci
+          format: table
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+      - name: Fail on fixable HIGH/CRITICAL vulnerabilities - k6
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: thrash-buddy-k6:ci
+          format: table
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+
   infra-and-images:
     concurrency:
       group: "test--infra-group-${{ github.event.pull_request.number }}"
