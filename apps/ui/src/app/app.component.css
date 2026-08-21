@@ -55,12 +55,30 @@
 }
 
 .header {
-  font-family: 'Impact', sans-serif;
+  font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 700;
   font-size: 94px;
-  color: whitesmoke;
+  letter-spacing: -0.02em;
+  line-height: 1;
   text-shadow: 3px 3px 5px rgba(55, 55, 55, 0.8);
   margin: 0;
-  padding: 0;
+  padding: 0 0 6px;
+}
+
+.header-word {
+  color: whitesmoke;
+}
+
+.header-word-ruled {
+  border-bottom: 3px solid whitesmoke;
+  padding-bottom: 2px;
+}
+
+/* #ff4b2b is a dedicated wordmark accent (not the cyan/pink already used
+   for run/stop state glow), chosen at ~5.7:1 contrast against the #111 page
+   background behind the header. */
+.header-word-accent {
+  color: #ff4b2b;
 }
 
 .flex-component {
