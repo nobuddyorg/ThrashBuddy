@@ -86,6 +86,7 @@ ingress:
   basicauth: ${BASIC_AUTH}
   className: nginx
   host: ${PUBLIC_IP}
+  tls: []
   rules:
     - path: /
       pathType: Prefix

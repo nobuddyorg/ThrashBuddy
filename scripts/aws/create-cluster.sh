@@ -41,12 +41,14 @@ function create_nodegroup() {
     --output text)
 
   for sg_id in $security_group_ids; do
-    aws ec2 authorize-security-group-ingress \
-      --group-id $sg_id \
-      --protocol tcp \
-      --port $EC2_PORT \
-      --cidr 0.0.0.0/0 \
-      --region $AWS_DEFAULT_REGION || echo "Rule for port $EC2_PORT might already exist for $sg_id"
+    for port in $EC2_PORT $EC2_PORT_SSL; do
+      aws ec2 authorize-security-group-ingress \
+        --group-id $sg_id \
+        --protocol tcp \
+        --port $port \
+        --cidr 0.0.0.0/0 \
+        --region $AWS_DEFAULT_REGION || echo "Rule for port $port might already exist for $sg_id"
+    done
   done
 }
 
