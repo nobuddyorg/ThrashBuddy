@@ -155,6 +155,11 @@ class K8sService {
                     isRunning = true
                 } else if (!isRunning && (System.currentTimeMillis() - noRunningSince > 2 * 60 * 1000)) {
                     log.warn("No running pods for 2 minutes, stopping monitor and canceling request")
+                    try {
+                        deleteK6Jobs()
+                    } catch (Exception e) {
+                        log.error("Failed deleting jobs after no-running-pods timeout", e)
+                    }
                     break
                 }
 
