@@ -236,13 +236,17 @@ app-dropzone {
   width: 100%;
 }
 
-/* Darker than the wordmark's #e0954f: that shade is tuned for the dark main
-   panel and only hits ~2.25:1 here on whitesmoke, well under the 4.5:1 floor. */
-.settings-heading {
-  font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #ad5725;
+::ng-deep .mdc-slider__track--active_fill {
+  border-color: #ad5725 !important;
+}
+
+::ng-deep .mdc-slider__thumb-knob {
+  background-color: #ad5725 !important;
+  border-color: #ad5725 !important;
+}
+
+::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: #e0e0e0 !important;
 }
 
 .settings-panel {
