@@ -35,114 +35,104 @@
   </div>
 
   <div class="slide settings-panel">
-    <div style="background-color: whitesmoke; padding: 20px; padding-left: 30px; border: 1px solid #111;">
-      <table style="width: 100%;">
-        <tr>
-          <td style=" width: 50%">
-            <h1>Settings</h1>
-          </td>
-          <td style="width: 50px">
-          </td>
-          <td style="width: 50%">
-            <h1>Files</h1>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <div class="settings-container-col">
-              <div class="row-container">
-                <label for="cpuComboBox">CPU:</label>
-                <mat-select [(value)]="selectedCpu" (selectionChange)="onCpuChange()">
-                  @for (cpu of cpuOptions; track cpu) {
-                    <mat-option [value]="cpu">{{ cpu }}</mat-option>
-                  }
-                </mat-select>
-              </div>
-
-              <div class="row-container">
-                <label for="memoryComboBox">Memory:</label>
-                <mat-select [(value)]="selectedMemory" class="select">
-                  @for (memory of memoryOptions; track memory) {
-                    <mat-option [value]="memory">{{ memory }}</mat-option>
-                  }
-                </mat-select>
-              </div>
-
-              <div class="row-container">
-                <label># Agents:</label>
-                <mat-slider min="1" max="25" step="1" showTickMarks discrete class="flex-component">
-                  <input matSliderThumb [(ngModel)]="loadAgents" />
-                </mat-slider>
-                <mat-icon
-                  matTooltip="Defines the number of started agents that create load in parallel.">
-                  info
-                </mat-icon>
-              </div>
-
-              <div class="row-container">
-                <mat-form-field class="flex-component">
-                  <mat-label>Environment Variables</mat-label>
-                  <textarea matInput [(ngModel)]="envVars" style="height: 250px;"></textarea>
-                </mat-form-field>
-              </div>
-            </div>
-          </td>
-          <td></td>
-          <td class="settings-table-container">
-            <div class="settings-container-col">
-              <div class="row-container">
-                <div class="file-section">
-                  <div class="uploaded-files-header">
-                    <h3>Uploaded Files</h3>
-                    <mat-icon matTooltip="A 'test.js' file is required as entrypoint to k6 runs.">
-                      info
-                    </mat-icon>
-                  </div>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Filename</th>
-                        <th>Last Modified</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @if (files().length > 0) {
-                        @for (file of files(); track file) {
-                          <tr>
-                            <td>{{ file.filename }}</td>
-                            <td>{{ file.lastModified | date:'short' }}</td>
-                            <td>
-                              <button mat-icon-button color="warn"
-                                (click)="deleteFile(file.filename)">
-                                <mat-icon>delete</mat-icon>
-                              </button>
-                            </td>
-                          </tr>
-                        }
-                      } @else {
-                        <tr>
-                          <td>-</td>
-                          <td>-</td>
-                          <td>-</td>
-                        </tr>
-                      }
-                    </tbody>
-
-                  </table>
-                </div>
-              </div>
-
-              <div class="row-container">
-                <app-dropzone (uploaded)="getStatus()"></app-dropzone>
-              </div>
-            </div>
-          </td>
-        </tr>
-      </table>
+    <div class="settings-card">
       <button class="round-button" (click)="toggleSettings()" aria-label="Back" data-testid="back-button">
         <mat-icon>arrow_back</mat-icon>
       </button>
+
+      <div class="settings-grid">
+        <div class="settings-column">
+          <h2 class="settings-heading">Settings</h2>
+          <div class="settings-container-col">
+            <div class="row-container">
+              <label for="cpuComboBox">CPU:</label>
+              <mat-select [(value)]="selectedCpu" (selectionChange)="onCpuChange()">
+                @for (cpu of cpuOptions; track cpu) {
+                  <mat-option [value]="cpu">{{ cpu }}</mat-option>
+                }
+              </mat-select>
+            </div>
+
+            <div class="row-container">
+              <label for="memoryComboBox">Memory:</label>
+              <mat-select [(value)]="selectedMemory" class="select">
+                @for (memory of memoryOptions; track memory) {
+                  <mat-option [value]="memory">{{ memory }}</mat-option>
+                }
+              </mat-select>
+            </div>
+
+            <div class="row-container">
+              <label># Agents:</label>
+              <mat-slider min="1" max="25" step="1" showTickMarks discrete class="flex-component">
+                <input matSliderThumb [(ngModel)]="loadAgents" />
+              </mat-slider>
+              <mat-icon
+                matTooltip="Defines the number of started agents that create load in parallel.">
+                info
+              </mat-icon>
+            </div>
+
+            <div class="row-container">
+              <mat-form-field class="flex-component">
+                <mat-label>Environment Variables</mat-label>
+                <textarea matInput [(ngModel)]="envVars" style="height: 250px;"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-column">
+          <h2 class="settings-heading">Files</h2>
+          <div class="settings-container-col">
+            <div class="row-container">
+              <div class="file-section">
+                <div class="uploaded-files-header">
+                  <h3>Uploaded Files</h3>
+                  <mat-icon matTooltip="A 'test.js' file is required as entrypoint to k6 runs.">
+                    info
+                  </mat-icon>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Filename</th>
+                      <th>Last Modified</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @if (files().length > 0) {
+                      @for (file of files(); track file) {
+                        <tr>
+                          <td>{{ file.filename }}</td>
+                          <td>{{ file.lastModified | date:'short' }}</td>
+                          <td>
+                            <button mat-icon-button color="warn"
+                              (click)="deleteFile(file.filename)">
+                              <mat-icon>delete</mat-icon>
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    } @else {
+                      <tr>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="row-container">
+              <app-dropzone (uploaded)="getStatus()"></app-dropzone>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -2,7 +2,7 @@
   display: flex;
   width: 200vw;
   height: 100vh;
-  transition: transform 1.0s ease;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slide-wrapper.show-settings {
@@ -113,10 +113,10 @@
 }
 
 .round-button {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: #111;
+  background: #262626;
   color: whitesmoke;
   border: none;
   cursor: pointer;
@@ -127,7 +127,7 @@
 }
 
 .round-button:hover {
-  background: #222;
+  background: #333;
 }
 
 .circle-button:nth-child(1) {
@@ -196,10 +196,11 @@
 .file-section {
   width: 100%;
   margin-bottom: 20px;
-  padding: 10px;
-  border: 1px solid #aaa;
-  border-radius: 5px;
-  background: whitesmoke;
+  padding: 16px;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  background: #1e1e1e;
+  color: whitesmoke;
 }
 
 .uploaded-files-header {
@@ -211,6 +212,7 @@
 
 .file-section h3 {
   margin: 0 0 10px;
+  color: whitesmoke;
 }
 
 .file-section table {
@@ -221,11 +223,14 @@
 .file-section th,
 .file-section td {
   padding: 8px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #333;
+  color: whitesmoke;
 }
 
 .file-section th {
   text-align: left;
+  color: #999;
+  font-weight: 500;
 }
 
 .file-section button {
@@ -236,31 +241,68 @@ app-dropzone {
   width: 100%;
 }
 
+/* The settings panel is dark now, so the slider/field overrides below use
+   the same dark-surface accent (#e0954f) as the wordmark, not the lighter-
+   panel shade (#ad5725) used while these controls sat on a whitesmoke card. */
 ::ng-deep .mdc-slider__track--active_fill {
-  border-color: #ad5725 !important;
+  border-color: #e0954f !important;
 }
 
 ::ng-deep .mdc-slider__thumb-knob {
-  background-color: #ad5725 !important;
-  border-color: #ad5725 !important;
+  background-color: #e0954f !important;
+  border-color: #e0954f !important;
 }
 
 ::ng-deep .mdc-slider__value-indicator {
-  background-color: #ad5725 !important;
+  background-color: #e0954f !important;
 }
 
 ::ng-deep .mat-mdc-slider-active-ripple,
 ::ng-deep .mat-mdc-slider-focus-ripple {
-  background-color: #ad5725 !important;
+  background-color: #e0954f !important;
 }
 
 ::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-  background-color: #e0e0e0 !important;
+  background-color: #242424 !important;
+}
+
+::ng-deep .mdc-text-field__input,
+::ng-deep .mdc-floating-label,
+::ng-deep .mat-mdc-select-value-text,
+::ng-deep .mat-mdc-select-arrow {
+  color: whitesmoke !important;
+}
+
+/* The select dropdown panel is a CDK overlay appended to <body>, outside
+   this component's DOM, so it needs ::ng-deep (compiles unscoped) rather
+   than a normal selector. */
+::ng-deep .mat-mdc-select-panel {
+  background: #1e1e1e !important;
+}
+
+::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
+  color: whitesmoke !important;
+}
+
+::ng-deep .mat-mdc-option:hover:not(.mdc-list-item--disabled),
+::ng-deep .mat-mdc-option.mat-mdc-option-active {
+  background: #2a2a2a !important;
+}
+
+::ng-deep .mat-mdc-option.mdc-list-item--selected:not(.mat-mdc-option-multiple) {
+  background: #33261c !important;
+}
+
+::ng-deep .mat-pseudo-checkbox-checked.mat-pseudo-checkbox-minimal::after {
+  color: #e0954f !important;
+}
+
+.row-container label {
+  color: whitesmoke;
 }
 
 .settings-panel {
-  color: 111;
-  background: #aaa;
+  background: #111;
   padding: 2rem;
   display: flex;
   align-items: center;
@@ -269,24 +311,49 @@ app-dropzone {
   box-sizing: border-box;
 }
 
-.settings-table-container {
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 1.5rem;
-  padding: 0;
+.settings-card {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  max-height: 100%;
+  overflow-y: auto;
+  background: #161616;
+  border: 1px solid #262626;
+  border-radius: 16px;
+  padding: 2.5rem;
   box-sizing: border-box;
 }
 
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  margin-top: 2.5rem;
+}
+
+@media (max-width: 900px) {
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.settings-heading {
+  font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: whitesmoke;
+  border-bottom: 2px solid whitesmoke;
+  padding-bottom: 6px;
+  margin: 0 0 1.5rem;
+}
+
 .settings-container-col {
-  width: 500px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 1.5rem;
-  padding: 1rem;
-  padding-left: 0;
   box-sizing: border-box;
 }
 
