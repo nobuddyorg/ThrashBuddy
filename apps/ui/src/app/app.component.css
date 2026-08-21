@@ -74,9 +74,9 @@
   padding-bottom: 2px;
 }
 
-/* Matches BikeBuddy's dark-theme wordmark accent for cross-app consistency; ~6.7:1 against #111. */
+/* Matches CollectionBuddy's dark-theme wordmark accent for cross-app consistency; ~7.7:1 against #111. */
 .header-word-accent {
-  color: #f97316;
+  color: #e0954f;
 }
 
 .flex-component {
