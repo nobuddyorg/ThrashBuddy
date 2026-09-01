@@ -1,7 +1,7 @@
 plugins {
     id 'groovy'
     id 'jacoco'
-    id 'org.springframework.boot' version '4.1.0'
+    id 'org.springframework.boot' version '4.1.1'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -29,27 +29,27 @@ dependencyManagement {
         // kubernetes-client and minio still depend on com.fasterxml.jackson:*
         // (Jackson 2) transitively. Both lines have had @JsonView-bypass CVEs
         // (CVE-2026-59889, CVE-2026-54515); force both to their patched releases.
-        mavenBom 'com.fasterxml.jackson:jackson-bom:2.21.5'
-        mavenBom 'tools.jackson:jackson-bom:3.1.5'
+        mavenBom 'com.fasterxml.jackson:jackson-bom:2.22.2'
+        mavenBom 'tools.jackson:jackson-bom:3.2.2'
     }
     dependencies {
         // spring-boot-starter-logging pulls this in via log4j-to-slf4j; bump
         // past the CVE-2026-49844 malformed-JSON fix even though it only
         // triggers under log4j-core's JsonTemplateLayout, which we don't use.
-        dependency 'org.apache.logging.log4j:log4j-api:2.25.5'
+        dependency 'org.apache.logging.log4j:log4j-api:2.26.1'
     }
 }
 
 dependencies {
-    implementation 'org.apache.groovy:groovy:5.0.8'
+    implementation 'org.apache.groovy:groovy:5.1.1'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'io.fabric8:kubernetes-client:7.8.0'
     implementation 'io.minio:minio:9.0.3'
-    implementation("org.apache.groovy:groovy-json:5.0.8")
+    implementation("org.apache.groovy:groovy-json:5.1.1")
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.spockframework:spock-spring:2.4-groovy-5.0'
-    testImplementation("org.apache.groovy:groovy-json:5.0.8")
+    testImplementation("org.apache.groovy:groovy-json:5.1.1")
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.mockito:mockito-core:5.23.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
