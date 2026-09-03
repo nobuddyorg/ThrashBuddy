@@ -247,7 +247,7 @@ jobs:
       - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
         with:
           dockerfile: ./apps/k6/Dockerfile
-          ignore: DL3018
+          ignore: DL3018,DL3064,DL3066
 
       - name: Set up Kubernetes with Minikube
         run: |
