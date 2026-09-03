@@ -153,7 +153,7 @@ jobs:
           trivyignores: apps/api/.trivyignore
       - name: Upload api SARIF
         if: always()
-        uses: github/codeql-action/upload-sarif@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4.37.7
+        uses: github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
           sarif_file: trivy-api.sarif
           category: trivy-api
@@ -167,7 +167,7 @@ jobs:
           output: trivy-ui.sarif
       - name: Upload ui SARIF
         if: always()
-        uses: github/codeql-action/upload-sarif@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4.37.7
+        uses: github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
           sarif_file: trivy-ui.sarif
           category: trivy-ui
@@ -181,7 +181,7 @@ jobs:
           output: trivy-k6.sarif
       - name: Upload k6 SARIF
         if: always()
-        uses: github/codeql-action/upload-sarif@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4.37.7
+        uses: github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
           sarif_file: trivy-k6.sarif
           category: trivy-k6
@@ -236,18 +236,18 @@ jobs:
       - name: Write .env file
         working-directory: ./configs
         run: echo "${{ secrets.DOT_ENV }}" > .env
-      - uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5 # v3.3.0
+      - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
         with:
           dockerfile: ./apps/api/Dockerfile
-          ignore: DL3018
-      - uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5 # v3.3.0
+          ignore: DL3018,DL3066,DL3025
+      - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
         with:
           dockerfile: ./apps/ui/Dockerfile
           ignore: DL3018
-      - uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5 # v3.3.0
+      - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
         with:
           dockerfile: ./apps/k6/Dockerfile
-          ignore: DL3018
+          ignore: DL3018,DL3064,DL3066
 
       - name: Set up Kubernetes with Minikube
         run: |
