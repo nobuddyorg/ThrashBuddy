@@ -104,6 +104,18 @@ global:
 # MinIO
 # ===============================
 minio:
+  # MinIO Inc. stopped publishing community images in 2026-09 (quay.io/minio/*
+  # now returns 401, and Docker Hub's minio/minio and minio/mc were deleted), so
+  # the chart's defaults can't be pulled. Use the pgsty community fork, which
+  # keeps the upstream image layout (/usr/bin/docker-entrypoint.sh, minio, mc).
+  # The same image serves as mcImage because the bucket/user post-job needs
+  # /bin/sh and /usr/bin/mc, both of which it ships.
+  image:
+    repository: docker.io/pgsty/minio
+    tag: RELEASE.2026-08-04T00-00-00Z
+  mcImage:
+    repository: docker.io/pgsty/minio
+    tag: RELEASE.2026-08-04T00-00-00Z
   rootUser: ${USERNAME_TOOLS}
   rootPassword: ${PASSWORD_TOOLS}
   mode: standalone
