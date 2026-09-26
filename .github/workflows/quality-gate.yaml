@@ -255,7 +255,10 @@ jobs:
           minikube delete --all
           # minikube 1.39 switched the default runtime to containerd; docker-env
           # (used below to build images straight into the cluster) needs dockerd.
-          minikube start --driver=docker --container-runtime=docker
+          # It also moved the default to Kubernetes v1.37, where the MinIO
+          # post-install hook timed out; pin minikube 1.38.1's default, the last
+          # version this job passed on.
+          minikube start --driver=docker --container-runtime=docker --kubernetes-version=v1.35.1
           eval $(minikube -p minikube docker-env --shell=bash)  # Exports the required Docker environment variables
           echo "DOCKER_TLS_VERIFY=${DOCKER_TLS_VERIFY}" >> $GITHUB_ENV
           echo "DOCKER_HOST=${DOCKER_HOST}" >> $GITHUB_ENV
@@ -298,6 +301,18 @@ jobs:
           ./npmw run test
 
           trap "kill $PORT_FORWARD_PID" EXIT
+      - name: Dump cluster state on failure
+        if: failure()
+        run: |
+          kubectl get pods,jobs --all-namespaces -o wide || true
+          kubectl get events --all-namespaces --sort-by=.lastTimestamp | tail -n 100 || true
+          for ns in thrash-buddy thrash-buddy-ingress; do
+            kubectl describe pods --namespace "$ns" || true
+            for pod in $(kubectl get pods --namespace "$ns" -o name 2>/dev/null); do
+              echo "===== logs: $ns/$pod"
+              kubectl logs "$pod" --namespace "$ns" --all-containers --tail=100 || true
+            done
+          done
       - name: Publish Playwright Test Results
         uses: EnricoMi/publish-unit-test-result-action/linux@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2
         if: always()
