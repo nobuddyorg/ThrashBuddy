@@ -37,8 +37,17 @@ dependencyManagement {
         // past the CVE-2026-49844 malformed-JSON fix even though it only
         // triggers under log4j-core's JsonTemplateLayout, which we don't use.
         dependency 'org.apache.logging.log4j:log4j-api:2.26.1'
+
+        // Pulled in transitively by kubernetes-client/minio; 1.84 has a Name
+        // Constraints bypass (CVE-2026-8763) and an ASN.1 DoS (CVE-2026-13506).
+        dependency 'org.bouncycastle:bcprov-jdk18on:1.85'
     }
 }
+
+// Spring Boot 4.1.1 manages Tomcat 11.0.24, which has several auth/access
+// bypass CVEs (CVE-2026-65182, CVE-2026-65905, CVE-2026-68525). Override the
+// Boot-managed version so all tomcat-embed-* artifacts move together.
+ext['tomcat.version'] = '11.0.25'
 
 dependencies {
     implementation 'org.apache.groovy:groovy:5.1.1'
