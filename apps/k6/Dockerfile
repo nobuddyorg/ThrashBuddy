@@ -3,7 +3,10 @@ RUN go install go.k6.io/xk6/cmd/xk6@v1.4.6 && \
     xk6 build
 
 FROM alpine:3@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
-RUN apk add --no-cache ca-certificates aws-cli dos2unix && \
+# Upgrade base packages first so Alpine security fixes (e.g. openssl) that
+# postdate the pinned base digest are picked up.
+RUN apk upgrade --no-cache && \
+    apk add --no-cache ca-certificates aws-cli dos2unix && \
     addgroup -S app && adduser -S -G app app
 COPY --from=builder /go/k6 /usr/local/bin/k6
 
