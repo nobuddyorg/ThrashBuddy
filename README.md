@@ -68,9 +68,7 @@ As systems grow more complex and distributed, running tests from a single machin
 
 ## Contributing
 
-Contributions are welcome! Whether it's a bug fix, new feature, or just improving the docs—open an issue or submit a pull request.
-
-Before contributing, please check out our [Contributing Guide](CONTRIBUTING.md).
+ThrashBuddy is a personal hobby project and doesn't accept outside pull requests, issues or feature requests; they are closed without review. Want to change something? Fork it — the MIT License allows it. See the [Contributing Guide](CONTRIBUTING.md).
 
 ## License
 
