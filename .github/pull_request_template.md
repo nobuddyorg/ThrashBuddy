@@ -1,3 +1,5 @@
+<!-- Outside pull requests are closed without review; fork instead (CONTRIBUTING.md). -->
+
 # 📄 PR Description
 
 <!--
