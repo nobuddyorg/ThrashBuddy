@@ -52,7 +52,7 @@ ext['tomcat.version'] = '11.0.25'
 dependencies {
     implementation 'org.apache.groovy:groovy:5.1.1'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'io.fabric8:kubernetes-client:7.8.0'
+    implementation 'io.fabric8:kubernetes-client:8.0.0'
     implementation 'io.minio:minio:9.0.3'
     implementation("org.apache.groovy:groovy-json:5.1.1")
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
