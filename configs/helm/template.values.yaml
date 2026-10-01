@@ -44,7 +44,7 @@ deployments:
       NAMESPACE: ${NAMESPACE}
   prometheus:
     name: prometheus
-    image: prom/prometheus:v3.13.0
+    image: prom/prometheus:3.15.0
     replicas: 1
     pdbMinAvailable: 1
     livenessPort: 9090
