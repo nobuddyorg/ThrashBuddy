@@ -23,14 +23,14 @@ dependencyManagement {
         // io.fabric8:kubernetes-client pulls in io.netty transitively; the resolved
         // version has had several fixed HIGH CVEs (netty-codec-http/-http2/
         // -compression). Force the whole io.netty:* set to the patched release.
-        mavenBom 'io.netty:netty-bom:4.2.17.Final'
+        mavenBom 'io.netty:netty-bom:4.2.18.Final'
 
         // Spring Boot's own web stack uses tools.jackson:* (Jackson 3), while
         // kubernetes-client and minio still depend on com.fasterxml.jackson:*
         // (Jackson 2) transitively. Both lines have had @JsonView-bypass CVEs
         // (CVE-2026-59889, CVE-2026-54515); force both to their patched releases.
-        mavenBom 'com.fasterxml.jackson:jackson-bom:2.22.2'
-        mavenBom 'tools.jackson:jackson-bom:3.2.2'
+        mavenBom 'com.fasterxml.jackson:jackson-bom:2.22.3'
+        mavenBom 'tools.jackson:jackson-bom:3.2.3'
     }
     dependencies {
         // spring-boot-starter-logging pulls this in via log4j-to-slf4j; bump
@@ -40,7 +40,7 @@ dependencyManagement {
 
         // Pulled in transitively by kubernetes-client/minio; 1.84 has a Name
         // Constraints bypass (CVE-2026-8763) and an ASN.1 DoS (CVE-2026-13506).
-        dependency 'org.bouncycastle:bcprov-jdk18on:1.85'
+        dependency 'org.bouncycastle:bcprov-jdk18on:1.86'
     }
 }
 
@@ -60,7 +60,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-spring:2.4-groovy-5.0'
     testImplementation("org.apache.groovy:groovy-json:5.1.1")
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation 'org.mockito:mockito-core:5.23.0'
+    testImplementation 'org.mockito:mockito-core:5.24.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 }
 
