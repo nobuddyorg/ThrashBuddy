@@ -29,7 +29,7 @@ jobs:
         working-directory: ./apps/api
         run: ./gradlew clean jacocoTestReport
       - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action/linux@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2
+        uses: EnricoMi/publish-unit-test-result-action/linux@7622c5bf3d112a72ab4fa3951c2aa5723d8ab92d # v2
         if: always()
         with:
           check_name: "api Unit Tests"
@@ -81,7 +81,7 @@ jobs:
         working-directory: ./apps/ui
         run: ./npmw run test:ci
       - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action/linux@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2
+        uses: EnricoMi/publish-unit-test-result-action/linux@7622c5bf3d112a72ab4fa3951c2aa5723d8ab92d # v2
         if: always()
         with:
           check_name: "ui Unit Tests"
@@ -153,7 +153,7 @@ jobs:
           trivyignores: apps/api/.trivyignore
       - name: Upload api SARIF
         if: always()
-        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: trivy-api.sarif
           category: trivy-api
@@ -167,7 +167,7 @@ jobs:
           output: trivy-ui.sarif
       - name: Upload ui SARIF
         if: always()
-        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: trivy-ui.sarif
           category: trivy-ui
@@ -181,7 +181,7 @@ jobs:
           output: trivy-k6.sarif
       - name: Upload k6 SARIF
         if: always()
-        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: trivy-k6.sarif
           category: trivy-k6
@@ -311,13 +311,13 @@ jobs:
             done
           done
       - name: Publish Playwright Test Results
-        uses: EnricoMi/publish-unit-test-result-action/linux@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2
+        uses: EnricoMi/publish-unit-test-result-action/linux@7622c5bf3d112a72ab4fa3951c2aa5723d8ab92d # v2
         if: always()
         with:
           check_name: "Playwright UI Tests"
           files: ./tests/ui/test-results/results.xml
       - name: Archive Playwright Test Results
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: always()
         with:
           name: report.zip
