@@ -1,4 +1,4 @@
-FROM golang:1.27.0@sha256:4013ae0f9e7994f8535c58c811f8f863fbed38b72e0d51e6592156f758d66146 AS builder
+FROM golang:1.27.3@sha256:2920bb124f1a2e12a1d39f0cab756ae0068441ee1da7655dec7f5e374944095b AS builder
 RUN go install go.k6.io/xk6/cmd/xk6@v1.4.6 && \
     xk6 build
 
