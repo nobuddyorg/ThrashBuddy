@@ -2,7 +2,7 @@ FROM golang:1.27.3@sha256:2920bb124f1a2e12a1d39f0cab756ae0068441ee1da7655dec7f5e
 RUN go install go.k6.io/xk6/cmd/xk6@v1.4.6 && \
     xk6 build
 
-FROM alpine:3@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
+FROM alpine:3@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a
 # Upgrade base packages first so Alpine security fixes (e.g. openssl) that
 # postdate the pinned base digest are picked up.
 RUN apk upgrade --no-cache && \
