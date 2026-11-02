@@ -49,16 +49,29 @@ dependencyManagement {
 // Boot-managed version so all tomcat-embed-* artifacts move together.
 ext['tomcat.version'] = '11.0.25'
 
+// Transitive via kubernetes-client and minio; Trivy flags the shipped versions
+// (guava CVE-2026-102554, snappy-java CVE-2026-108106 and CVE-2026-93451).
+configurations.configureEach {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'com.google.guava' && details.requested.name == 'guava') {
+            details.useVersion '33.7.2-jre'
+        }
+        if (details.requested.group == 'org.xerial.snappy' && details.requested.name == 'snappy-java') {
+            details.useVersion '1.1.10.9'
+        }
+    }
+}
+
 dependencies {
-    implementation 'org.apache.groovy:groovy:5.1.1'
+    implementation 'org.apache.groovy:groovy:6.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'io.fabric8:kubernetes-client:8.0.0'
     implementation 'io.minio:minio:9.0.3'
-    implementation("org.apache.groovy:groovy-json:5.1.1")
+    implementation("org.apache.groovy:groovy-json:6.0.0")
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.spockframework:spock-spring:2.5-groovy-5.0'
-    testImplementation("org.apache.groovy:groovy-json:5.1.1")
+    testImplementation 'org.spockframework:spock-spring:2.5-groovy-6.0'
+    testImplementation("org.apache.groovy:groovy-json:6.0.0")
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.mockito:mockito-core:5.24.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'

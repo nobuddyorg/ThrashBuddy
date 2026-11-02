@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { AppComponent } from "./app.component";
 import { provideHttpClient } from "@angular/common/http";
 import { provideHttpClientTesting } from "@angular/common/http/testing";
@@ -83,18 +83,21 @@ describe("AppComponent", () => {
     });
 
     describe("status updates", () => {
-        it("should call getStatus periodically", fakeAsync(() => {
+        beforeEach(() => jasmine.clock().install());
+        afterEach(() => jasmine.clock().uninstall());
+
+        it("should call getStatus periodically", () => {
             const fixture = TestBed.createComponent(AppComponent);
             const app = fixture.componentInstance;
             const getStatusSpy = spyOn(app, "getStatus").and.callThrough();
 
             fixture.detectChanges();
-            tick(10000);
+            jasmine.clock().tick(10000);
 
             expect(getStatusSpy).toHaveBeenCalledTimes(2);
-        }));
+        });
 
-        it("should retry on getStatus failure", fakeAsync(() => {
+        it("should retry on getStatus failure", () => {
             spyOn(console, "error");
             const fixture = TestBed.createComponent(AppComponent);
             const app = fixture.componentInstance;
@@ -106,10 +109,10 @@ describe("AppComponent", () => {
             });
 
             app.getStatus();
-            tick(1000);
+            jasmine.clock().tick(1000);
 
             expect(testServiceSpy.getStatus).toHaveBeenCalledTimes(2);
-        }));
+        });
 
         it("should fallback to empty files array when response.data is undefined", () => {
             const { componentInstance } = TestBed.createComponent(AppComponent);
