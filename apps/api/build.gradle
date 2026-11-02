@@ -49,6 +49,19 @@ dependencyManagement {
 // Boot-managed version so all tomcat-embed-* artifacts move together.
 ext['tomcat.version'] = '11.0.25'
 
+// Transitive via kubernetes-client and minio; Trivy flags the shipped versions
+// (guava CVE-2026-102554, snappy-java CVE-2026-108106 and CVE-2026-93451).
+configurations.configureEach {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'com.google.guava' && details.requested.name == 'guava') {
+            details.useVersion '33.7.2-jre'
+        }
+        if (details.requested.group == 'org.xerial.snappy' && details.requested.name == 'snappy-java') {
+            details.useVersion '1.1.10.9'
+        }
+    }
+}
+
 dependencies {
     implementation 'org.apache.groovy:groovy:6.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-web'
