@@ -23,14 +23,14 @@ dependencyManagement {
         // io.fabric8:kubernetes-client pulls in io.netty transitively; the resolved
         // version has had several fixed HIGH CVEs (netty-codec-http/-http2/
         // -compression). Force the whole io.netty:* set to the patched release.
-        mavenBom 'io.netty:netty-bom:4.2.19.Final'
+        mavenBom 'io.netty:netty-bom:4.2.20.Final'
 
         // Spring Boot's own web stack uses tools.jackson:* (Jackson 3), while
         // kubernetes-client and minio still depend on com.fasterxml.jackson:*
         // (Jackson 2) transitively. Both lines have had @JsonView-bypass CVEs
         // (CVE-2026-59889, CVE-2026-54515); force both to their patched releases.
-        mavenBom 'com.fasterxml.jackson:jackson-bom:2.22.4'
-        mavenBom 'tools.jackson:jackson-bom:3.2.4'
+        mavenBom 'com.fasterxml.jackson:jackson-bom:2.23.0'
+        mavenBom 'tools.jackson:jackson-bom:3.3.0'
     }
     dependencies {
         // spring-boot-starter-logging pulls this in via log4j-to-slf4j; bump
@@ -66,7 +66,7 @@ dependencies {
     implementation 'org.apache.groovy:groovy:6.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'io.fabric8:kubernetes-client:8.0.0'
-    implementation 'io.minio:minio:9.0.3'
+    implementation 'io.minio:minio:9.0.4'
     implementation("org.apache.groovy:groovy-json:6.0.0")
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
