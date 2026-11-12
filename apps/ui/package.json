@@ -51,6 +51,7 @@
     },
     "overrides": {
         "@babel/core": "^7.29.6",
-        "esbuild": "^0.28.1"
+        "esbuild": "^0.28.1",
+        "minimatch@^10": "^11.0.8"
     }
 }
